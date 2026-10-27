@@ -1,0 +1,791 @@
+<!doctype html>
+<html lang="sv">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- Inte sökbar än: tas bort när sidan ska synas i sökmotorer. -->
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Raketord – hann du läsa ordet?</title>
+    <meta
+      name="description"
+      content="Lärospel för barn 6–10 år. Ett ord blixtrar förbi och försvinner. Skriv det du såg och träna på att känna igen hela ord snabbt."
+    />
+    <meta name="theme-color" content="#3B6F7E" />
+    <link rel="icon" href="favicon.png" />
+    <link rel="stylesheet" href="../style.css" />
+  </head>
+  <body>
+    <svg width="0" height="0" style="position: absolute" aria-hidden="true">
+      <defs>
+        <!-- Appens raket (src/components/Rocket.tsx) -->
+        <clipPath id="rocket-body">
+          <path d="M50 8C66 20 74 44 74 70v34q0 8-8 8H34q-8 0-8-8V70C26 44 34 20 50 8z" />
+        </clipPath>
+        <!-- Raketen som i appen (src/components/Rocket.tsx). Utan inställningar är den
+             Lätt-raketen, som logon. Svårighetskorten byter färger och delar med
+             CSS-variabler (--rocket-*, --stripes-1, --stripes-2, --boosters, --bolt). -->
+        <symbol id="rocket" viewBox="0 0 100 160">
+          <g style="opacity: var(--boosters, 0)">
+            <path d="M10 110C10 118 14 124 17 128C20 124 24 118 24 110z" fill="var(--flame)" />
+            <path d="M76 110C76 118 80 124 83 128C86 124 90 118 90 110z" fill="var(--flame)" />
+            <path d="M9 94 2 116l7-4zM91 94l7 22-7-4z" fill="var(--ink)" />
+            <path
+              d="M17 66c5 5 8 12 8 20v26H9V86c0-8 3-15 8-20zM83 66c5 5 8 12 8 20v26H75V86c0-8 3-15 8-20z"
+              fill="var(--rocket-fins, var(--accent-deep))"
+            />
+          </g>
+          <path d="M35 104C35 117.5 44 128 50 134C56 128 65 117.5 65 104z" fill="var(--flame)" />
+          <path
+            d="M42 104C42 113.5 46.8 120.8 50 125C53.2 120.8 58 113.5 58 104z"
+            fill="var(--hl-light)"
+          />
+          <path
+            d="M27 78C15 84 10 96 10 114l17-6zM73 78c12 6 17 18 17 36l-17-6z"
+            fill="var(--rocket-fins, var(--accent-deep))"
+            style="opacity: calc(1 - var(--boosters, 0))"
+          />
+          <rect x="47.5" y="0" width="5" height="14" rx="2.5" fill="var(--ink)" />
+          <path
+            d="M50 8C66 20 74 44 74 70v34q0 8-8 8H34q-8 0-8-8V70C26 44 34 20 50 8z"
+            fill="var(--rocket-body, var(--accent))"
+          />
+          <g clip-path="url(#rocket-body)">
+            <rect x="0" y="0" width="100" height="34" fill="var(--rocket-nose, var(--accent))" />
+            <rect
+              x="0"
+              y="88"
+              width="100"
+              height="7"
+              fill="var(--rocket-stripe, var(--hl))"
+              style="opacity: var(--stripes-1, 0)"
+            />
+            <path
+              d="M0 84h100v7H0zM0 96h100v7H0z"
+              fill="var(--rocket-stripe, var(--hl))"
+              style="opacity: var(--stripes-2, 0)"
+            />
+            <rect x="50" y="0" width="50" height="160" fill="rgba(0,0,0,.11)" />
+          </g>
+          <circle
+            cx="50"
+            cy="54"
+            r="12"
+            fill="var(--rocket-window, var(--sky))"
+            stroke="var(--cloud-light)"
+            stroke-width="5"
+          />
+          <path
+            d="M44 50a7 7 0 0 1 6-5"
+            stroke="#fff"
+            stroke-opacity=".6"
+            stroke-width="2.5"
+            stroke-linecap="round"
+            fill="none"
+          />
+          <g style="opacity: var(--bolt, 0)">
+            <path d="M53 70 43 87h7l-4 15 12-19h-7l5-13z" fill="var(--hl)" />
+            <path
+              d="M8 24l1.2 4.8 4.8 1.2-4.8 1.2L8 36l-1.2-4.8L2 30l4.8-1.2zM92 41.5l.9 3.6 3.6.9-3.6.9-.9 3.6-.9-3.6-3.6-.9 3.6-.9z"
+              fill="var(--star)"
+            />
+          </g>
+        </symbol>
+        <symbol id="apple" viewBox="0 0 24 24">
+          <path
+            fill="#fff"
+            d="M16.4 12.6c0-2.6 2.1-3.8 2.2-3.9-1.2-1.8-3.1-2-3.7-2-1.6-.2-3.1.9-3.9.9-.8 0-2-.9-3.4-.9-1.7 0-3.3 1-4.2 2.6-1.8 3.1-.5 7.7 1.3 10.2.9 1.2 1.9 2.6 3.2 2.6 1.3-.1 1.8-.8 3.3-.8 1.6 0 2 .8 3.4.8 1.4 0 2.3-1.3 3.1-2.5 1-1.4 1.4-2.8 1.4-2.9-.1 0-2.7-1-2.7-4.1zM13.9 5c.7-.9 1.2-2 1-3.2-1 0-2.3.7-3 1.6-.7.8-1.2 2-1.1 3.1 1.2.1 2.3-.6 3.1-1.5z"
+          />
+        </symbol>
+        <symbol id="play" viewBox="0 0 24 24">
+          <path d="M4 2.5v19l10.5-9.5z" fill="#34A853" />
+          <path d="M4 2.5l10.5 10 3-2.8L6 2.9C5.3 2.5 4.6 2.4 4 2.5z" fill="#4285F4" />
+          <path d="M4 21.5c.6.1 1.3 0 2-.4l11.5-6.6-3-2.8z" fill="#EA4335" />
+          <path d="M17.5 9.7l-3 2.8 3 2.8 3-1.7c.9-.5.9-1.7 0-2.2z" fill="#FBBC04" />
+        </symbol>
+        <symbol id="check" viewBox="0 0 40 40">
+          <circle cx="20" cy="20" r="18" fill="var(--hl-pale)" />
+          <path
+            d="M13 21l5 5 9-11"
+            stroke="var(--on-card)"
+            stroke-width="3.5"
+            fill="none"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </symbol>
+
+        <!-- Himlakropparna i appen (src/components/sky/) -->
+        <clipPath id="body-clip"><circle r="50" /></clipPath>
+        <symbol id="moon" viewBox="-50 -50 100 100">
+          <g clip-path="url(#body-clip)">
+            <circle r="50" fill="var(--moon)" />
+            <circle cx="11.44" cy="15.44" r="12.96" fill="var(--body-sheen)" />
+            <circle cx="10" cy="14" r="12" fill="var(--body-shade)" />
+            <circle cx="13" cy="17" r="7.68" fill="var(--moon-crater)" />
+            <circle cx="30.84" cy="0.84" r="7.56" fill="var(--body-sheen)" />
+            <circle cx="30" cy="0" r="7" fill="var(--body-shade)" />
+            <circle cx="31.75" cy="1.75" r="4.48" fill="var(--moon-crater)" />
+            <circle cx="0.96" cy="38.96" r="8.64" fill="var(--body-sheen)" />
+            <circle cx="0" cy="38" r="8" fill="var(--body-shade)" />
+            <circle cx="2" cy="40" r="5.12" fill="var(--moon-crater)" />
+            <circle cx="-21.28" cy="20.72" r="6.48" fill="var(--body-sheen)" />
+            <circle cx="-22" cy="20" r="6" fill="var(--body-shade)" />
+            <circle cx="-20.5" cy="21.5" r="3.84" fill="var(--moon-crater)" />
+            <circle cx="-24.92" cy="-14.92" r="9.72" fill="var(--body-sheen)" />
+            <circle cx="-26" cy="-16" r="9" fill="var(--body-shade)" />
+            <circle cx="-23.75" cy="-13.75" r="5.76" fill="var(--moon-crater)" />
+            <circle cx="6.6" cy="-25.4" r="5.4" fill="var(--body-sheen)" />
+            <circle cx="6" cy="-26" r="5" fill="var(--body-shade)" />
+            <circle cx="7.25" cy="-24.75" r="3.2" fill="var(--moon-crater)" />
+            <circle cx="32.48" cy="28.48" r="4.32" fill="var(--body-sheen)" />
+            <circle cx="32" cy="28" r="4" fill="var(--body-shade)" />
+            <circle cx="33" cy="29" r="2.56" fill="var(--moon-crater)" />
+            <circle cx="-9.64" cy="2.36" r="3.24" fill="var(--body-sheen)" />
+            <circle cx="-10" cy="2" r="3" fill="var(--body-shade)" />
+            <circle cx="-9.25" cy="2.75" r="1.92" fill="var(--moon-crater)" />
+            <circle
+              cx="-10"
+              cy="-10"
+              r="80"
+              stroke="var(--body-shade)"
+              stroke-width="50"
+              fill="none"
+            />
+          </g>
+        </symbol>
+        <symbol id="ringed" viewBox="-100 -50 200 100">
+          <g transform="translate(0 0) rotate(-14)">
+            <path
+              d="M -90 0 A 90 19 0 0 1 90 0"
+              stroke="var(--planet-ring)"
+              stroke-width="10"
+              fill="none"
+            />
+            <path
+              d="M -72 0 A 72 14.5 0 0 1 72 0"
+              stroke="var(--planet-ring)"
+              stroke-width="8"
+              fill="none"
+            />
+          </g>
+          <g clip-path="url(#body-clip)">
+            <circle r="50" fill="var(--planet)" />
+            <g transform="rotate(-14)">
+              <rect x="-50" y="-50" width="100" height="18" fill="var(--body-shade)" />
+              <rect x="-50" y="-24" width="100" height="6" fill="var(--body-sheen)" />
+              <rect x="-50" y="26" width="100" height="7" fill="var(--body-shade)" />
+            </g>
+            <g transform="translate(0 8) rotate(-14)">
+              <path
+                d="M 90 0 A 90 19 0 0 1 -90 0"
+                stroke="var(--body-shade)"
+                stroke-width="10"
+                fill="none"
+              />
+              <path
+                d="M 72 0 A 72 14.5 0 0 1 -72 0"
+                stroke="var(--body-shade)"
+                stroke-width="8"
+                fill="none"
+              />
+            </g>
+            <circle
+              cx="-10"
+              cy="-10"
+              r="80"
+              stroke="var(--body-shade)"
+              stroke-width="50"
+              fill="none"
+            />
+          </g>
+          <g transform="translate(0 0) rotate(-14)">
+            <path
+              d="M 90 0 A 90 19 0 0 1 -90 0"
+              stroke="var(--planet-ring)"
+              stroke-width="10"
+              fill="none"
+            />
+            <path
+              d="M 72 0 A 72 14.5 0 0 1 -72 0"
+              stroke="var(--planet-ring)"
+              stroke-width="8"
+              fill="none"
+            />
+          </g>
+        </symbol>
+        <symbol id="giant" viewBox="-50 -50 100 100">
+          <g clip-path="url(#body-clip)">
+            <circle r="50" fill="var(--gas-giant)" />
+            <g transform="rotate(-8)">
+              <rect x="-50" y="-36" width="100" height="7" fill="var(--gas-giant-band)" />
+              <rect x="-50" y="-20" width="100" height="10" fill="var(--gas-giant-band)" />
+              <rect x="-50" y="-2" width="100" height="6" fill="var(--gas-giant-band)" />
+              <rect x="-50" y="14" width="100" height="11" fill="var(--gas-giant-band)" />
+              <rect x="-50" y="33" width="100" height="7" fill="var(--gas-giant-band)" />
+              <ellipse cx="14" cy="20" rx="12" ry="7" fill="var(--gas-giant-spot)" />
+              <ellipse cx="12" cy="18" rx="6" ry="3" fill="var(--body-sheen)" />
+            </g>
+            <circle
+              cx="-10"
+              cy="-10"
+              r="80"
+              stroke="var(--body-shade)"
+              stroke-width="50"
+              fill="none"
+            />
+          </g>
+        </symbol>
+        <symbol id="small-planet" viewBox="-50 -50 100 100">
+          <g clip-path="url(#body-clip)">
+            <circle r="50" fill="var(--extra)" />
+            <ellipse cx="-4" cy="-46" rx="24" ry="12" fill="var(--body-sheen)" />
+            <ellipse cx="10" cy="8" rx="16" ry="8" fill="var(--body-shade)" />
+            <ellipse cx="-20" cy="22" rx="9" ry="5" fill="var(--body-shade)" />
+            <circle
+              cx="-10"
+              cy="-10"
+              r="80"
+              stroke="var(--body-shade)"
+              stroke-width="50"
+              fill="none"
+            />
+          </g>
+        </symbol>
+        <symbol id="star" viewBox="0 0 24 24">
+          <path
+            d="M12 2.5l2.9 6 6.6.8-4.9 4.6 1.3 6.6L12 17.3l-5.9 3.2 1.3-6.6-4.9-4.6 6.6-.8z"
+            fill="var(--star)"
+            stroke="var(--star)"
+            stroke-width="2"
+            stroke-linejoin="round"
+          />
+        </symbol>
+        <!-- Appens molnbank (src/components/sky/CloudBank.tsx) -->
+        <filter id="cloud-shadow" x="-5%" y="-20%" width="110%" height="140%">
+          <feDropShadow dx="0" dy="-5" stdDeviation="0" flood-color="#000" flood-opacity="0.15" />
+        </filter>
+        <g id="cloud-1">
+          <circle cx="-355" cy="93" r="85" />
+          <circle cx="-235" cy="113" r="75" />
+          <circle cx="-75" cy="103" r="95" />
+          <circle cx="15" cy="107" r="75" />
+          <circle cx="35" cy="93" r="85" />
+          <circle cx="155" cy="113" r="75" />
+          <circle cx="315" cy="103" r="95" />
+          <circle cx="405" cy="107" r="75" />
+          <circle cx="425" cy="93" r="85" />
+          <circle cx="545" cy="113" r="75" />
+          <circle cx="705" cy="103" r="95" />
+          <circle cx="795" cy="107" r="75" />
+          <circle cx="815" cy="93" r="85" />
+          <circle cx="935" cy="113" r="75" />
+          <circle cx="1095" cy="103" r="95" />
+          <circle cx="1185" cy="107" r="75" />
+          <circle cx="1205" cy="93" r="85" />
+          <circle cx="1325" cy="113" r="75" />
+          <circle cx="1485" cy="103" r="95" />
+          <circle cx="1575" cy="107" r="75" />
+          <circle cx="1595" cy="93" r="85" />
+          <circle cx="1715" cy="113" r="75" />
+          <circle cx="1875" cy="103" r="95" />
+          <circle cx="1965" cy="107" r="75" />
+        </g>
+        <g id="cloud-2">
+          <circle cx="-355" cy="133" r="75" />
+          <circle cx="-40" cy="136" r="80" />
+          <circle cx="35" cy="133" r="75" />
+          <circle cx="350" cy="136" r="80" />
+          <circle cx="425" cy="133" r="75" />
+          <circle cx="740" cy="136" r="80" />
+          <circle cx="815" cy="133" r="75" />
+          <circle cx="1130" cy="136" r="80" />
+          <circle cx="1205" cy="133" r="75" />
+          <circle cx="1520" cy="136" r="80" />
+          <circle cx="1595" cy="133" r="75" />
+          <circle cx="1910" cy="136" r="80" />
+        </g>
+        <g id="cloud-3">
+          <circle cx="10" cy="138" r="60" />
+          <circle cx="400" cy="138" r="60" />
+          <circle cx="790" cy="138" r="60" />
+          <circle cx="1180" cy="138" r="60" />
+          <circle cx="1570" cy="138" r="60" />
+          <circle cx="1960" cy="138" r="60" />
+        </g>
+        <g id="cloud-4">
+          <circle cx="-310" cy="158" r="70" />
+          <circle cx="-190" cy="148" r="70" />
+          <circle cx="-75" cy="167" r="75" />
+          <circle cx="80" cy="158" r="70" />
+          <circle cx="200" cy="148" r="70" />
+          <circle cx="315" cy="167" r="75" />
+          <circle cx="470" cy="158" r="70" />
+          <circle cx="590" cy="148" r="70" />
+          <circle cx="705" cy="167" r="75" />
+          <circle cx="860" cy="158" r="70" />
+          <circle cx="980" cy="148" r="70" />
+          <circle cx="1095" cy="167" r="75" />
+          <circle cx="1250" cy="158" r="70" />
+          <circle cx="1370" cy="148" r="70" />
+          <circle cx="1485" cy="167" r="75" />
+          <circle cx="1640" cy="158" r="70" />
+          <circle cx="1760" cy="148" r="70" />
+          <circle cx="1875" cy="167" r="75" />
+        </g>
+        <g id="cloud-5">
+          <circle cx="-355" cy="179" r="65" />
+          <circle cx="-230" cy="190" r="70" />
+          <circle cx="-115" cy="189" r="65" />
+          <circle cx="-10" cy="176" r="60" />
+          <circle cx="35" cy="179" r="65" />
+          <circle cx="160" cy="190" r="70" />
+          <circle cx="275" cy="189" r="65" />
+          <circle cx="380" cy="176" r="60" />
+          <circle cx="425" cy="179" r="65" />
+          <circle cx="550" cy="190" r="70" />
+          <circle cx="665" cy="189" r="65" />
+          <circle cx="770" cy="176" r="60" />
+          <circle cx="815" cy="179" r="65" />
+          <circle cx="940" cy="190" r="70" />
+          <circle cx="1055" cy="189" r="65" />
+          <circle cx="1160" cy="176" r="60" />
+          <circle cx="1205" cy="179" r="65" />
+          <circle cx="1330" cy="190" r="70" />
+          <circle cx="1445" cy="189" r="65" />
+          <circle cx="1550" cy="176" r="60" />
+          <circle cx="1595" cy="179" r="65" />
+          <circle cx="1720" cy="190" r="70" />
+          <circle cx="1835" cy="189" r="65" />
+          <circle cx="1940" cy="176" r="60" />
+        </g>
+      </defs>
+    </svg>
+
+    <div class="sky">
+      <div class="sky-deco" aria-hidden="true">
+        <i class="dot big tw" style="left: 62.3%; top: 66.8%; --d: 1.3s"></i
+        ><i class="dot big" style="left: 94.2%; top: 66.6%; --d: 1.57s"></i
+        ><i class="dot big" style="left: 2.9%; top: 41.9%; --d: 1.84s"></i
+        ><i class="dot" style="left: 64.9%; top: 81.1%; --d: 2.11s"></i
+        ><i class="dot tw" style="left: 46.9%; top: 22.2%; --d: 2.38s"></i
+        ><i class="dot" style="left: 57.4%; top: 1.2%; --d: 2.65s"></i
+        ><i class="dot big" style="left: 27.9%; top: 82.5%; --d: 2.92s"></i
+        ><i class="dot" style="left: 16%; top: 71.7%; --d: 3.19s"></i
+        ><i class="dot tw" style="left: 61.7%; top: 11.4%; --d: 3.46s"></i
+        ><i class="dot" style="left: 87.1%; top: 18.9%; --d: 3.73s"></i
+        ><i class="dot" style="left: 98.2%; top: 78.5%; --d: 4s"></i
+        ><i class="dot big" style="left: 96.1%; top: 48.5%; --d: 4.27s"></i
+        ><i class="dot big tw" style="left: 20.5%; top: 84.7%; --d: 4.54s"></i
+        ><i class="dot" style="left: 96.7%; top: 80.4%; --d: 4.81s"></i
+        ><i class="dot" style="left: 36.1%; top: 14.9%; --d: 5.08s"></i
+        ><i class="dot big" style="left: 6.5%; top: 27.1%; --d: 5.35s"></i
+        ><i class="dot tw" style="left: 0.3%; top: 61%; --d: 5.62s"></i
+        ><i class="dot" style="left: 31%; top: 73.7%; --d: 5.89s"></i
+        ><i class="dot big" style="left: 31.6%; top: 43.3%; --d: 6.16s"></i
+        ><i class="dot" style="left: 5.7%; top: 87.8%; --d: 6.43s"></i
+        ><i class="dot tw" style="left: 75%; top: 76%; --d: 6.7s"></i
+        ><i class="dot" style="left: 78.8%; top: 33%; --d: 6.97s"></i
+        ><i class="dot" style="left: 0.9%; top: 4.2%; --d: 7.24s"></i
+        ><i class="dot big" style="left: 95.5%; top: 17.7%; --d: 7.51s"></i
+        ><i class="dot tw" style="left: 93%; top: 84.8%; --d: 7.78s"></i
+        ><i class="dot big" style="left: 35.5%; top: 47.2%; --d: 8.05s"></i
+        ><svg class="gold" style="left: 24%; top: 20%; width: 20px; --d: 1.7s">
+          <use href="#star" /></svg
+        ><svg class="gold" style="left: 66%; top: 14%; width: 18px; --d: 2.01s">
+          <use href="#star" /></svg
+        ><svg class="gold" style="left: 46%; top: 6%; width: 24px; --d: 2.32s">
+          <use href="#star" /></svg
+        ><svg class="gold" style="left: 8%; top: 40%; width: 16px; --d: 2.63s">
+          <use href="#star" /></svg
+        ><svg class="gold" style="left: 90%; top: 62%; width: 14px; --d: 2.94s">
+          <use href="#star" />
+        </svg>
+        <svg class="body giant"><use href="#giant" /></svg>
+        <svg class="body small-planet"><use href="#small-planet" /></svg>
+        <i class="meteor m1"></i><i class="meteor m2"></i>
+        <svg class="flyby"><use href="#rocket" /></svg>
+      </div>
+      <header class="site-head">
+        <div class="wrap">
+          <a class="logo" href="#top">
+            <svg aria-hidden="true"><use href="#rocket" /></svg>
+            <span class="wordmark">Raket<b>ord</b></span>
+          </a>
+          <nav aria-label="Sidan">
+            <a href="#sa-funkar-det">Så funkar det</a>
+            <a href="#larande">Vad barnet lär sig</a>
+            <a href="#prova">Prova</a>
+            <a href="#ladda-ner">Ladda ner</a>
+          </nav>
+        </div>
+      </header>
+
+      <main class="hero" id="top">
+        <div class="wrap">
+          <div class="hero-text">
+            <span class="eyebrow">Lärospel för barn 6–10 år</span>
+            <h1>Hann du läsa ordet?</h1>
+            <p class="lead">
+              Ett ord blixtrar förbi och försvinner. Skriv det du såg. Raketord tränar barn att
+              känna igen hela ord snabbt, och det är grunden för att läsa med flyt.
+            </p>
+            <!-- Butikslänkarna läggs in när appen finns i butikerna. -->
+            <div class="badges">
+              <a class="badge" href="#ladda-ner">
+                <svg aria-hidden="true"><use href="#apple" /></svg>
+                <span>Hämta i<strong>App Store</strong></span>
+              </a>
+              <a class="badge" href="#ladda-ner">
+                <svg aria-hidden="true"><use href="#play" /></svg>
+                <span>Ladda ned på<strong>Google Play</strong></span>
+              </a>
+            </div>
+            <a class="try-link" href="#prova">Prova gratis i webbläsaren →</a>
+            <div class="facts">
+              <span>Inga köp i appen</span><span>Ingen reklam</span><span>7 språk</span>
+            </div>
+          </div>
+          <div class="hero-phone">
+            <svg class="body moon"><use href="#moon" /></svg>
+            <svg class="body ringed"><use href="#ringed" /></svg>
+            <div class="phone">
+              <video
+                src="media/klipp.mp4"
+                poster="media/start.jpg"
+                autoplay
+                muted
+                loop
+                playsinline
+                aria-label="Film ur spelet: ordet DYR blixtrar förbi och barnet skriver det"
+              ></video>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <svg
+      class="clouds"
+      viewBox="0 0 1440 152"
+      preserveAspectRatio="xMidYMin slice"
+      aria-hidden="true"
+    >
+      <use class="drift-1" href="#cloud-1" filter="url(#cloud-shadow)" />
+      <use class="drift-2" href="#cloud-2" filter="url(#cloud-shadow)" />
+      <use class="drift-3" href="#cloud-3" filter="url(#cloud-shadow)" />
+      <use class="drift-4" href="#cloud-4" filter="url(#cloud-shadow)" />
+      <use class="drift-5" href="#cloud-5" filter="url(#cloud-shadow)" />
+    </svg>
+
+    <section class="paper" id="sa-funkar-det">
+      <div class="wrap">
+        <div class="sec-head">
+          <span class="eyebrow">Så funkar det</span>
+          <h2>Från att ljuda till att läsa flytande</h2>
+        </div>
+        <ol class="steps">
+          <li>
+            <h3>Ordet visas en kort stund</h3>
+            <p>
+              Barnet hinner inte ljuda bokstav för bokstav, utan övar på att känna igen hela ordet
+              på en gång.
+            </p>
+          </li>
+          <li>
+            <h3>Barnet skriver ordet</h3>
+            <p>Då syns det att ordet verkligen blev läst, och stavningen tränas på köpet.</p>
+          </li>
+          <li>
+            <h3>Tiden kortas steg för steg</h3>
+            <p>
+              För varje nivå visas ordet lite kortare tid. Läsningen blir snabbare och säkrare,
+              tills den går av sig själv.
+            </p>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="band" id="se-spelet">
+      <div class="wrap">
+        <div class="sec-head">
+          <span class="eyebrow">Se spelet</span>
+          <h2>Så ser det ut i telefonen</h2>
+        </div>
+        <div class="shots" tabindex="0" aria-label="Bilder ur spelet">
+          <figure>
+            <div class="phone small">
+              <img
+                src="media/start.jpg"
+                alt="Startsidan med svårighetsgraderna Lätt, Mellan och Svår"
+                loading="lazy"
+              />
+            </div>
+            <figcaption>
+              Fyra svårighetsgrader<span>Från korta vardagsord till långa ord från skolan</span>
+            </figcaption>
+          </figure>
+          <figure>
+            <div class="phone small">
+              <img src="media/ordet.jpg" alt="Ordet LÄSA visas en kort stund" loading="lazy" />
+            </div>
+            <figcaption>
+              Ordet blixtrar förbi<span>Lite kortare tid för varje nivå</span>
+            </figcaption>
+          </figure>
+          <figure>
+            <div class="phone small">
+              <img
+                src="media/ratt.jpg"
+                alt="Rätt svar: LÄSA blir grönt och ger poäng"
+                loading="lazy"
+              />
+            </div>
+            <figcaption>
+              Rätt svar ger poäng<span>Direkt återkoppling på varje ord</span>
+            </figcaption>
+          </figure>
+          <figure>
+            <div class="phone small">
+              <img
+                src="media/svart.jpg"
+                alt="Ordet äventyr i små bokstäver, på svårighetsgraden Svår"
+                loading="lazy"
+              />
+            </div>
+            <figcaption>
+              Längre ord när barnet är redo<span>Med stora eller små bokstäver</span>
+            </figcaption>
+          </figure>
+          <figure>
+            <div class="phone small">
+              <img
+                src="media/installningar.jpg"
+                alt="Inställningarna med hastighet och stora eller små bokstäver"
+                loading="lazy"
+              />
+            </div>
+            <figcaption>Anpassa efter barnet<span>Välj hastighet och bokstäver</span></figcaption>
+          </figure>
+          <figure>
+            <div class="phone small">
+              <img
+                src="media/resultat.jpg"
+                alt="Resultatet efter en runda, med två av tre stjärnor"
+                loading="lazy"
+              />
+            </div>
+            <figcaption>Slå ditt eget rekord<span>Stjärnor, rekord och medaljer</span></figcaption>
+          </figure>
+        </div>
+        <div class="carousel-nav on-desktop">
+          <button class="prev" type="button" aria-label="Föregående bilder">←</button>
+          <button class="next" type="button" aria-label="Nästa bilder">→</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="paper" id="larande">
+      <div class="wrap">
+        <div class="sec-head">
+          <span class="eyebrow">Vad barnet lär sig</span>
+          <h2>Från första orden till skolans ämnen</h2>
+          <p>
+            Raketord är gjort för barn 6–10 år som går från att ljuda till att känna igen hela ord.
+            Expert är en utmaning för den som redan läser flytande.
+          </p>
+        </div>
+        <div class="learn-grid">
+          <div>
+            <h3>Läsa snabbare</h3>
+            <p>Att känna igen hela ord utan att ljuda är grunden för flytande läsning.</p>
+          </div>
+          <div>
+            <h3>Känna igen ord</h3>
+            <p>Samma vanliga ord kommer tillbaka, så att de fastnar som ordbilder.</p>
+          </div>
+          <div>
+            <h3>Ett stöd vid lässvårigheter</h3>
+            <p>
+              Korta, lekfulla pass med tydliga bokstäver och direkt återkoppling kan vara ett bra
+              komplement för den som tycker att läsning är jobbigt.
+            </p>
+          </div>
+          <div>
+            <h3>Ord på sju språk</h3>
+            <p>
+              Svenska, engelska, norska, danska, nederländska, italienska och portugisiska. Bra även
+              för den som övar ett nytt språk.
+            </p>
+          </div>
+        </div>
+        <!-- Svårighetskorten som i appen: var sin himmel från dag till natt och var sin raket. -->
+        <ul class="level-cards">
+          <li class="day">
+            <svg aria-hidden="true"><use href="#rocket" /></svg>
+            <h3>Lätt</h3>
+            <p class="age">6–7 år</p>
+            <p>Korta ord som låter som de stavas</p>
+          </li>
+          <li class="sunset">
+            <svg aria-hidden="true"><use href="#rocket" /></svg>
+            <h3>Mellan</h3>
+            <p class="age">7–8 år</p>
+            <p>Vardagsord</p>
+          </li>
+          <li class="dusk">
+            <svg aria-hidden="true"><use href="#rocket" /></svg>
+            <h3>Svår</h3>
+            <p class="age">8–9 år</p>
+            <p>Vardagsord och ord ur barnböcker</p>
+          </li>
+          <li class="night">
+            <svg aria-hidden="true"><use href="#rocket" /></svg>
+            <h3>Expert</h3>
+            <p class="age">10 år och uppåt</p>
+            <p>Även ord från skolans ämnen</p>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="band try" id="prova">
+      <div class="wrap">
+        <div class="text">
+          <span class="eyebrow">Prova först</span>
+          <h2>Testa i webbläsaren</h2>
+          <p>
+            Se om Raketord passar ert barn innan ni laddar ner. Gratisversionen fungerar i
+            webbläsaren på både dator och telefon och har svårighetsgraden Lätt. I appen finns alla
+            fyra.
+          </p>
+        </div>
+        <a class="btn" href="https://dsandberg.github.io/raketord-test/">Prova gratis</a>
+      </div>
+    </section>
+
+    <section class="paper" id="foraldrar">
+      <div class="wrap">
+        <div class="sec-head">
+          <span class="eyebrow">För föräldrar och lärare</span>
+          <h2>Tryggt att lämna över telefonen</h2>
+          <p>Du betalar en gång när du laddar ner appen. Sedan finns det inget mer att köpa.</p>
+        </div>
+        <div class="trust">
+          <div>
+            <svg aria-hidden="true"><use href="#check" /></svg>
+            <h3>Inga köp, ingen reklam</h3>
+            <p>Allt ingår från början, och inget lockar barnet vidare.</p>
+          </div>
+          <div>
+            <svg aria-hidden="true"><use href="#check" /></svg>
+            <h3>Anpassa efter barnet</h3>
+            <p>Ställ in hastigheten, och välj stora eller små bokstäver.</p>
+          </div>
+          <div>
+            <svg aria-hidden="true"><use href="#check" /></svg>
+            <h3>Ingen spårning</h3>
+            <p>Inga konton, och ingen data lämnar telefonen.</p>
+          </div>
+          <div>
+            <svg aria-hidden="true"><use href="#check" /></svg>
+            <h3>Slå ditt eget rekord</h3>
+            <p>Stjärnor, rekord och medaljer att jaga, men ingen topplista.</p>
+          </div>
+          <div>
+            <svg aria-hidden="true"><use href="#check" /></svg>
+            <h3>Korta pass</h3>
+            <p>Några minuter i taget, med direkt återkoppling.</p>
+          </div>
+          <div>
+            <svg aria-hidden="true"><use href="#check" /></svg>
+            <h3>Passar en sexåring</h3>
+            <p>Alla ord passar barn, även i Expert.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <svg
+      class="clouds flip"
+      viewBox="0 0 1440 152"
+      preserveAspectRatio="xMidYMin slice"
+      aria-hidden="true"
+    >
+      <use class="drift-1" href="#cloud-1" filter="url(#cloud-shadow)" />
+      <use class="drift-2" href="#cloud-2" filter="url(#cloud-shadow)" />
+      <use class="drift-3" href="#cloud-3" filter="url(#cloud-shadow)" />
+      <use class="drift-4" href="#cloud-4" filter="url(#cloud-shadow)" />
+      <use class="drift-5" href="#cloud-5" filter="url(#cloud-shadow)" />
+    </svg>
+
+    <section class="sky cta" id="ladda-ner">
+      <div class="sky-deco" aria-hidden="true">
+        <svg class="gold" style="left: 10%; top: 22%; width: 18px; --d: 1.7s">
+          <use href="#star" /></svg
+        ><svg class="gold" style="left: 84%; top: 16%; width: 22px; --d: 2.01s">
+          <use href="#star" /></svg
+        ><svg class="gold" style="left: 92%; top: 70%; width: 14px; --d: 2.32s">
+          <use href="#star" /></svg
+        ><svg class="gold" style="left: 18%; top: 74%; width: 14px; --d: 2.63s">
+          <use href="#star" />
+        </svg>
+        <i class="meteor m1"></i>
+      </div>
+      <div class="wrap">
+        <svg class="big-rocket" aria-hidden="true"><use href="#rocket" /></svg>
+        <h2>Ladda ner Raketord</h2>
+        <p>För iPhone, iPad och Android. Du betalar en gång, sedan ingår allt.</p>
+        <div class="badges">
+          <a class="badge" href="#ladda-ner">
+            <svg aria-hidden="true"><use href="#apple" /></svg>
+            <span>Hämta i<strong>App Store</strong></span>
+          </a>
+          <a class="badge" href="#ladda-ner">
+            <svg aria-hidden="true"><use href="#play" /></svg>
+            <span>Ladda ned på<strong>Google Play</strong></span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <div class="wrap">
+        <a class="sibling" href="../kometmatte/">
+          <img src="../kometmatte/media/ikon.png" alt="" />
+          <span>
+            <small>Fler appar</small>
+            <strong>Kometmatte</strong>
+            Räkna plus, minus, gånger och delat med.
+          </span>
+        </a>
+        <nav class="foot-links" aria-label="Sidfot">
+          <a href="integritet.html">Integritetspolicy</a>
+          <a href="../">No Swell Studio</a>
+          <span>© 2026 Raketord</span>
+        </nav>
+      </div>
+    </footer>
+
+    <script>
+      // Pilarna bläddrar en skärmbredd i bildraden.
+      const shots = document.querySelector('.shots');
+      const [prev, next] = document.querySelectorAll('.carousel-nav button');
+      const update = () => {
+        prev.disabled = shots.scrollLeft <= 0;
+        next.disabled = shots.scrollLeft + shots.clientWidth >= shots.scrollWidth - 1;
+      };
+      prev.addEventListener('click', () => shots.scrollBy({ left: -shots.clientWidth }));
+      next.addEventListener('click', () => shots.scrollBy({ left: shots.clientWidth }));
+      shots.addEventListener('scroll', update);
+      update();
+      // Vid reducerad rörelse spelas filmen inte upp av sig själv.
+      if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        const video = document.querySelector('video');
+        video.removeAttribute('autoplay');
+        video.pause();
+        video.controls = true;
+      }
+    </script>
+  </body>
+</html>

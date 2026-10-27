@@ -1,0 +1,1002 @@
+/* Apparnas webbsidor: en one-pager per app med samma mall. Himmel överst, en
+   molnbank, papper att läsa på och himmel igen längst ner. Färgerna är appens egna
+   (src/theme/colors.ts), utan mörkt läge: sidan ska se ut som appen. */
+
+@font-face {
+  font-family: 'Fredoka';
+  font-weight: 600;
+  font-display: swap;
+  src: url('fonts/Fredoka_600SemiBold.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Fredoka';
+  font-weight: 700;
+  font-display: swap;
+  src: url('fonts/Fredoka_700Bold.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Jost';
+  font-weight: 400;
+  font-display: swap;
+  src: url('fonts/Jost_400Regular.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Jost';
+  font-weight: 600;
+  font-display: swap;
+  src: url('fonts/Jost_600SemiBold.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Jost';
+  font-weight: 700;
+  font-display: swap;
+  src: url('fonts/Jost_700Bold.ttf') format('truetype');
+}
+
+/* Raketord */
+:root {
+  color-scheme: light;
+  --sky: #3b6f7e;
+  --sky-deep: #2f5f6e;
+  --cloud: #4e7f8c;
+  --cloud-pale: #a9bcc0;
+  --cloud-light: #dce3e3;
+  --on-sky: #fff8ec;
+  --on-sky-muted: #dce8ea;
+  --card: #fff8ec;
+  --on-card: #24434c;
+  --on-card-muted: #5b7479;
+  --accent: #b5483a;
+  --accent-edge: #7e2f25;
+  --accent-deep: #96382d;
+  --on-accent: #ffffff;
+  --hl: #f2c25c;
+  --hl-light: #f7d27e;
+  --hl-pale: #fbe3a6;
+  --hl-edge: #d9a93e;
+  --extra: #e77fae;
+  --ink: #24434c;
+  --flame: #e9963b;
+  --star: #f3d27a;
+  --moon: #f6d9b0;
+  --moon-crater: #ebc48f;
+  --planet: #7fb0e0;
+  --planet-ring: #a9cbec;
+  --gas-giant: #e7b98a;
+  --gas-giant-band: #cf9466;
+  --gas-giant-spot: #b5483a;
+  --body-shade: rgba(36, 67, 76, 0.2);
+  --body-sheen: rgba(255, 248, 236, 0.45);
+  --meteor-tail: #fbe3a6;
+  /* Svårighetskortens himlar, från dag till natt, och dämpad text på de ljusa. */
+  --sky-day: #a9cbec;
+  --sky-sunset: #f4a977;
+  --sky-dusk: #4b4f86;
+  --sky-night: #24434c;
+  --on-scene-muted: #374747;
+  --display: 'Fredoka', 'Arial Rounded MT Bold', system-ui, sans-serif;
+  --body: 'Jost', 'Avenir Next', 'Segoe UI', system-ui, sans-serif;
+}
+
+/* Kometmatte */
+:root.matte {
+  --sky: #663f64;
+  --sky-deep: #553453;
+  --cloud: #7a5478;
+  --cloud-pale: #d6aca6;
+  --cloud-light: #f1dcd6;
+  --on-sky-muted: #eedfe8;
+  --on-card: #3d2541;
+  --on-card-muted: #6f5870;
+  --accent: #3e9c88;
+  --accent-edge: #2a6e60;
+  --accent-deep: #33826f;
+  --hl-light: #f7d88f;
+  --hl-edge: #c99a3a;
+  --extra: #7aa6e0;
+  --ink: #3d2541;
+  --planet: #e0866f;
+  --planet-ring: #f0b08f;
+  --gas-giant: #e9c29a;
+  --gas-giant-band: #d29d73;
+  --gas-giant-spot: #b8614e;
+  --body-shade: rgba(61, 37, 65, 0.2);
+}
+
+* {
+  box-sizing: border-box;
+}
+html {
+  scroll-behavior: smooth;
+}
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+body {
+  margin: 0;
+  background: var(--sky-deep);
+  color: var(--on-card);
+  font: 400 18px/1.55 var(--body);
+}
+h1,
+h2,
+h3 {
+  font-family: var(--display);
+  font-weight: 600;
+  line-height: 1.1;
+  text-wrap: balance;
+  margin: 0;
+}
+p {
+  margin: 0;
+}
+a {
+  color: inherit;
+}
+:focus-visible {
+  outline: 3px solid var(--hl);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+.wrap {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding-inline: 20px;
+}
+
+/* Himlen, med stjärnor */
+.sky {
+  background: var(--sky);
+  color: var(--on-sky);
+  position: relative;
+  overflow: hidden;
+}
+.sky::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    radial-gradient(2.5px 2.5px at 8% 18%, var(--star) 50%, transparent 51%),
+    radial-gradient(2px 2px at 22% 62%, var(--on-sky) 50%, transparent 51%),
+    radial-gradient(2.5px 2.5px at 41% 10%, var(--on-sky) 50%, transparent 51%),
+    radial-gradient(2px 2px at 54% 52%, var(--star) 50%, transparent 51%),
+    radial-gradient(2.5px 2.5px at 74% 8%, var(--on-sky) 50%, transparent 51%),
+    radial-gradient(2px 2px at 95% 40%, var(--star) 50%, transparent 51%),
+    radial-gradient(2.5px 2.5px at 88% 78%, var(--on-sky) 50%, transparent 51%),
+    radial-gradient(2px 2px at 33% 88%, var(--star) 50%, transparent 51%);
+  opacity: 0.8;
+}
+.sky > * {
+  position: relative;
+}
+
+/* Sidhuvudet */
+.site-head .wrap {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding-block: 22px;
+}
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+}
+.logo svg {
+  width: 26px;
+  height: 42px;
+}
+.wordmark {
+  font: 700 30px/1 var(--display);
+  color: var(--on-sky);
+  text-shadow: 0 2px 0 var(--sky-deep);
+  transform: rotate(-2deg);
+}
+.wordmark b {
+  font-weight: 700;
+  color: var(--hl);
+}
+.site-head nav {
+  display: flex;
+  gap: 24px;
+  margin-left: auto;
+  font: 600 17px/1 var(--display);
+}
+.site-head nav a {
+  text-decoration: none;
+  color: var(--on-sky-muted);
+}
+.site-head nav a:hover {
+  color: var(--on-sky);
+}
+
+/* Toppen: text till vänster, telefonen med filmen till höger */
+.hero .wrap {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: 40px;
+  align-items: center;
+  padding-block: 28px 56px;
+}
+.hero-text {
+  display: grid;
+  gap: 24px;
+  min-width: 0;
+}
+.eyebrow {
+  font: 600 16px/1 var(--body);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--on-sky-muted);
+}
+.hero h1 {
+  font-size: clamp(42px, 6vw, 70px);
+  font-weight: 700;
+}
+.lead {
+  font-size: 21px;
+  color: var(--on-sky-muted);
+  max-width: 36ch;
+}
+.facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.facts span {
+  border: 2px solid var(--cloud);
+  border-radius: 999px;
+  padding: 4px 12px;
+  font: 600 15px/1.3 var(--body);
+  color: var(--on-sky-muted);
+}
+.try-link {
+  display: inline-flex;
+  font: 600 18px/1 var(--display);
+  color: var(--on-sky);
+  text-decoration: none;
+  border-bottom: 2px solid var(--hl);
+  padding-bottom: 4px;
+  width: fit-content;
+}
+.try-link:hover {
+  color: var(--hl);
+}
+.hero-phone {
+  display: grid;
+  justify-items: center;
+  position: relative;
+}
+
+/* Himlen som i appen: stjärnor, planeter, stjärnfall och en raket långt borta */
+.sky > .sky-deco {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.sky-deco .dot {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--on-sky);
+  opacity: 0.85;
+}
+.sky-deco .dot.big {
+  width: 7px;
+  height: 7px;
+}
+.sky-deco .gold {
+  position: absolute;
+  aspect-ratio: 1;
+}
+.body {
+  position: absolute;
+}
+.giant {
+  width: 44px;
+  aspect-ratio: 1;
+  left: 50%;
+  top: 16%;
+}
+.small-planet {
+  width: 20px;
+  aspect-ratio: 1;
+  left: 44%;
+  top: 86%;
+  opacity: 0.55;
+}
+.moon {
+  width: 150px;
+  aspect-ratio: 1;
+  top: -10px;
+  right: -10px;
+  filter: drop-shadow(0 8px 9px rgba(0, 0, 0, 0.22));
+}
+.ringed {
+  width: 120px;
+  aspect-ratio: 2;
+  bottom: 90px;
+  left: -40px;
+}
+.meteor {
+  position: absolute;
+  width: 150px;
+  height: 3px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--on-sky), var(--meteor-tail) 20%, transparent);
+  transform-origin: left center;
+  opacity: 0;
+}
+.meteor.m1 {
+  left: 70%;
+  top: 6%;
+}
+.meteor.m2 {
+  left: 40%;
+  top: 2%;
+}
+.flyby {
+  position: absolute;
+  width: 18px;
+  height: 29px;
+  left: 0;
+  top: 60%;
+  opacity: 0;
+}
+
+/* Allt rör sig sakta, men står still med reducerad rörelse */
+@media (prefers-reduced-motion: no-preference) {
+  .sky-deco .tw,
+  .sky-deco .gold {
+    animation: twinkle var(--d) ease-in-out infinite alternate;
+  }
+  .giant {
+    animation: float 7.4s ease-in-out infinite alternate;
+    --float: -6px;
+  }
+  .small-planet {
+    animation: float 5.2s ease-in-out infinite alternate;
+    --float: -5px;
+  }
+  .moon {
+    animation: float 8.4s ease-in-out infinite alternate;
+    --float: -6px;
+  }
+  .ringed {
+    animation: float 6.2s ease-in-out infinite alternate;
+    --float: -8px;
+  }
+  .meteor.m1 {
+    animation: meteor 11s ease-in infinite 3s;
+  }
+  .meteor.m2 {
+    animation: meteor 17s ease-in infinite 9s;
+  }
+  .flyby {
+    animation: flyby 34s linear infinite 6s;
+  }
+  .clouds .drift-1 {
+    animation: drift 18s ease-in-out infinite alternate;
+    --drift: 8px;
+  }
+  .clouds .drift-2 {
+    animation: drift 16s ease-in-out infinite alternate;
+    --drift: -12px;
+  }
+  .clouds .drift-3 {
+    animation: drift 14s ease-in-out infinite alternate;
+    --drift: 10px;
+  }
+  .clouds .drift-4 {
+    animation: drift 12s ease-in-out infinite alternate;
+    --drift: -16px;
+  }
+  .clouds .drift-5 {
+    animation: drift 10s ease-in-out infinite alternate;
+    --drift: 20px;
+  }
+}
+@keyframes twinkle {
+  to {
+    opacity: 0.35;
+    transform: scale(0.7);
+  }
+}
+@keyframes float {
+  to {
+    transform: translateY(var(--float));
+  }
+}
+@keyframes drift {
+  to {
+    transform: translateX(var(--drift));
+  }
+}
+/* Ett stjärnfall snett ned åt vänster tar en sekund, sedan är det tomt en stund. */
+@keyframes meteor {
+  0% {
+    opacity: 0;
+    transform: rotate(-35deg) translateX(0);
+  }
+  1% {
+    opacity: 1;
+  }
+  7% {
+    opacity: 1;
+  }
+  9%,
+  100% {
+    opacity: 0;
+    transform: rotate(-35deg) translateX(-480px);
+  }
+}
+/* Raketen flyger snett uppåt tvärs över himlen, sedan är det tomt en stund. */
+@keyframes flyby {
+  0% {
+    opacity: 0.85;
+    transform: translate(-40px, 0) rotate(80deg);
+  }
+  40% {
+    opacity: 0.85;
+    transform: translate(calc(100vw + 40px), -120px) rotate(80deg);
+  }
+  40.1%,
+  100% {
+    opacity: 0;
+    transform: translate(calc(100vw + 40px), -120px) rotate(80deg);
+  }
+}
+
+/* Telefonen. Inspelningarna har redan statusraden och kameraön. */
+.phone {
+  position: relative;
+  width: min(300px, 100%);
+  border-radius: 50px;
+  background: var(--ink);
+  padding: 11px;
+  box-shadow: 0 10px 0 rgba(0, 0, 0, 0.18);
+}
+.phone.small {
+  width: min(240px, 100%);
+  border-radius: 40px;
+  padding: 9px;
+}
+.phone video,
+.phone img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 600 / 1304;
+  object-fit: cover;
+  border-radius: 40px;
+  background: var(--sky);
+}
+.phone.small img {
+  border-radius: 32px;
+}
+
+/* Butikslänkarna */
+.badges {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: #000;
+  color: #fff;
+  border: 1px solid #a6a6a6;
+  border-radius: 10px;
+  padding: 8px 16px 8px 12px;
+  text-decoration: none;
+  min-width: 172px;
+}
+.badge svg {
+  width: 26px;
+  height: 26px;
+  flex: none;
+}
+.badge span {
+  display: grid;
+  font: 400 11px/1.1 var(--body);
+}
+.badge strong {
+  font: 600 20px/1.1 var(--body);
+  letter-spacing: -0.01em;
+}
+
+/* Molnbanken mellan himmel och papper, med appens lager */
+.clouds {
+  display: block;
+  width: 100%;
+  height: clamp(110px, 10.5vw, 152px);
+  background: var(--sky);
+}
+.clouds.flip {
+  transform: scaleY(-1);
+}
+.clouds .drift-1 {
+  fill: var(--cloud);
+}
+.clouds .drift-2 {
+  fill: var(--cloud-pale);
+}
+.clouds .drift-3 {
+  fill: var(--cloud-light);
+}
+.clouds .drift-4 {
+  fill: var(--hl-light);
+}
+.clouds .drift-5 {
+  fill: var(--hl);
+}
+
+/* Papperssektionerna */
+.paper {
+  background: var(--card);
+  color: var(--on-card);
+}
+.band {
+  background: var(--cloud-light);
+  color: var(--on-card);
+}
+section .wrap {
+  padding-block: 72px;
+}
+.sec-head {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 40px;
+  max-width: 62ch;
+}
+.sec-head h2 {
+  font-size: clamp(30px, 4vw, 44px);
+}
+.sec-head p {
+  color: var(--on-card-muted);
+}
+.paper .eyebrow,
+.band .eyebrow {
+  color: var(--accent);
+}
+
+.steps {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  counter-reset: step;
+}
+.steps li {
+  counter-increment: step;
+  display: grid;
+  gap: 8px;
+  align-content: start;
+}
+.steps li::before {
+  content: counter(step);
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: var(--hl);
+  color: var(--on-card);
+  display: grid;
+  place-items: center;
+  font: 700 23px/1 var(--display);
+  box-shadow: 0 4px 0 var(--hl-edge);
+  margin-bottom: 6px;
+}
+.steps h3 {
+  font-size: 23px;
+}
+.steps p {
+  color: var(--on-card-muted);
+}
+
+.learn-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 22px 44px;
+  margin-bottom: 48px;
+}
+.learn-grid div {
+  display: grid;
+  gap: 6px;
+  align-content: start;
+  padding-left: 18px;
+  border-left: 4px solid var(--cloud-pale);
+}
+.learn-grid h3 {
+  font-size: 22px;
+}
+.learn-grid p {
+  color: var(--on-card-muted);
+}
+
+.levels-wrap {
+  overflow-x: auto;
+}
+.levels {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 17px;
+  min-width: 520px;
+}
+.levels th,
+.levels td {
+  text-align: left;
+  padding: 12px 14px;
+  border-bottom: 2px solid var(--cloud-light);
+  vertical-align: top;
+}
+.levels thead th {
+  font: 600 15px/1.2 var(--display);
+  color: var(--on-card-muted);
+}
+.levels tbody th {
+  font: 600 18px/1.2 var(--display);
+  white-space: nowrap;
+}
+
+/* Svårighetskorten som i appen: var sin himmel från dag till natt och var sin raket
+   (variablerna i raketen, se #rocket i raketord/index.html). */
+.level-cards {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+.level-cards li {
+  position: relative;
+  display: grid;
+  align-content: start;
+  gap: 4px;
+  padding: 18px 18px 20px;
+  border-radius: 24px;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.22);
+  color: var(--ink);
+}
+.level-cards svg {
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  width: 42px;
+  height: 68px;
+  transform: rotate(-10deg);
+}
+.level-cards h3 {
+  font: 600 28px/1.1 var(--display);
+  padding-right: 50px;
+}
+.level-cards p {
+  font-size: 16px;
+  color: var(--on-scene-muted);
+}
+.level-cards .age {
+  font: 600 16px/1.3 var(--body);
+  color: var(--accent-edge);
+  padding-right: 50px;
+}
+.level-cards .day {
+  background: var(--sky-day);
+}
+.level-cards .sunset {
+  background: var(--sky-sunset);
+  --stripes-1: 1;
+}
+.level-cards .dusk,
+.level-cards .night {
+  color: var(--on-sky);
+  --stripes-2: 1;
+  --boosters: 1;
+  /* Stjärnprickar som på appens kort. */
+  background-image:
+    radial-gradient(2px 2px at 18% 78%, var(--on-sky) 50%, transparent 51%),
+    radial-gradient(2.5px 2.5px at 52% 14%, var(--on-sky) 50%, transparent 51%),
+    radial-gradient(2px 2px at 88% 86%, var(--on-sky) 50%, transparent 51%);
+}
+.level-cards .dusk p,
+.level-cards .night p {
+  color: var(--on-sky-muted);
+}
+.level-cards .dusk .age,
+.level-cards .night .age {
+  color: var(--hl-light);
+}
+.level-cards .dusk {
+  background-color: var(--sky-dusk);
+  --rocket-body: var(--hl);
+  --rocket-fins: var(--accent);
+  --rocket-stripe: var(--accent);
+}
+.level-cards .night {
+  background-color: var(--sky-night);
+  --rocket-body: var(--sky);
+  --rocket-nose: var(--hl);
+  --rocket-fins: var(--extra);
+  --rocket-window: var(--ink);
+  --bolt: 1;
+}
+@media (max-width: 900px) {
+  .level-cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 460px) {
+  .level-cards {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Bilder ur spelet: en rad som man bläddrar i sidled, tre i taget på dator */
+.shots {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: calc((100% - 2 * 32px) / 3);
+  gap: 32px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  padding-block: 4px 12px;
+}
+.shots::-webkit-scrollbar {
+  display: none;
+}
+.shots figure {
+  scroll-snap-align: start;
+}
+.carousel-nav {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 24px;
+}
+.carousel-nav button {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 0;
+  background: var(--accent);
+  color: var(--on-accent);
+  font: 600 22px/1 var(--display);
+  cursor: pointer;
+  box-shadow: 0 4px 0 var(--accent-edge);
+}
+.carousel-nav button:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+.shots figure {
+  margin: 0;
+  display: grid;
+  gap: 16px;
+  justify-items: center;
+  align-content: start;
+  text-align: center;
+}
+.shots figcaption {
+  font: 600 19px/1.3 var(--display);
+}
+.shots figcaption span {
+  display: block;
+  font: 400 16px/1.4 var(--body);
+  color: var(--on-card-muted);
+}
+
+/* Prova i webbläsaren */
+.try .wrap {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 28px;
+  align-items: center;
+  padding-block: 56px;
+}
+.try .text {
+  display: grid;
+  gap: 12px;
+}
+.try h2 {
+  font-size: clamp(26px, 3.4vw, 38px);
+}
+.try p {
+  color: var(--on-card-muted);
+  max-width: 56ch;
+}
+@media not ((hover: none) and (pointer: coarse)) {
+  .on-touch {
+    display: none !important;
+  }
+}
+@media (hover: none) and (pointer: coarse) {
+  .on-desktop {
+    display: none !important;
+  }
+}
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--accent);
+  color: var(--on-accent);
+  font: 600 20px/1 var(--display);
+  text-decoration: none;
+  padding: 18px 30px;
+  border-radius: 999px;
+  box-shadow: 0 5px 0 var(--accent-edge);
+  white-space: nowrap;
+}
+.btn:hover {
+  filter: brightness(1.06);
+}
+.btn:active {
+  transform: translateY(3px);
+  box-shadow: 0 2px 0 var(--accent-edge);
+}
+
+/* För föräldrar och lärare */
+.trust {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 28px 34px;
+}
+.trust div {
+  display: grid;
+  grid-template-columns: 40px 1fr;
+  gap: 4px 14px;
+  align-items: start;
+}
+.trust svg {
+  grid-row: span 2;
+  width: 40px;
+  height: 40px;
+}
+.trust h3 {
+  font-size: 20px;
+  align-self: center;
+}
+.trust p {
+  color: var(--on-card-muted);
+  grid-column: 2;
+}
+
+/* Ladda ner */
+.cta .wrap {
+  display: grid;
+  justify-items: center;
+  text-align: center;
+  gap: 22px;
+  padding-block: 40px 80px;
+}
+.cta h2 {
+  font-size: clamp(34px, 5vw, 54px);
+  font-weight: 700;
+}
+.cta p {
+  color: var(--on-sky-muted);
+  max-width: 46ch;
+}
+.cta .badges {
+  justify-content: center;
+}
+.big-rocket {
+  width: 60px;
+  height: 96px;
+}
+
+/* Sidfoten med syskonappen */
+footer {
+  background: var(--sky-deep);
+  color: var(--on-sky-muted);
+}
+footer .wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  align-items: center;
+  justify-content: space-between;
+  padding-block: 36px;
+  font-size: 15px;
+}
+.sibling {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  text-decoration: none;
+  border: 2px solid var(--cloud);
+  border-radius: 18px;
+  padding: 14px 18px;
+  max-width: 460px;
+}
+.sibling:hover {
+  border-color: var(--on-sky-muted);
+}
+.sibling img {
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+  flex: none;
+}
+.sibling small {
+  display: block;
+  font-size: 14px;
+}
+.sibling strong {
+  display: block;
+  font: 600 20px/1.2 var(--display);
+  color: var(--on-sky);
+}
+
+@media (max-width: 860px) {
+  .hero .wrap,
+  .try .wrap {
+    grid-template-columns: 1fr;
+  }
+  .steps,
+  .trust,
+  .learn-grid {
+    grid-template-columns: 1fr;
+  }
+  .site-head nav {
+    display: none;
+  }
+  .moon {
+    width: 100px;
+  }
+  .ringed {
+    width: 90px;
+    left: -20px;
+  }
+  .shots {
+    grid-auto-columns: 60%;
+    gap: 20px;
+  }
+  .giant {
+    left: 80%;
+    top: 3%;
+  }
+  .small-planet {
+    display: none;
+  }
+}
+
+.foot-links {
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+/* Textsidor (integritetspolicyn) */
+.prose {
+  max-width: 720px;
+  padding-block: 56px 72px;
+}
+.prose h1 {
+  font-size: clamp(34px, 5vw, 48px);
+  font-weight: 700;
+}
+.prose h2 {
+  font-size: 24px;
+  margin-top: 36px;
+}
+.prose p {
+  margin-top: 12px;
+}
+.prose .updated {
+  color: var(--on-card-muted);
+  font-size: 16px;
+}
+footer a {
+  color: var(--on-sky-muted);
+}

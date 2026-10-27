@@ -1,0 +1,979 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>No Swell Studio</title>
+    <meta
+      name="description"
+      content="No Swell Studio builds learning games for kids: RocketWords and CometMath."
+    />
+    <!-- Inte sökbar än: tas bort när sidan ska synas i sökmotorer. -->
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="theme-color" content="#0F2A33" />
+    <style>
+      @font-face {
+        font-family: 'Fredoka';
+        font-weight: 600;
+        font-display: swap;
+        src: url('fonts/Fredoka_600SemiBold.ttf') format('truetype');
+      }
+      @font-face {
+        font-family: 'Fredoka';
+        font-weight: 700;
+        font-display: swap;
+        src: url('fonts/Fredoka_700Bold.ttf') format('truetype');
+      }
+      @font-face {
+        font-family: 'Jost';
+        font-weight: 300;
+        font-display: swap;
+        src: url('fonts/Jost_300Light.ttf') format('truetype');
+      }
+      @font-face {
+        font-family: 'Jost';
+        font-weight: 400;
+        font-display: swap;
+        src: url('fonts/Jost_400Regular.ttf') format('truetype');
+      }
+      @font-face {
+        font-family: 'Jost';
+        font-weight: 500;
+        font-display: swap;
+        src: url('fonts/Jost_500Medium.ttf') format('truetype');
+      }
+      @font-face {
+        font-family: 'Jost';
+        font-weight: 600;
+        font-display: swap;
+        src: url('fonts/Jost_600SemiBold.ttf') format('truetype');
+      }
+
+      :root {
+        --bg: #0f2a33;
+        --line: #24434c;
+        --text: #eaf2f0;
+        --muted: #a9c3c4;
+        --soft: #c3d6d6;
+        --horizon: #7fc4c0;
+        --paper: #fff8ec;
+        --hl: #f2c25c;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font-family: 'Jost', system-ui, sans-serif;
+        overflow-x: hidden;
+      }
+      a {
+        color: var(--text);
+      }
+      .wrap {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px;
+      }
+      .site-head {
+        padding-top: 24px;
+      }
+      .brand {
+        display: inline-block;
+        padding: 10px 0;
+        font-weight: 600;
+        font-size: 17px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        text-decoration: none;
+      }
+      .hero {
+        padding-top: clamp(48px, 10vw, 96px);
+      }
+      .eyebrow {
+        margin: 0 0 16px;
+        font-size: 16px;
+        letter-spacing: 0.06em;
+        color: var(--muted);
+      }
+      h1 {
+        margin: 0;
+        font-weight: 300;
+        font-size: clamp(52px, 12vw, 88px);
+        line-height: 1;
+        letter-spacing: -0.01em;
+      }
+      .lead {
+        margin: 24px 0 0;
+        max-width: 32em;
+        font-size: clamp(18px, 4.6vw, 21px);
+        line-height: 1.5;
+        color: var(--soft);
+      }
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        min-height: 48px;
+        margin-top: 32px;
+        padding: 0 24px;
+        border-radius: 999px;
+        background: var(--text);
+        color: var(--bg);
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 17px;
+      }
+      .horizon {
+        display: flex;
+        align-items: flex-end;
+        margin-top: clamp(40px, 8vw, 64px);
+        color: var(--horizon);
+      }
+      .horizon svg {
+        flex: none;
+        display: block;
+        width: clamp(240px, 40vw, 520px);
+        height: auto;
+        overflow: visible;
+      }
+      .horizon div {
+        flex: 1;
+        border-top: 2px solid currentColor;
+      }
+      .report dl {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px 48px;
+        margin: 0;
+        padding-top: 24px;
+      }
+      .report dt {
+        font-size: 13px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+      .report dd {
+        margin: 6px 0 0;
+        font-size: clamp(22px, 5vw, 28px);
+        font-weight: 500;
+      }
+      .report .build {
+        color: var(--horizon);
+      }
+      .report p {
+        margin: 24px 0 0;
+        font-size: 17px;
+        color: var(--soft);
+      }
+      .apps {
+        padding-top: clamp(64px, 12vw, 96px);
+        padding-bottom: clamp(64px, 12vw, 96px);
+      }
+      .apps-head {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        align-items: baseline;
+        gap: 8px 12px;
+        margin-bottom: 32px;
+      }
+      h2 {
+        margin: 0;
+        font-weight: 400;
+        font-size: clamp(32px, 7vw, 44px);
+      }
+      .apps-head p {
+        margin: 0;
+        font-size: 16px;
+        color: var(--muted);
+      }
+      .app-list {
+        display: flex;
+        flex-direction: column;
+        gap: 32px;
+      }
+      .app {
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 40px 48px;
+        padding: clamp(28px, 6vw, 64px);
+        border-radius: clamp(24px, 4vw, 32px);
+        color: var(--paper);
+      }
+      .app.rw {
+        --sky: #3b6f7e;
+        --sky-deep: #2f5f6e;
+        --ink: #24434c;
+        --edge: #a9bcc0;
+        --muted-on-sky: #dce8ea;
+        background: var(--sky);
+      }
+      .app.km {
+        --sky: #663f64;
+        --sky-deep: #553453;
+        --ink: #3d2541;
+        --edge: #d6aca6;
+        --muted-on-sky: #eedfe8;
+        background: var(--sky);
+      }
+      .app-text,
+      .phone {
+        position: relative;
+      }
+      .app-text {
+        flex: 1 1 340px;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+      }
+      .lockup {
+        display: flex;
+        align-items: flex-end;
+        gap: clamp(8px, 2vw, 14px);
+        padding-bottom: 6px;
+      }
+      .lockup span {
+        flex: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: clamp(50px, 13vw, 72px);
+        height: clamp(50px, 13vw, 72px);
+        border-radius: 22%;
+        background: var(--paper);
+        color: var(--ink);
+        box-shadow: 0 6px 0 var(--edge);
+        font-family: 'Fredoka', sans-serif;
+        font-weight: 700;
+        font-size: clamp(34px, 9vw, 50px);
+        line-height: 1;
+      }
+      .lockup span:nth-child(1) {
+        transform: rotate(-9deg);
+      }
+      .lockup span:nth-child(2) {
+        transform: rotate(5deg);
+        margin-bottom: clamp(10px, 2.5vw, 16px);
+      }
+      .lockup span:nth-child(3) {
+        transform: rotate(8deg);
+        margin-bottom: 2px;
+      }
+      .lockup svg {
+        flex: none;
+        margin-left: clamp(-14px, -2vw, -6px);
+        width: clamp(52px, 13vw, 76px);
+        height: auto;
+      }
+      .rw .lockup svg {
+        transform: rotate(28deg);
+      }
+      .km .lockup svg {
+        width: clamp(56px, 14vw, 82px);
+      }
+      .wordmark {
+        margin: 0;
+        font-family: 'Fredoka', sans-serif;
+        font-weight: 700;
+        font-size: clamp(40px, 10.5vw, 80px);
+        line-height: 1.1;
+        color: var(--paper);
+        text-shadow: 0 0.06em 0 var(--sky-deep);
+        transform: rotate(-2deg);
+        transform-origin: left center;
+      }
+      .wordmark b {
+        color: var(--hl);
+      }
+      .kind {
+        margin: 0;
+        font-size: 17px;
+        letter-spacing: 0.04em;
+        color: var(--muted-on-sky);
+      }
+      .pitch {
+        margin: 0;
+        max-width: 24em;
+        font-size: clamp(18px, 4.6vw, 22px);
+        line-height: 1.5;
+      }
+      .more {
+        align-self: flex-start;
+        display: inline-flex;
+        align-items: center;
+        min-height: 52px;
+        padding: 0 26px;
+        border-radius: 999px;
+        background: var(--paper);
+        color: var(--ink);
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 17px;
+      }
+      .phone {
+        flex: 0 1 300px;
+        max-width: 300px;
+        margin: 0 auto;
+        padding: 11px;
+        border-radius: 50px;
+        background: var(--ink);
+        box-shadow: 0 10px 0 rgba(0, 0, 0, 0.18);
+      }
+      .phone video {
+        display: block;
+        width: 100%;
+        aspect-ratio: 600/1304;
+        object-fit: cover;
+        border-radius: 40px;
+        background: var(--sky);
+      }
+      .promise {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px 28px;
+        list-style: none;
+        margin: 32px 0 0;
+        padding: 0;
+        font-size: 17px;
+        color: var(--soft);
+      }
+      .site-foot {
+        border-top: 1px solid var(--line);
+      }
+      .site-foot .wrap {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        gap: 16px;
+        padding-top: 32px;
+        padding-bottom: 48px;
+        font-size: 15px;
+        color: var(--muted);
+      }
+      /* Himlen i apparnas paneler: stjärnor och planeter som i appen */
+      .sky {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+      }
+      .sky > * {
+        position: absolute;
+      }
+      .sky .dot {
+        width: 4px;
+        height: 4px;
+        border-radius: 50%;
+        background: var(--paper);
+        opacity: 0.8;
+      }
+      .sky .gold {
+        aspect-ratio: 1;
+      }
+      .giant {
+        width: clamp(48px, 7vw, 76px);
+        aspect-ratio: 1;
+        left: 57%;
+        top: 7%;
+      }
+      .small-planet {
+        width: clamp(18px, 2.4vw, 26px);
+        aspect-ratio: 1;
+        left: 41%;
+        top: 5%;
+        opacity: 0.6;
+      }
+      .ringed {
+        width: clamp(120px, 15vw, 180px);
+        aspect-ratio: 2;
+        left: 42%;
+        bottom: 7%;
+      }
+      @media (max-width: 720px) {
+        .giant {
+          left: auto;
+          right: 5%;
+          top: 1.6%;
+          width: 44px;
+        }
+        .small-planet {
+          left: 52%;
+          top: 1.2%;
+        }
+        .ringed {
+          display: none;
+        }
+      }
+      /* Allt rör sig sakta, men står still med reducerad rörelse */
+      @media (prefers-reduced-motion: no-preference) {
+        .sky .tw,
+        .sky .gold {
+          animation: twinkle var(--d) ease-in-out infinite alternate;
+        }
+        .giant {
+          animation: float 7.4s ease-in-out infinite alternate;
+          --float: -8px;
+        }
+        .small-planet {
+          animation: float 5.2s ease-in-out infinite alternate;
+          --float: -6px;
+        }
+        .ringed {
+          animation: float 6.2s ease-in-out infinite alternate;
+          --float: -10px;
+        }
+      }
+      @keyframes twinkle {
+        to {
+          opacity: 0.3;
+          transform: scale(0.7);
+        }
+      }
+      @keyframes float {
+        to {
+          transform: translateY(var(--float));
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- No Swell Studio: huvudsidan över apparna, bara på engelska. Ingen spårning. -->
+    <header class="site-head">
+      <div class="wrap"><a class="brand" href="./">No Swell Studio</a></div>
+    </header>
+    <main>
+      <section class="hero wrap">
+        <p class="eyebrow">swell &lt; 0.5 m = work</p>
+        <h1>no swell<br />work.</h1>
+        <p class="lead">
+          The focused work you do when there are no waves to ride. We build apps and games – on flat
+          days.
+        </p>
+        <a class="btn" href="#apps">See our apps</a>
+      </section>
+      <div class="horizon" aria-hidden="true">
+        <svg
+          viewBox="0 0 520 102"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path
+            vector-effect="non-scaling-stroke"
+            d="M0 96 C 70 96, 125 72, 168 42 C 200 20, 226 10, 250 10 C 278 10, 300 24, 302 44 C 304 62, 284 70, 274 58 C 266 48, 276 38, 286 44"
+          ></path>
+          <path
+            vector-effect="non-scaling-stroke"
+            d="M250 10 C 236 30, 240 62, 270 80 C 300 98, 340 101, 400 101 L 520 101"
+          ></path>
+        </svg>
+        <div></div>
+      </div>
+      <section class="report wrap" aria-label="Surf report">
+        <dl>
+          <div>
+            <dt>Wave height</dt>
+            <dd>0.3 m</dd>
+          </div>
+          <div>
+            <dt>Period</dt>
+            <dd>4 s</dd>
+          </div>
+          <div>
+            <dt>Wind</dt>
+            <dd>2 m/s</dd>
+          </div>
+          <div>
+            <dt>Conditions</dt>
+            <dd>Flat</dd>
+          </div>
+          <div>
+            <dt>Plan</dt>
+            <dd class="build">Build</dd>
+          </div>
+        </dl>
+        <p>Flat. Perfect for building.</p>
+      </section>
+      <section class="apps wrap" id="apps">
+        <div class="apps-head">
+          <h2>Built on flat days</h2>
+          <p>2 apps · iPhone, Android and web</p>
+        </div>
+        <div class="app-list">
+          <article class="app rw">
+            <div class="sky" aria-hidden="true">
+              <i class="dot" style="left: 4%; top: 8%; --d: 3.1s"></i
+              ><i class="dot tw" style="left: 18%; top: 92%; --d: 4.2s"></i
+              ><i class="dot" style="left: 36%; top: 4%; --d: 5.3s"></i
+              ><i class="dot tw" style="left: 52%; top: 88%; --d: 3.7s"></i
+              ><i class="dot" style="left: 61%; top: 30%; --d: 4.8s"></i
+              ><i class="dot tw" style="left: 72%; top: 6%; --d: 6.1s"></i
+              ><i class="dot" style="left: 88%; top: 94%; --d: 3.4s"></i
+              ><i class="dot tw" style="left: 97%; top: 46%; --d: 5.6s"></i
+              ><i class="dot" style="left: 30%; top: 60%; --d: 4.4s"></i
+              ><i class="dot tw" style="left: 46%; top: 52%; --d: 6.6s"></i
+              ><i class="dot" style="left: 93%; top: 14%; --d: 4s"></i
+              ><i class="dot tw" style="left: 2%; top: 70%; --d: 5s"></i
+              ><svg
+                class="gold"
+                viewBox="0 0 24 24"
+                style="left: 42%; top: 12%; width: 18px; --d: 1.9s"
+              >
+                <path
+                  d="M12 2.5l2.9 6 6.6.8-4.9 4.6 1.3 6.6L12 17.3l-5.9 3.2 1.3-6.6-4.9-4.6 6.6-.8z"
+                  fill="#F3D27A"
+                  stroke="#F3D27A"
+                  stroke-width="2"
+                  stroke-linejoin="round"
+                ></path></svg
+              ><svg
+                class="gold"
+                viewBox="0 0 24 24"
+                style="left: 79%; top: 52%; width: 14px; --d: 2.6s"
+              >
+                <path
+                  d="M12 2.5l2.9 6 6.6.8-4.9 4.6 1.3 6.6L12 17.3l-5.9 3.2 1.3-6.6-4.9-4.6 6.6-.8z"
+                  fill="#F3D27A"
+                  stroke="#F3D27A"
+                  stroke-width="2"
+                  stroke-linejoin="round"
+                ></path></svg
+              ><svg
+                class="gold"
+                viewBox="0 0 24 24"
+                style="left: 12%; top: 96%; width: 12px; --d: 2.2s"
+              >
+                <path
+                  d="M12 2.5l2.9 6 6.6.8-4.9 4.6 1.3 6.6L12 17.3l-5.9 3.2 1.3-6.6-4.9-4.6 6.6-.8z"
+                  fill="#F3D27A"
+                  stroke="#F3D27A"
+                  stroke-width="2"
+                  stroke-linejoin="round"
+                ></path></svg
+              ><svg
+                class="gold"
+                viewBox="0 0 24 24"
+                style="left: 98%; top: 78%; width: 16px; --d: 3s"
+              >
+                <path
+                  d="M12 2.5l2.9 6 6.6.8-4.9 4.6 1.3 6.6L12 17.3l-5.9 3.2 1.3-6.6-4.9-4.6 6.6-.8z"
+                  fill="#F3D27A"
+                  stroke="#F3D27A"
+                  stroke-width="2"
+                  stroke-linejoin="round"
+                ></path></svg
+              ><svg class="small-planet" viewBox="-50 -50 100 100">
+                <clipPath id="rw-small"><circle r="50"></circle></clipPath>
+                <g clip-path="url(#rw-small)">
+                  <circle r="50" fill="#E77FAE"></circle>
+                  <ellipse cx="-4" cy="-46" rx="24" ry="12" fill="rgba(255,248,236,.45)"></ellipse>
+                  <ellipse cx="10" cy="8" rx="16" ry="8" fill="rgba(36,67,76,.2)"></ellipse>
+                  <ellipse cx="-20" cy="22" rx="9" ry="5" fill="rgba(36,67,76,.2)"></ellipse>
+                  <circle
+                    cx="-10"
+                    cy="-10"
+                    r="80"
+                    stroke="rgba(36,67,76,.2)"
+                    stroke-width="50"
+                    fill="none"
+                  ></circle>
+                </g></svg
+              ><svg class="giant" viewBox="-50 -50 100 100">
+                <clipPath id="rw-giant"><circle r="50"></circle></clipPath>
+                <g clip-path="url(#rw-giant)">
+                  <circle r="50" fill="#E7B98A"></circle>
+                  <g transform="rotate(-8)">
+                    <rect x="-50" y="-36" width="100" height="7" fill="#CF9466"></rect>
+                    <rect x="-50" y="-20" width="100" height="10" fill="#CF9466"></rect>
+                    <rect x="-50" y="-2" width="100" height="6" fill="#CF9466"></rect>
+                    <rect x="-50" y="14" width="100" height="11" fill="#CF9466"></rect>
+                    <rect x="-50" y="33" width="100" height="7" fill="#CF9466"></rect>
+                    <ellipse cx="14" cy="20" rx="12" ry="7" fill="#B5483A"></ellipse>
+                    <ellipse cx="12" cy="18" rx="6" ry="3" fill="rgba(255,248,236,.45)"></ellipse>
+                  </g>
+                  <circle
+                    cx="-10"
+                    cy="-10"
+                    r="80"
+                    stroke="rgba(36,67,76,.2)"
+                    stroke-width="50"
+                    fill="none"
+                  ></circle>
+                </g></svg
+              ><svg class="ringed" viewBox="-100 -50 200 100">
+                <clipPath id="rw-ringed"><circle r="50"></circle></clipPath>
+                <g transform="rotate(-14)">
+                  <path
+                    d="M -90 0 A 90 19 0 0 1 90 0"
+                    stroke="#A9CBEC"
+                    stroke-width="10"
+                    fill="none"
+                  ></path>
+                  <path
+                    d="M -72 0 A 72 14.5 0 0 1 72 0"
+                    stroke="#A9CBEC"
+                    stroke-width="8"
+                    fill="none"
+                  ></path>
+                </g>
+                <g clip-path="url(#rw-ringed)">
+                  <circle r="50" fill="#7FB0E0"></circle>
+                  <g transform="rotate(-14)">
+                    <rect x="-50" y="-50" width="100" height="18" fill="rgba(36,67,76,.2)"></rect>
+                    <rect
+                      x="-50"
+                      y="-24"
+                      width="100"
+                      height="6"
+                      fill="rgba(255,248,236,.45)"
+                    ></rect>
+                    <rect x="-50" y="26" width="100" height="7" fill="rgba(36,67,76,.2)"></rect>
+                  </g>
+                  <g transform="translate(0 8) rotate(-14)">
+                    <path
+                      d="M 90 0 A 90 19 0 0 1 -90 0"
+                      stroke="rgba(36,67,76,.2)"
+                      stroke-width="10"
+                      fill="none"
+                    ></path>
+                    <path
+                      d="M 72 0 A 72 14.5 0 0 1 -72 0"
+                      stroke="rgba(36,67,76,.2)"
+                      stroke-width="8"
+                      fill="none"
+                    ></path>
+                  </g>
+                  <circle
+                    cx="-10"
+                    cy="-10"
+                    r="80"
+                    stroke="rgba(36,67,76,.2)"
+                    stroke-width="50"
+                    fill="none"
+                  ></circle>
+                </g>
+                <g transform="rotate(-14)">
+                  <path
+                    d="M 90 0 A 90 19 0 0 1 -90 0"
+                    stroke="#A9CBEC"
+                    stroke-width="10"
+                    fill="none"
+                  ></path>
+                  <path
+                    d="M 72 0 A 72 14.5 0 0 1 -72 0"
+                    stroke="#A9CBEC"
+                    stroke-width="8"
+                    fill="none"
+                  ></path>
+                </g>
+              </svg>
+            </div>
+            <div class="app-text">
+              <div class="lockup" aria-hidden="true">
+                <span>A</span><span>B</span><span>C</span
+                ><svg viewBox="0 0 100 160">
+                  <path
+                    d="M35 104C35 126.5 44 144 50 154C56 144 65 126.5 65 104z"
+                    fill="#E9963B"
+                  ></path>
+                  <path
+                    d="M42 104C42 119.75 46.8 132 50 139C53.2 132 58 119.75 58 104z"
+                    fill="#F7D27E"
+                  ></path>
+                  <path
+                    d="M27 78C15 84 10 96 10 114l17-6zM73 78c12 6 17 18 17 36l-17-6z"
+                    fill="#96382D"
+                  ></path>
+                  <rect x="47.5" y="0" width="5" height="14" rx="2.5" fill="#24434C"></rect>
+                  <path
+                    d="M50 8C66 20 74 44 74 70v34q0 8-8 8H34q-8 0-8-8V70C26 44 34 20 50 8z"
+                    fill="#B5483A"
+                  ></path>
+                  <rect x="26" y="88" width="48" height="7" fill="#F2C25C"></rect>
+                  <path d="M50 8C66 20 74 44 74 70v34q0 8-8 8H50z" fill="rgba(0,0,0,.11)"></path>
+                  <circle
+                    cx="50"
+                    cy="54"
+                    r="12"
+                    fill="#3B6F7E"
+                    stroke="#DCE3E3"
+                    stroke-width="5"
+                  ></circle>
+                  <path
+                    d="M44 50a7 7 0 0 1 6-5"
+                    stroke="#FFFFFF"
+                    stroke-opacity=".6"
+                    stroke-width="2.5"
+                    stroke-linecap="round"
+                    fill="none"
+                  ></path>
+                </svg>
+              </div>
+              <h3 class="wordmark">Rocket<b>Words</b></h3>
+              <p class="kind">Word game · ages 6–10</p>
+              <p class="pitch">
+                A word flashes by and disappears. Type what you saw – and build reading fluency.
+              </p>
+              <a class="more" href="raketord/">More about RocketWords →</a>
+            </div>
+            <div class="phone">
+              <video
+                src="raketord/media/klipp.mp4"
+                poster="raketord/media/start.jpg"
+                autoplay
+                muted
+                loop
+                playsinline
+                aria-label="Clip from RocketWords: a word flashes by and the child types it"
+              ></video>
+            </div>
+          </article>
+          <article class="app km">
+            <div class="sky" aria-hidden="true">
+              <i class="dot" style="left: 4%; top: 8%; --d: 3.1s"></i
+              ><i class="dot tw" style="left: 18%; top: 92%; --d: 4.2s"></i
+              ><i class="dot" style="left: 36%; top: 4%; --d: 5.3s"></i
+              ><i class="dot tw" style="left: 52%; top: 88%; --d: 3.7s"></i
+              ><i class="dot" style="left: 61%; top: 30%; --d: 4.8s"></i
+              ><i class="dot tw" style="left: 72%; top: 6%; --d: 6.1s"></i
+              ><i class="dot" style="left: 88%; top: 94%; --d: 3.4s"></i
+              ><i class="dot tw" style="left: 97%; top: 46%; --d: 5.6s"></i
+              ><i class="dot" style="left: 30%; top: 60%; --d: 4.4s"></i
+              ><i class="dot tw" style="left: 46%; top: 52%; --d: 6.6s"></i
+              ><i class="dot" style="left: 93%; top: 14%; --d: 4s"></i
+              ><i class="dot tw" style="left: 2%; top: 70%; --d: 5s"></i
+              ><svg
+                class="gold"
+                viewBox="0 0 24 24"
+                style="left: 42%; top: 12%; width: 18px; --d: 1.9s"
+              >
+                <path
+                  d="M12 2.5l2.9 6 6.6.8-4.9 4.6 1.3 6.6L12 17.3l-5.9 3.2 1.3-6.6-4.9-4.6 6.6-.8z"
+                  fill="#F3D27A"
+                  stroke="#F3D27A"
+                  stroke-width="2"
+                  stroke-linejoin="round"
+                ></path></svg
+              ><svg
+                class="gold"
+                viewBox="0 0 24 24"
+                style="left: 79%; top: 52%; width: 14px; --d: 2.6s"
+              >
+                <path
+                  d="M12 2.5l2.9 6 6.6.8-4.9 4.6 1.3 6.6L12 17.3l-5.9 3.2 1.3-6.6-4.9-4.6 6.6-.8z"
+                  fill="#F3D27A"
+                  stroke="#F3D27A"
+                  stroke-width="2"
+                  stroke-linejoin="round"
+                ></path></svg
+              ><svg
+                class="gold"
+                viewBox="0 0 24 24"
+                style="left: 12%; top: 96%; width: 12px; --d: 2.2s"
+              >
+                <path
+                  d="M12 2.5l2.9 6 6.6.8-4.9 4.6 1.3 6.6L12 17.3l-5.9 3.2 1.3-6.6-4.9-4.6 6.6-.8z"
+                  fill="#F3D27A"
+                  stroke="#F3D27A"
+                  stroke-width="2"
+                  stroke-linejoin="round"
+                ></path></svg
+              ><svg
+                class="gold"
+                viewBox="0 0 24 24"
+                style="left: 98%; top: 78%; width: 16px; --d: 3s"
+              >
+                <path
+                  d="M12 2.5l2.9 6 6.6.8-4.9 4.6 1.3 6.6L12 17.3l-5.9 3.2 1.3-6.6-4.9-4.6 6.6-.8z"
+                  fill="#F3D27A"
+                  stroke="#F3D27A"
+                  stroke-width="2"
+                  stroke-linejoin="round"
+                ></path></svg
+              ><svg class="small-planet" viewBox="-50 -50 100 100">
+                <clipPath id="km-small"><circle r="50"></circle></clipPath>
+                <g clip-path="url(#km-small)">
+                  <circle r="50" fill="#7AA6E0"></circle>
+                  <ellipse cx="-4" cy="-46" rx="24" ry="12" fill="rgba(255,248,236,.45)"></ellipse>
+                  <ellipse cx="10" cy="8" rx="16" ry="8" fill="rgba(61,37,65,.2)"></ellipse>
+                  <ellipse cx="-20" cy="22" rx="9" ry="5" fill="rgba(61,37,65,.2)"></ellipse>
+                  <circle
+                    cx="-10"
+                    cy="-10"
+                    r="80"
+                    stroke="rgba(61,37,65,.2)"
+                    stroke-width="50"
+                    fill="none"
+                  ></circle>
+                </g></svg
+              ><svg class="giant" viewBox="-50 -50 100 100">
+                <clipPath id="km-giant"><circle r="50"></circle></clipPath>
+                <g clip-path="url(#km-giant)">
+                  <circle r="50" fill="#E9C29A"></circle>
+                  <g transform="rotate(-8)">
+                    <rect x="-50" y="-36" width="100" height="7" fill="#D29D73"></rect>
+                    <rect x="-50" y="-20" width="100" height="10" fill="#D29D73"></rect>
+                    <rect x="-50" y="-2" width="100" height="6" fill="#D29D73"></rect>
+                    <rect x="-50" y="14" width="100" height="11" fill="#D29D73"></rect>
+                    <rect x="-50" y="33" width="100" height="7" fill="#D29D73"></rect>
+                    <ellipse cx="14" cy="20" rx="12" ry="7" fill="#B8614E"></ellipse>
+                    <ellipse cx="12" cy="18" rx="6" ry="3" fill="rgba(255,248,236,.45)"></ellipse>
+                  </g>
+                  <circle
+                    cx="-10"
+                    cy="-10"
+                    r="80"
+                    stroke="rgba(61,37,65,.2)"
+                    stroke-width="50"
+                    fill="none"
+                  ></circle>
+                </g></svg
+              ><svg class="ringed" viewBox="-100 -50 200 100">
+                <clipPath id="km-ringed"><circle r="50"></circle></clipPath>
+                <g transform="rotate(-14)">
+                  <path
+                    d="M -90 0 A 90 19 0 0 1 90 0"
+                    stroke="#F0B08F"
+                    stroke-width="10"
+                    fill="none"
+                  ></path>
+                  <path
+                    d="M -72 0 A 72 14.5 0 0 1 72 0"
+                    stroke="#F0B08F"
+                    stroke-width="8"
+                    fill="none"
+                  ></path>
+                </g>
+                <g clip-path="url(#km-ringed)">
+                  <circle r="50" fill="#E0866F"></circle>
+                  <g transform="rotate(-14)">
+                    <rect x="-50" y="-50" width="100" height="18" fill="rgba(61,37,65,.2)"></rect>
+                    <rect
+                      x="-50"
+                      y="-24"
+                      width="100"
+                      height="6"
+                      fill="rgba(255,248,236,.45)"
+                    ></rect>
+                    <rect x="-50" y="26" width="100" height="7" fill="rgba(61,37,65,.2)"></rect>
+                  </g>
+                  <g transform="translate(0 8) rotate(-14)">
+                    <path
+                      d="M 90 0 A 90 19 0 0 1 -90 0"
+                      stroke="rgba(61,37,65,.2)"
+                      stroke-width="10"
+                      fill="none"
+                    ></path>
+                    <path
+                      d="M 72 0 A 72 14.5 0 0 1 -72 0"
+                      stroke="rgba(61,37,65,.2)"
+                      stroke-width="8"
+                      fill="none"
+                    ></path>
+                  </g>
+                  <circle
+                    cx="-10"
+                    cy="-10"
+                    r="80"
+                    stroke="rgba(61,37,65,.2)"
+                    stroke-width="50"
+                    fill="none"
+                  ></circle>
+                </g>
+                <g transform="rotate(-14)">
+                  <path
+                    d="M 90 0 A 90 19 0 0 1 -90 0"
+                    stroke="#F0B08F"
+                    stroke-width="10"
+                    fill="none"
+                  ></path>
+                  <path
+                    d="M 72 0 A 72 14.5 0 0 1 -72 0"
+                    stroke="#F0B08F"
+                    stroke-width="8"
+                    fill="none"
+                  ></path>
+                </g>
+              </svg>
+            </div>
+            <div class="app-text">
+              <div class="lockup" aria-hidden="true">
+                <span>1</span><span>+</span><span>2</span
+                ><svg viewBox="0 0 100 160">
+                  <path
+                    d="M24.7 52L30.3 70.7L58 126.9L56.1 91.3L82.8 145.6L74.2 96.9L96.8 132.5L85.4 72.6L79.3 52Z"
+                    fill="#86D8F4"
+                    fill-opacity=".5"
+                  ></path>
+                  <path
+                    d="M38.6 91.3L58 126.9L56.1 91.3L82.8 145.6L74.2 96.9L96.8 132.5L90.5 93.2L71.8 78.2L53.8 76.3Z"
+                    fill="#3E9EE0"
+                  ></path>
+                  <path
+                    d="M45.2 98.8L55.8 117.5L54.5 93.2L59.9 89.4L79.4 134.4L71.4 95.1L78.5 93.2L92.9 123.1L88.4 96.9L73 85.7L56 83.8Z"
+                    fill="#86D8F4"
+                  ></path>
+                  <g transform="translate(50 52) scale(.65)">
+                    <circle cx="3" cy="3" r="42" fill="#3E9EE0"></circle>
+                    <circle r="40" fill="#F08A2E"></circle>
+                    <path
+                      d="M-38.1 12.2A40 40 0 0 1 12.2 -38.1A36 36 0 1 1 -38.1 12.2Z"
+                      fill="#F9B44A"
+                    ></path>
+                    <path
+                      d="M-24.7 -11.6A10 6 -40 1 0 -9.3 -24.4A10 6 -40 1 0 -24.7 -11.6Z"
+                      fill="#F7D88F"
+                    ></path>
+                    <path
+                      d="M4.6 0.6A10 12 20 1 0 23.4 7.4A10 12 20 1 0 4.6 0.6ZM20.1 -15.9A5 6 10 1 0 29.9 -14.1A5 6 10 1 0 20.1 -15.9ZM-10.9 27.6A9 6 -10 1 0 6.9 24.4A9 6 -10 1 0 -10.9 27.6ZM-28 14A4 3 0 1 0 -20 14A4 3 0 1 0 -28 14Z"
+                      fill="#CF5F22"
+                    ></path>
+                  </g>
+                </svg>
+              </div>
+              <h3 class="wordmark">Comet<b>Math</b></h3>
+              <p class="kind">Math game · ages 6–10</p>
+              <p class="pitch">
+                Addition, subtraction, multiplication and division at your own pace. How far can you
+                count?
+              </p>
+              <a class="more" href="kometmatte/">More about CometMath →</a>
+            </div>
+            <div class="phone">
+              <video
+                src="kometmatte/media/klipp.mp4"
+                poster="kometmatte/media/start.jpg"
+                autoplay
+                muted
+                loop
+                playsinline
+                aria-label="Clip from CometMath: the child answers math problems"
+              ></video>
+            </div>
+          </article>
+        </div>
+        <ul class="promise">
+          <li>No in-app purchases</li>
+          <li>No ads</li>
+          <li>No tracking</li>
+          <li>No account</li>
+        </ul>
+      </section>
+    </main>
+    <footer class="site-foot">
+      <div class="wrap"><span>Built on a flat day.</span><span>© 2026 No Swell Studio</span></div>
+    </footer>
+  </body>
+</html>
