@@ -1,0 +1,761 @@
+<!doctype html>
+<html lang="en" class="matte">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- Inte sökbar än: tas bort när sidan ska synas i sökmotorer. -->
+    <meta name="robots" content="noindex, nofollow" />
+    <title>CometMath – how far can you count?</title>
+    <meta
+      name="description"
+      content="Learning game for kids aged 6–10. Practice addition, subtraction, multiplication and division at your own pace, until math facts and times tables stick."
+    />
+    <meta name="theme-color" content="#663F64" />
+    <link rel="icon" href="../kometmatte/favicon.png" />
+    <link rel="stylesheet" href="../style.css" />
+  </head>
+  <body>
+    <svg width="0" height="0" style="position: absolute" aria-hidden="true">
+      <defs>
+        <!-- Appens Lätt-komet, rak som på startsidan (src/components/Comet.tsx) -->
+        <symbol id="comet" viewBox="0 0 100 160">
+          <path
+            d="M24.7 52L24.7 70.7L35.6 126.9L44.3 91.3L54.7 145.6L60.7 96.9L72.7 132.5L79.3 72.6L79.3 52Z"
+            fill="#86D8F4"
+            fill-opacity=".5"
+          />
+          <path
+            d="M26.8 91.3L35.6 126.9L44.3 91.3L54.7 145.6L60.7 96.9L72.7 132.5L78.2 93.2L64 78.2L46.5 76.3Z"
+            fill="#3E9EE0"
+          />
+          <path
+            d="M31.2 98.8L36.1 117.5L42.1 93.2L48.7 89.4L54.7 134.4L58.5 95.1L66.1 93.2L71.6 123.1L74.9 96.9L62.9 85.7L46.5 83.8Z"
+            fill="#86D8F4"
+          />
+          <g transform="translate(50 52) scale(.65)">
+            <circle cx="3" cy="3" r="42" fill="#3E9EE0" />
+            <circle r="40" fill="#F08A2E" />
+            <path d="M-38.1 12.2A40 40 0 0 1 12.2 -38.1A36 36 0 1 1 -38.1 12.2Z" fill="#F9B44A" />
+            <path
+              d="M-24.7 -11.6A10 6 -40 1 0 -9.3 -24.4A10 6 -40 1 0 -24.7 -11.6Z"
+              fill="#F7D88F"
+            />
+            <path
+              d="M4.6 0.6A10 12 20 1 0 23.4 7.4A10 12 20 1 0 4.6 0.6ZM20.1 -15.9A5 6 10 1 0 29.9 -14.1A5 6 10 1 0 20.1 -15.9ZM-10.9 27.6A9 6 -10 1 0 6.9 24.4A9 6 -10 1 0 -10.9 27.6ZM-28 14A4 3 0 1 0 -20 14A4 3 0 1 0 -28 14Z"
+              fill="#CF5F22"
+            />
+          </g>
+        </symbol>
+        <symbol id="apple" viewBox="0 0 24 24">
+          <path
+            fill="#fff"
+            d="M16.4 12.6c0-2.6 2.1-3.8 2.2-3.9-1.2-1.8-3.1-2-3.7-2-1.6-.2-3.1.9-3.9.9-.8 0-2-.9-3.4-.9-1.7 0-3.3 1-4.2 2.6-1.8 3.1-.5 7.7 1.3 10.2.9 1.2 1.9 2.6 3.2 2.6 1.3-.1 1.8-.8 3.3-.8 1.6 0 2 .8 3.4.8 1.4 0 2.3-1.3 3.1-2.5 1-1.4 1.4-2.8 1.4-2.9-.1 0-2.7-1-2.7-4.1zM13.9 5c.7-.9 1.2-2 1-3.2-1 0-2.3.7-3 1.6-.7.8-1.2 2-1.1 3.1 1.2.1 2.3-.6 3.1-1.5z"
+          />
+        </symbol>
+        <symbol id="play" viewBox="0 0 24 24">
+          <path d="M4 2.5v19l10.5-9.5z" fill="#34A853" />
+          <path d="M4 2.5l10.5 10 3-2.8L6 2.9C5.3 2.5 4.6 2.4 4 2.5z" fill="#4285F4" />
+          <path d="M4 21.5c.6.1 1.3 0 2-.4l11.5-6.6-3-2.8z" fill="#EA4335" />
+          <path d="M17.5 9.7l-3 2.8 3 2.8 3-1.7c.9-.5.9-1.7 0-2.2z" fill="#FBBC04" />
+        </symbol>
+        <symbol id="check" viewBox="0 0 40 40">
+          <circle cx="20" cy="20" r="18" fill="var(--hl-pale)" />
+          <path
+            d="M13 21l5 5 9-11"
+            stroke="var(--on-card)"
+            stroke-width="3.5"
+            fill="none"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </symbol>
+
+        <!-- Himlakropparna i appen (src/components/sky/) -->
+        <clipPath id="body-clip"><circle r="50" /></clipPath>
+        <symbol id="moon" viewBox="-50 -50 100 100">
+          <g clip-path="url(#body-clip)">
+            <circle r="50" fill="var(--moon)" />
+            <circle cx="11.44" cy="15.44" r="12.96" fill="var(--body-sheen)" />
+            <circle cx="10" cy="14" r="12" fill="var(--body-shade)" />
+            <circle cx="13" cy="17" r="7.68" fill="var(--moon-crater)" />
+            <circle cx="30.84" cy="0.84" r="7.56" fill="var(--body-sheen)" />
+            <circle cx="30" cy="0" r="7" fill="var(--body-shade)" />
+            <circle cx="31.75" cy="1.75" r="4.48" fill="var(--moon-crater)" />
+            <circle cx="0.96" cy="38.96" r="8.64" fill="var(--body-sheen)" />
+            <circle cx="0" cy="38" r="8" fill="var(--body-shade)" />
+            <circle cx="2" cy="40" r="5.12" fill="var(--moon-crater)" />
+            <circle cx="-21.28" cy="20.72" r="6.48" fill="var(--body-sheen)" />
+            <circle cx="-22" cy="20" r="6" fill="var(--body-shade)" />
+            <circle cx="-20.5" cy="21.5" r="3.84" fill="var(--moon-crater)" />
+            <circle cx="-24.92" cy="-14.92" r="9.72" fill="var(--body-sheen)" />
+            <circle cx="-26" cy="-16" r="9" fill="var(--body-shade)" />
+            <circle cx="-23.75" cy="-13.75" r="5.76" fill="var(--moon-crater)" />
+            <circle cx="6.6" cy="-25.4" r="5.4" fill="var(--body-sheen)" />
+            <circle cx="6" cy="-26" r="5" fill="var(--body-shade)" />
+            <circle cx="7.25" cy="-24.75" r="3.2" fill="var(--moon-crater)" />
+            <circle cx="32.48" cy="28.48" r="4.32" fill="var(--body-sheen)" />
+            <circle cx="32" cy="28" r="4" fill="var(--body-shade)" />
+            <circle cx="33" cy="29" r="2.56" fill="var(--moon-crater)" />
+            <circle cx="-9.64" cy="2.36" r="3.24" fill="var(--body-sheen)" />
+            <circle cx="-10" cy="2" r="3" fill="var(--body-shade)" />
+            <circle cx="-9.25" cy="2.75" r="1.92" fill="var(--moon-crater)" />
+            <circle
+              cx="-10"
+              cy="-10"
+              r="80"
+              stroke="var(--body-shade)"
+              stroke-width="50"
+              fill="none"
+            />
+          </g>
+        </symbol>
+        <symbol id="ringed" viewBox="-100 -50 200 100">
+          <g transform="translate(0 0) rotate(-14)">
+            <path
+              d="M -90 0 A 90 19 0 0 1 90 0"
+              stroke="var(--planet-ring)"
+              stroke-width="10"
+              fill="none"
+            />
+            <path
+              d="M -72 0 A 72 14.5 0 0 1 72 0"
+              stroke="var(--planet-ring)"
+              stroke-width="8"
+              fill="none"
+            />
+          </g>
+          <g clip-path="url(#body-clip)">
+            <circle r="50" fill="var(--planet)" />
+            <g transform="rotate(-14)">
+              <rect x="-50" y="-50" width="100" height="18" fill="var(--body-shade)" />
+              <rect x="-50" y="-24" width="100" height="6" fill="var(--body-sheen)" />
+              <rect x="-50" y="26" width="100" height="7" fill="var(--body-shade)" />
+            </g>
+            <g transform="translate(0 8) rotate(-14)">
+              <path
+                d="M 90 0 A 90 19 0 0 1 -90 0"
+                stroke="var(--body-shade)"
+                stroke-width="10"
+                fill="none"
+              />
+              <path
+                d="M 72 0 A 72 14.5 0 0 1 -72 0"
+                stroke="var(--body-shade)"
+                stroke-width="8"
+                fill="none"
+              />
+            </g>
+            <circle
+              cx="-10"
+              cy="-10"
+              r="80"
+              stroke="var(--body-shade)"
+              stroke-width="50"
+              fill="none"
+            />
+          </g>
+          <g transform="translate(0 0) rotate(-14)">
+            <path
+              d="M 90 0 A 90 19 0 0 1 -90 0"
+              stroke="var(--planet-ring)"
+              stroke-width="10"
+              fill="none"
+            />
+            <path
+              d="M 72 0 A 72 14.5 0 0 1 -72 0"
+              stroke="var(--planet-ring)"
+              stroke-width="8"
+              fill="none"
+            />
+          </g>
+        </symbol>
+        <symbol id="giant" viewBox="-50 -50 100 100">
+          <g clip-path="url(#body-clip)">
+            <circle r="50" fill="var(--gas-giant)" />
+            <g transform="rotate(-8)">
+              <rect x="-50" y="-36" width="100" height="7" fill="var(--gas-giant-band)" />
+              <rect x="-50" y="-20" width="100" height="10" fill="var(--gas-giant-band)" />
+              <rect x="-50" y="-2" width="100" height="6" fill="var(--gas-giant-band)" />
+              <rect x="-50" y="14" width="100" height="11" fill="var(--gas-giant-band)" />
+              <rect x="-50" y="33" width="100" height="7" fill="var(--gas-giant-band)" />
+              <ellipse cx="14" cy="20" rx="12" ry="7" fill="var(--gas-giant-spot)" />
+              <ellipse cx="12" cy="18" rx="6" ry="3" fill="var(--body-sheen)" />
+            </g>
+            <circle
+              cx="-10"
+              cy="-10"
+              r="80"
+              stroke="var(--body-shade)"
+              stroke-width="50"
+              fill="none"
+            />
+          </g>
+        </symbol>
+        <symbol id="small-planet" viewBox="-50 -50 100 100">
+          <g clip-path="url(#body-clip)">
+            <circle r="50" fill="var(--extra)" />
+            <ellipse cx="-4" cy="-46" rx="24" ry="12" fill="var(--body-sheen)" />
+            <ellipse cx="10" cy="8" rx="16" ry="8" fill="var(--body-shade)" />
+            <ellipse cx="-20" cy="22" rx="9" ry="5" fill="var(--body-shade)" />
+            <circle
+              cx="-10"
+              cy="-10"
+              r="80"
+              stroke="var(--body-shade)"
+              stroke-width="50"
+              fill="none"
+            />
+          </g>
+        </symbol>
+        <symbol id="star" viewBox="0 0 24 24">
+          <path
+            d="M12 2.5l2.9 6 6.6.8-4.9 4.6 1.3 6.6L12 17.3l-5.9 3.2 1.3-6.6-4.9-4.6 6.6-.8z"
+            fill="var(--star)"
+            stroke="var(--star)"
+            stroke-width="2"
+            stroke-linejoin="round"
+          />
+        </symbol>
+        <!-- Appens molnbank (src/components/sky/CloudBank.tsx) -->
+        <filter id="cloud-shadow" x="-5%" y="-20%" width="110%" height="140%">
+          <feDropShadow dx="0" dy="-5" stdDeviation="0" flood-color="#000" flood-opacity="0.15" />
+        </filter>
+        <g id="cloud-1">
+          <circle cx="-355" cy="93" r="85" />
+          <circle cx="-235" cy="113" r="75" />
+          <circle cx="-75" cy="103" r="95" />
+          <circle cx="15" cy="107" r="75" />
+          <circle cx="35" cy="93" r="85" />
+          <circle cx="155" cy="113" r="75" />
+          <circle cx="315" cy="103" r="95" />
+          <circle cx="405" cy="107" r="75" />
+          <circle cx="425" cy="93" r="85" />
+          <circle cx="545" cy="113" r="75" />
+          <circle cx="705" cy="103" r="95" />
+          <circle cx="795" cy="107" r="75" />
+          <circle cx="815" cy="93" r="85" />
+          <circle cx="935" cy="113" r="75" />
+          <circle cx="1095" cy="103" r="95" />
+          <circle cx="1185" cy="107" r="75" />
+          <circle cx="1205" cy="93" r="85" />
+          <circle cx="1325" cy="113" r="75" />
+          <circle cx="1485" cy="103" r="95" />
+          <circle cx="1575" cy="107" r="75" />
+          <circle cx="1595" cy="93" r="85" />
+          <circle cx="1715" cy="113" r="75" />
+          <circle cx="1875" cy="103" r="95" />
+          <circle cx="1965" cy="107" r="75" />
+        </g>
+        <g id="cloud-2">
+          <circle cx="-355" cy="133" r="75" />
+          <circle cx="-40" cy="136" r="80" />
+          <circle cx="35" cy="133" r="75" />
+          <circle cx="350" cy="136" r="80" />
+          <circle cx="425" cy="133" r="75" />
+          <circle cx="740" cy="136" r="80" />
+          <circle cx="815" cy="133" r="75" />
+          <circle cx="1130" cy="136" r="80" />
+          <circle cx="1205" cy="133" r="75" />
+          <circle cx="1520" cy="136" r="80" />
+          <circle cx="1595" cy="133" r="75" />
+          <circle cx="1910" cy="136" r="80" />
+        </g>
+        <g id="cloud-3">
+          <circle cx="10" cy="138" r="60" />
+          <circle cx="400" cy="138" r="60" />
+          <circle cx="790" cy="138" r="60" />
+          <circle cx="1180" cy="138" r="60" />
+          <circle cx="1570" cy="138" r="60" />
+          <circle cx="1960" cy="138" r="60" />
+        </g>
+        <g id="cloud-4">
+          <circle cx="-310" cy="158" r="70" />
+          <circle cx="-190" cy="148" r="70" />
+          <circle cx="-75" cy="167" r="75" />
+          <circle cx="80" cy="158" r="70" />
+          <circle cx="200" cy="148" r="70" />
+          <circle cx="315" cy="167" r="75" />
+          <circle cx="470" cy="158" r="70" />
+          <circle cx="590" cy="148" r="70" />
+          <circle cx="705" cy="167" r="75" />
+          <circle cx="860" cy="158" r="70" />
+          <circle cx="980" cy="148" r="70" />
+          <circle cx="1095" cy="167" r="75" />
+          <circle cx="1250" cy="158" r="70" />
+          <circle cx="1370" cy="148" r="70" />
+          <circle cx="1485" cy="167" r="75" />
+          <circle cx="1640" cy="158" r="70" />
+          <circle cx="1760" cy="148" r="70" />
+          <circle cx="1875" cy="167" r="75" />
+        </g>
+        <g id="cloud-5">
+          <circle cx="-355" cy="179" r="65" />
+          <circle cx="-230" cy="190" r="70" />
+          <circle cx="-115" cy="189" r="65" />
+          <circle cx="-10" cy="176" r="60" />
+          <circle cx="35" cy="179" r="65" />
+          <circle cx="160" cy="190" r="70" />
+          <circle cx="275" cy="189" r="65" />
+          <circle cx="380" cy="176" r="60" />
+          <circle cx="425" cy="179" r="65" />
+          <circle cx="550" cy="190" r="70" />
+          <circle cx="665" cy="189" r="65" />
+          <circle cx="770" cy="176" r="60" />
+          <circle cx="815" cy="179" r="65" />
+          <circle cx="940" cy="190" r="70" />
+          <circle cx="1055" cy="189" r="65" />
+          <circle cx="1160" cy="176" r="60" />
+          <circle cx="1205" cy="179" r="65" />
+          <circle cx="1330" cy="190" r="70" />
+          <circle cx="1445" cy="189" r="65" />
+          <circle cx="1550" cy="176" r="60" />
+          <circle cx="1595" cy="179" r="65" />
+          <circle cx="1720" cy="190" r="70" />
+          <circle cx="1835" cy="189" r="65" />
+          <circle cx="1940" cy="176" r="60" />
+        </g>
+      </defs>
+    </svg>
+
+    <div class="sky">
+      <div class="sky-deco" aria-hidden="true">
+        <i class="dot big tw" style="left: 62.3%; top: 66.8%; --d: 1.3s"></i
+        ><i class="dot big" style="left: 94.2%; top: 66.6%; --d: 1.57s"></i
+        ><i class="dot big" style="left: 2.9%; top: 41.9%; --d: 1.84s"></i
+        ><i class="dot" style="left: 64.9%; top: 81.1%; --d: 2.11s"></i
+        ><i class="dot tw" style="left: 46.9%; top: 22.2%; --d: 2.38s"></i
+        ><i class="dot" style="left: 57.4%; top: 1.2%; --d: 2.65s"></i
+        ><i class="dot big" style="left: 27.9%; top: 82.5%; --d: 2.92s"></i
+        ><i class="dot" style="left: 16%; top: 71.7%; --d: 3.19s"></i
+        ><i class="dot tw" style="left: 61.7%; top: 11.4%; --d: 3.46s"></i
+        ><i class="dot" style="left: 87.1%; top: 18.9%; --d: 3.73s"></i
+        ><i class="dot" style="left: 98.2%; top: 78.5%; --d: 4s"></i
+        ><i class="dot big" style="left: 96.1%; top: 48.5%; --d: 4.27s"></i
+        ><i class="dot big tw" style="left: 20.5%; top: 84.7%; --d: 4.54s"></i
+        ><i class="dot" style="left: 96.7%; top: 80.4%; --d: 4.81s"></i
+        ><i class="dot" style="left: 36.1%; top: 14.9%; --d: 5.08s"></i
+        ><i class="dot big" style="left: 6.5%; top: 27.1%; --d: 5.35s"></i
+        ><i class="dot tw" style="left: 0.3%; top: 61%; --d: 5.62s"></i
+        ><i class="dot" style="left: 31%; top: 73.7%; --d: 5.89s"></i
+        ><i class="dot big" style="left: 31.6%; top: 43.3%; --d: 6.16s"></i
+        ><i class="dot" style="left: 5.7%; top: 87.8%; --d: 6.43s"></i
+        ><i class="dot tw" style="left: 75%; top: 76%; --d: 6.7s"></i
+        ><i class="dot" style="left: 78.8%; top: 33%; --d: 6.97s"></i
+        ><i class="dot" style="left: 0.9%; top: 4.2%; --d: 7.24s"></i
+        ><i class="dot big" style="left: 95.5%; top: 17.7%; --d: 7.51s"></i
+        ><i class="dot tw" style="left: 93%; top: 84.8%; --d: 7.78s"></i
+        ><i class="dot big" style="left: 35.5%; top: 47.2%; --d: 8.05s"></i
+        ><svg class="gold" style="left: 24%; top: 20%; width: 20px; --d: 1.7s">
+          <use href="#star" /></svg
+        ><svg class="gold" style="left: 66%; top: 14%; width: 18px; --d: 2.01s">
+          <use href="#star" /></svg
+        ><svg class="gold" style="left: 46%; top: 6%; width: 24px; --d: 2.32s">
+          <use href="#star" /></svg
+        ><svg class="gold" style="left: 8%; top: 40%; width: 16px; --d: 2.63s">
+          <use href="#star" /></svg
+        ><svg class="gold" style="left: 90%; top: 62%; width: 14px; --d: 2.94s">
+          <use href="#star" />
+        </svg>
+        <svg class="body giant"><use href="#giant" /></svg>
+        <svg class="body small-planet"><use href="#small-planet" /></svg>
+        <i class="meteor m1"></i><i class="meteor m2"></i>
+        <svg class="flyby"><use href="#comet" /></svg>
+      </div>
+      <header class="site-head">
+        <div class="wrap">
+          <a class="logo" href="#top">
+            <svg aria-hidden="true"><use href="#comet" /></svg>
+            <span class="wordmark">Comet<b>Math</b></span>
+          </a>
+          <nav aria-label="Page">
+            <a href="#how-it-works">How it works</a>
+            <a href="#learning">What kids learn</a>
+            <a href="#parents">For grown-ups</a>
+            <a href="#download">Download</a>
+          </nav>
+        </div>
+      </header>
+
+      <main class="hero" id="top">
+        <div class="wrap">
+          <div class="hero-text">
+            <span class="eyebrow">Learning game for kids aged 6–10</span>
+            <h1>How far can you count?</h1>
+            <p class="lead">
+              Choose addition, subtraction, multiplication or division and count at your own pace.
+              No clock to rush you, but quick answers score the most points.
+            </p>
+            <!-- Butikslänkarna läggs in när appen finns i butikerna. -->
+            <div class="badges">
+              <a class="badge" href="#download">
+                <svg aria-hidden="true"><use href="#apple" /></svg>
+                <span>Download on the<strong>App Store</strong></span>
+              </a>
+              <a class="badge" href="#download">
+                <svg aria-hidden="true"><use href="#play" /></svg>
+                <span>Get it on<strong>Google Play</strong></span>
+              </a>
+            </div>
+            <div class="facts">
+              <span>No in-app purchases</span><span>No ads</span><span>14 languages</span>
+            </div>
+          </div>
+          <div class="hero-phone">
+            <svg class="body moon"><use href="#moon" /></svg>
+            <svg class="body ringed"><use href="#ringed" /></svg>
+            <div class="phone">
+              <video
+                src="../kometmatte/media/klipp.mp4"
+                poster="../kometmatte/media/start.jpg"
+                autoplay
+                muted
+                loop
+                playsinline
+                aria-label="Clip from the game: the child picks addition, answers 1 + 6 and sees the result"
+              ></video>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <svg
+      class="clouds"
+      viewBox="0 0 1440 152"
+      preserveAspectRatio="xMidYMin slice"
+      aria-hidden="true"
+    >
+      <use class="drift-1" href="#cloud-1" filter="url(#cloud-shadow)" />
+      <use class="drift-2" href="#cloud-2" filter="url(#cloud-shadow)" />
+      <use class="drift-3" href="#cloud-3" filter="url(#cloud-shadow)" />
+      <use class="drift-4" href="#cloud-4" filter="url(#cloud-shadow)" />
+      <use class="drift-5" href="#cloud-5" filter="url(#cloud-shadow)" />
+    </svg>
+
+    <section class="paper" id="how-it-works">
+      <div class="wrap">
+        <div class="sec-head">
+          <span class="eyebrow">How it works</span>
+          <h2>From counting it out to just knowing it</h2>
+        </div>
+        <ol class="steps">
+          <li>
+            <h3>Choose an operation and a level</h3>
+            <p>
+              Addition, subtraction, multiplication or division. The child starts where it feels
+              right and moves on at their own pace.
+            </p>
+          </li>
+          <li>
+            <h3>The child answers calmly</h3>
+            <p>
+              No time runs out, so there is time to think. For more of a challenge, turn on a time
+              limit.
+            </p>
+          </li>
+          <li>
+            <h3>The answers stick</h3>
+            <p>
+              The problems get harder step by step. In the end, the child knows the answer right
+              away instead of counting on their fingers.
+            </p>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="band" id="see-the-game">
+      <div class="wrap">
+        <div class="sec-head">
+          <span class="eyebrow">See the game</span>
+          <h2>What it looks like on the phone</h2>
+        </div>
+        <div class="shots" tabindex="0" aria-label="Pictures from the game">
+          <figure>
+            <div class="phone small">
+              <img
+                src="../kometmatte/media/start.jpg"
+                alt="The start screen with addition, subtraction, multiplication and division"
+                loading="lazy"
+              />
+            </div>
+            <figcaption>Four operations<span>Each with four difficulty levels</span></figcaption>
+          </figure>
+          <figure>
+            <div class="phone small">
+              <img
+                src="../kometmatte/media/svar.jpg"
+                alt="The problem 1 + 6 with the answer 7 typed in"
+                loading="lazy"
+              />
+            </div>
+            <figcaption>
+              Count at your own pace<span>Big number buttons, no clock to rush you</span>
+            </figcaption>
+          </figure>
+          <figure>
+            <div class="phone small">
+              <img
+                src="../kometmatte/media/ratt.jpg"
+                alt="Correct answer: 1 + 6 = 7 scores ten points"
+                loading="lazy"
+              />
+            </div>
+            <figcaption>
+              Correct answers score points<span>A wrong answer shows the right one</span>
+            </figcaption>
+          </figure>
+          <figure>
+            <div class="phone small">
+              <img
+                src="../kometmatte/media/bildmatte.jpg"
+                alt="Picture math: 2 + 4 with pictures to count and four answers to choose from"
+                loading="lazy"
+              />
+            </div>
+            <figcaption>
+              Count with pictures<span>Easy problems with space pictures to count</span>
+            </figcaption>
+          </figure>
+          <figure>
+            <div class="phone small">
+              <img
+                src="../kometmatte/media/installningar.jpg"
+                alt="Settings for language, time limit, sound and vibration"
+                loading="lazy"
+              />
+            </div>
+            <figcaption>
+              Adjust to your child<span
+                >Choose language, sound and whether to have a time limit</span
+              >
+            </figcaption>
+          </figure>
+          <figure>
+            <div class="phone small">
+              <img
+                src="../kometmatte/media/resultat.jpg"
+                alt="The result: 8 of 10 correct, two stars and a new record"
+                loading="lazy"
+              />
+            </div>
+            <figcaption>
+              Beat your own record<span>Stars, records and medals, no leaderboard</span>
+            </figcaption>
+          </figure>
+        </div>
+        <div class="carousel-nav on-desktop">
+          <button class="prev" type="button" aria-label="Previous pictures">←</button>
+          <button class="next" type="button" aria-label="Next pictures">→</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="paper" id="learning">
+      <div class="wrap">
+        <div class="sec-head">
+          <span class="eyebrow">What kids learn</span>
+          <h2>Math facts that stick, leaving energy for harder math</h2>
+          <p>
+            CometMath is made for kids aged 6–10 who are moving from counting on their fingers to
+            knowing math facts and times tables by heart. Expert is a challenge for 10-year-olds.
+          </p>
+        </div>
+        <div class="learn-grid">
+          <div>
+            <h3>Count faster</h3>
+            <p>
+              Once 8 + 5 and 7 × 8 stick, the child no longer has to count step by step and can put
+              that energy into harder math.
+            </p>
+          </div>
+          <div>
+            <h3>Just the right challenge</h3>
+            <p>The problems get harder with every level, at the child's own pace.</p>
+          </div>
+          <div>
+            <h3>Tricky problems come back</h3>
+            <p>The same problems return until they stick – and that earns medals.</p>
+          </div>
+          <div>
+            <h3>Support when math feels hard</h3>
+            <p>
+              Short, playful sessions with instant feedback and the right answer after a mistake.
+            </p>
+          </div>
+        </div>
+        <div class="levels-wrap">
+          <table class="levels">
+            <thead>
+              <tr>
+                <th>Operation</th>
+                <th>Easy</th>
+                <th>Medium</th>
+                <th>Hard</th>
+                <th>Expert</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th>Addition</th>
+                <td>6–7</td>
+                <td>7–8</td>
+                <td>8</td>
+                <td>8–9</td>
+              </tr>
+              <tr>
+                <th>Subtraction</th>
+                <td>7</td>
+                <td>7–8</td>
+                <td>8–9</td>
+                <td>9</td>
+              </tr>
+              <tr>
+                <th>Multiplication</th>
+                <td>8</td>
+                <td>8–9</td>
+                <td>9</td>
+                <td>10</td>
+              </tr>
+              <tr>
+                <th>Division</th>
+                <td>8–9</td>
+                <td>9</td>
+                <td>9–10</td>
+                <td>10</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section class="paper" id="parents">
+      <div class="wrap">
+        <div class="sec-head">
+          <span class="eyebrow">For parents and teachers</span>
+          <h2>Safe to hand over the phone</h2>
+          <p>You pay once when you download the app. After that, there is nothing more to buy.</p>
+        </div>
+        <div class="trust">
+          <div>
+            <svg aria-hidden="true"><use href="#check" /></svg>
+            <h3>No in-app purchases</h3>
+            <p>Everything is included from the start.</p>
+          </div>
+          <div>
+            <svg aria-hidden="true"><use href="#check" /></svg>
+            <h3>No ads</h3>
+            <p>Nothing that lures the child away.</p>
+          </div>
+          <div>
+            <svg aria-hidden="true"><use href="#check" /></svg>
+            <h3>No tracking</h3>
+            <p>No accounts, and no data leaves the phone.</p>
+          </div>
+          <div>
+            <svg aria-hidden="true"><use href="#check" /></svg>
+            <h3>Beat your own record</h3>
+            <p>Stars, records and medals to chase, but no leaderboard.</p>
+          </div>
+          <div>
+            <svg aria-hidden="true"><use href="#check" /></svg>
+            <h3>A calm pace</h3>
+            <p>No clock to rush you, unless you want one.</p>
+          </div>
+          <div>
+            <svg aria-hidden="true"><use href="#check" /></svg>
+            <h3>14 languages</h3>
+            <p>
+              English, Swedish, Norwegian, Danish, Dutch, Italian, Portuguese, German, French,
+              Spanish, Polish, Finnish, Czech and Turkish.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <svg
+      class="clouds flip"
+      viewBox="0 0 1440 152"
+      preserveAspectRatio="xMidYMin slice"
+      aria-hidden="true"
+    >
+      <use class="drift-1" href="#cloud-1" filter="url(#cloud-shadow)" />
+      <use class="drift-2" href="#cloud-2" filter="url(#cloud-shadow)" />
+      <use class="drift-3" href="#cloud-3" filter="url(#cloud-shadow)" />
+      <use class="drift-4" href="#cloud-4" filter="url(#cloud-shadow)" />
+      <use class="drift-5" href="#cloud-5" filter="url(#cloud-shadow)" />
+    </svg>
+
+    <section class="sky cta" id="download">
+      <div class="sky-deco" aria-hidden="true">
+        <svg class="gold" style="left: 10%; top: 22%; width: 18px; --d: 1.7s">
+          <use href="#star" /></svg
+        ><svg class="gold" style="left: 84%; top: 16%; width: 22px; --d: 2.01s">
+          <use href="#star" /></svg
+        ><svg class="gold" style="left: 92%; top: 70%; width: 14px; --d: 2.32s">
+          <use href="#star" /></svg
+        ><svg class="gold" style="left: 18%; top: 74%; width: 14px; --d: 2.63s">
+          <use href="#star" />
+        </svg>
+        <i class="meteor m1"></i>
+      </div>
+      <div class="wrap">
+        <svg class="big-rocket" aria-hidden="true"><use href="#comet" /></svg>
+        <h2>Download CometMath</h2>
+        <p>For iPhone, iPad and Android. Pay once, and everything is included.</p>
+        <div class="badges">
+          <a class="badge" href="#download">
+            <svg aria-hidden="true"><use href="#apple" /></svg>
+            <span>Download on the<strong>App Store</strong></span>
+          </a>
+          <a class="badge" href="#download">
+            <svg aria-hidden="true"><use href="#play" /></svg>
+            <span>Get it on<strong>Google Play</strong></span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <div class="wrap">
+        <a class="sibling" href="../rocketwords/">
+          <img src="../raketord/media/ikon.png" alt="" />
+          <span>
+            <small>More apps</small>
+            <strong>RocketWords</strong>
+            Recognize words faster and read fluently.
+          </span>
+        </a>
+        <nav class="foot-links" aria-label="Footer">
+          <a href="privacy.html">Privacy policy</a>
+          <a href="../">No Swell Studio</a>
+          <a href="../kometmatte/" hreflang="sv" lang="sv">Svenska</a>
+          <span>© 2026 CometMath</span>
+        </nav>
+      </div>
+    </footer>
+
+    <script>
+      // Pilarna bläddrar en skärmbredd i bildraden.
+      const shots = document.querySelector('.shots');
+      const [prev, next] = document.querySelectorAll('.carousel-nav button');
+      const update = () => {
+        prev.disabled = shots.scrollLeft <= 0;
+        next.disabled = shots.scrollLeft + shots.clientWidth >= shots.scrollWidth - 1;
+      };
+      prev.addEventListener('click', () => shots.scrollBy({ left: -shots.clientWidth }));
+      next.addEventListener('click', () => shots.scrollBy({ left: shots.clientWidth }));
+      shots.addEventListener('scroll', update);
+      update();
+      // Vid reducerad rörelse spelas filmen inte upp av sig själv.
+      if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        const video = document.querySelector('video');
+        video.removeAttribute('autoplay');
+        video.pause();
+        video.controls = true;
+      }
+    </script>
+  </body>
+</html>
