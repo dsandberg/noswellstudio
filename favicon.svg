@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <rect width="64" height="64" rx="14" fill="#0f2a33" />
+  <!-- Vågen från sidans horisont, beskuren kring toppen. -->
+  <svg x="4" y="12" width="56" height="40" viewBox="150 4 200 100">
+    <g fill="none" stroke="#7fc4c0" stroke-width="18" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M0 96 C 70 96, 125 72, 168 42 C 200 20, 226 10, 250 10 C 278 10, 300 24, 302 44 C 304 62, 284 70, 274 58 C 266 48, 276 38, 286 44" />
+      <path d="M250 10 C 236 30, 240 62, 270 80 C 300 98, 340 101, 400 101 L 520 101" />
+    </g>
+  </svg>
+</svg>
