@@ -1,0 +1,556 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Press – No Swell Studio</title>
+    <meta
+      name="description"
+      content="Press room for RocketWords and CometMath: facts, descriptions, app icons, screenshots and video."
+    />
+    <!-- Inte sökbar än: tas bort när sidan ska synas i sökmotorer. -->
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="theme-color" content="#0F2A33" />
+    <link rel="icon" href="../favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="../apple-touch-icon.png" />
+    <style>
+      @font-face {
+        font-family: 'Fredoka';
+        font-weight: 700;
+        font-display: swap;
+        src: url('../fonts/Fredoka_700Bold.ttf') format('truetype');
+      }
+      @font-face {
+        font-family: 'Jost';
+        font-weight: 300;
+        font-display: swap;
+        src: url('../fonts/Jost_300Light.ttf') format('truetype');
+      }
+      @font-face {
+        font-family: 'Jost';
+        font-weight: 400;
+        font-display: swap;
+        src: url('../fonts/Jost_400Regular.ttf') format('truetype');
+      }
+      @font-face {
+        font-family: 'Jost';
+        font-weight: 500;
+        font-display: swap;
+        src: url('../fonts/Jost_500Medium.ttf') format('truetype');
+      }
+      @font-face {
+        font-family: 'Jost';
+        font-weight: 600;
+        font-display: swap;
+        src: url('../fonts/Jost_600SemiBold.ttf') format('truetype');
+      }
+
+      :root {
+        --bg: #0f2a33;
+        --line: #24434c;
+        --text: #eaf2f0;
+        --muted: #a9c3c4;
+        --soft: #c3d6d6;
+        --paper: #fff8ec;
+        --hl: #f2c25c;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font-family: 'Jost', system-ui, sans-serif;
+        overflow-x: hidden;
+      }
+      a {
+        color: var(--text);
+      }
+      .wrap {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding-inline: 20px;
+      }
+      .site-head {
+        padding-top: 24px;
+      }
+      .brand {
+        display: inline-block;
+        padding: 10px 0;
+        font-weight: 600;
+        font-size: 17px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        text-decoration: none;
+      }
+      .hero {
+        padding-top: clamp(48px, 10vw, 96px);
+      }
+      .eyebrow {
+        margin: 0 0 16px;
+        font-size: 16px;
+        letter-spacing: 0.06em;
+        color: var(--muted);
+      }
+      h1 {
+        margin: 0;
+        font-weight: 300;
+        font-size: clamp(52px, 12vw, 88px);
+        line-height: 1;
+        letter-spacing: -0.01em;
+      }
+      .lead {
+        margin: 24px 0 0;
+        max-width: 32em;
+        font-size: clamp(18px, 4.6vw, 21px);
+        line-height: 1.5;
+        color: var(--soft);
+      }
+      section {
+        padding-top: clamp(64px, 12vw, 96px);
+      }
+      h2 {
+        margin: 0 0 24px;
+        font-weight: 400;
+        font-size: clamp(32px, 7vw, 44px);
+      }
+      p {
+        line-height: 1.6;
+      }
+      .text {
+        max-width: 40em;
+        font-size: 18px;
+        color: var(--soft);
+      }
+      .text p {
+        margin: 0 0 16px;
+      }
+      .app-list {
+        display: flex;
+        flex-direction: column;
+        gap: 32px;
+      }
+      .app {
+        padding: clamp(28px, 6vw, 56px);
+        border-radius: clamp(24px, 4vw, 32px);
+        color: var(--paper);
+      }
+      .app.rw {
+        --sky: #3b6f7e;
+        --sky-deep: #2f5f6e;
+        --ink: #24434c;
+        --muted-on-sky: #dce8ea;
+        background: var(--sky);
+      }
+      .app.km {
+        --sky: #663f64;
+        --sky-deep: #553453;
+        --ink: #3d2541;
+        --muted-on-sky: #eedfe8;
+        background: var(--sky);
+      }
+      .app-head {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+      }
+      .app-head img {
+        width: clamp(64px, 14vw, 88px);
+        height: auto;
+        border-radius: 22%;
+      }
+      .wordmark {
+        margin: 0;
+        font-family: 'Fredoka', sans-serif;
+        font-weight: 700;
+        font-size: clamp(36px, 9vw, 60px);
+        line-height: 1.1;
+        text-shadow: 0 0.06em 0 var(--sky-deep);
+      }
+      .wordmark b {
+        color: var(--hl);
+      }
+      .app .short {
+        margin: 24px 0 0;
+        max-width: 30em;
+        font-size: clamp(18px, 4.6vw, 22px);
+        line-height: 1.5;
+      }
+      .app .long {
+        margin: 16px 0 0;
+        max-width: 40em;
+        font-size: 17px;
+        color: var(--muted-on-sky);
+      }
+      .facts {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 20px 32px;
+        margin: 32px 0 0;
+      }
+      .facts dt,
+      h4 {
+        font-size: 13px;
+        font-weight: 400;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--muted-on-sky);
+      }
+      .facts dd {
+        margin: 6px 0 0;
+        font-size: 18px;
+        font-weight: 500;
+        line-height: 1.4;
+      }
+      h4 {
+        margin: 40px 0 16px;
+      }
+      .shots {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+        gap: 12px;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      }
+      .shots img {
+        display: block;
+        width: 100%;
+        height: auto;
+        border-radius: 12px;
+        background: var(--ink);
+      }
+      .files {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 20px;
+      }
+      .file {
+        display: inline-flex;
+        align-items: center;
+        min-height: 48px;
+        padding: 0 22px;
+        border-radius: 999px;
+        background: var(--paper);
+        color: var(--ink);
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 16px;
+      }
+      .file small {
+        margin-left: 8px;
+        font-weight: 400;
+        opacity: 0.7;
+      }
+      .note {
+        margin: 16px 0 0;
+        font-size: 15px;
+        color: var(--muted);
+      }
+      .promise {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px 28px;
+        list-style: none;
+        margin: 24px 0 0;
+        padding: 0;
+        font-size: 17px;
+        color: var(--soft);
+      }
+      .contact {
+        padding-bottom: clamp(64px, 12vw, 96px);
+      }
+      .contact a {
+        font-size: clamp(22px, 5vw, 28px);
+        font-weight: 500;
+      }
+      .site-foot {
+        border-top: 1px solid var(--line);
+      }
+      .site-foot .wrap {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        gap: 16px;
+        padding-top: 32px;
+        padding-bottom: 48px;
+        font-size: 15px;
+        color: var(--muted);
+      }
+      .site-foot a {
+        color: inherit;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Pressrummet: allt pressmaterial för båda apparna, bara på engelska. Ingen spårning. -->
+    <header class="site-head">
+      <div class="wrap"><a class="brand" href="../">No Swell Studio</a></div>
+    </header>
+    <main>
+      <section class="hero wrap">
+        <p class="eyebrow">Press</p>
+        <h1>Press room</h1>
+        <p class="lead">
+          Everything you need to write about RocketWords and CometMath: facts, descriptions, app
+          icons, screenshots and video. Use them freely in articles and reviews about the apps.
+        </p>
+      </section>
+
+      <section class="wrap" aria-labelledby="apps">
+        <h2 id="apps">The apps</h2>
+        <div class="app-list">
+          <article class="app rw">
+            <div class="app-head">
+              <img src="media/rocketwords-icon.png" alt="" />
+              <h3 class="wordmark">Rocket<b>Words</b></h3>
+            </div>
+            <p class="short">
+              A word shows for just a moment. Can you read it? Practice reading whole words.
+            </p>
+            <p class="long">
+              Reading fluently means knowing words at a glance instead of sounding out each one.
+              RocketWords trains exactly that: a word flashes up for just a moment, and the child
+              types what they read. On every level, the word is shown for a little less time. Four
+              difficulties with ten levels each, from short everyday words for brand-new readers to
+              long words from school subjects.
+            </p>
+            <dl class="facts">
+              <div>
+                <dt>Developer</dt>
+                <dd>Daniel Sandberg, No Swell Studio</dd>
+              </div>
+              <div>
+                <dt>Ages</dt>
+                <dd>6–10</dd>
+              </div>
+              <div>
+                <dt>Platforms</dt>
+                <dd>iPhone, iPad and Android</dd>
+              </div>
+              <div>
+                <dt>Price</dt>
+                <dd>Paid download, everything included</dd>
+              </div>
+              <div>
+                <dt>Release</dt>
+                <dd>To be announced</dd>
+              </div>
+              <div>
+                <dt>Languages</dt>
+                <dd>English, Swedish, Norwegian, Danish, Dutch, Italian, Portuguese</dd>
+              </div>
+            </dl>
+            <h4>Screenshots</h4>
+            <ul class="shots">
+              <li>
+                <a href="../rocketwords/media/start.jpg" download
+                  ><img
+                    src="../rocketwords/media/start.jpg"
+                    alt="The start screen with the difficulty levels"
+                    loading="lazy"
+                /></a>
+              </li>
+              <li>
+                <a href="../rocketwords/media/ordet.jpg" download
+                  ><img
+                    src="../rocketwords/media/ordet.jpg"
+                    alt="The word READ shows for a moment"
+                    loading="lazy"
+                /></a>
+              </li>
+              <li>
+                <a href="../rocketwords/media/ratt.jpg" download
+                  ><img
+                    src="../rocketwords/media/ratt.jpg"
+                    alt="Correct answer: READ turns green and scores points"
+                    loading="lazy"
+                /></a>
+              </li>
+              <li>
+                <a href="../rocketwords/media/svart.jpg" download
+                  ><img
+                    src="../rocketwords/media/svart.jpg"
+                    alt="The word cherry in lowercase letters, on the Hard level"
+                    loading="lazy"
+                /></a>
+              </li>
+              <li>
+                <a href="../rocketwords/media/resultat.jpg" download
+                  ><img
+                    src="../rocketwords/media/resultat.jpg"
+                    alt="The result after a round, with three stars and a new record"
+                    loading="lazy"
+                /></a>
+              </li>
+              <li>
+                <a href="../rocketwords/media/installningar.jpg" download
+                  ><img
+                    src="../rocketwords/media/installningar.jpg"
+                    alt="Settings for speed and uppercase or lowercase letters"
+                    loading="lazy"
+                /></a>
+              </li>
+            </ul>
+            <div class="files">
+              <a class="file" href="media/rocketwords-icon.png" download
+                >App icon <small>PNG, 1024 × 1024</small></a
+              >
+              <a class="file" href="../rocketwords/media/klipp.mp4" download
+                >Gameplay video <small>MP4, 4 MB</small></a
+              >
+              <a class="file" href="../rocketwords/">Web page</a>
+            </div>
+          </article>
+
+          <article class="app km">
+            <div class="app-head">
+              <img src="media/cometmath-icon.png" alt="" />
+              <h3 class="wordmark">Comet<b>Math</b></h3>
+            </div>
+            <p class="short">
+              Plus, minus, times and divide. At your own pace; quick answers score the most.
+            </p>
+            <p class="long">
+              When number facts and times tables come automatically, children no longer have to
+              count step by step and can put their energy into harder problems. CometMath trains
+              exactly that, at the child's own pace: no clock is ticking, but faster answers earn
+              more points. Four operations with four difficulties each, and picture math for the
+              youngest.
+            </p>
+            <dl class="facts">
+              <div>
+                <dt>Developer</dt>
+                <dd>Daniel Sandberg, No Swell Studio</dd>
+              </div>
+              <div>
+                <dt>Ages</dt>
+                <dd>6–10</dd>
+              </div>
+              <div>
+                <dt>Platforms</dt>
+                <dd>iPhone, iPad and Android</dd>
+              </div>
+              <div>
+                <dt>Price</dt>
+                <dd>Paid download, everything included</dd>
+              </div>
+              <div>
+                <dt>Release</dt>
+                <dd>To be announced</dd>
+              </div>
+              <div>
+                <dt>Languages</dt>
+                <dd>
+                  English, Swedish, Norwegian, Danish, Dutch, Italian, Portuguese, German, French,
+                  Spanish, Polish, Finnish, Czech, Turkish
+                </dd>
+              </div>
+            </dl>
+            <h4>Screenshots</h4>
+            <ul class="shots">
+              <li>
+                <a href="../cometmath/media/start.jpg" download
+                  ><img
+                    src="../cometmath/media/start.jpg"
+                    alt="The start screen with addition, subtraction, multiplication and division"
+                    loading="lazy"
+                /></a>
+              </li>
+              <li>
+                <a href="../cometmath/media/svar.jpg" download
+                  ><img
+                    src="../cometmath/media/svar.jpg"
+                    alt="The problem 1 + 1 with the answer 2 typed in"
+                    loading="lazy"
+                /></a>
+              </li>
+              <li>
+                <a href="../cometmath/media/ratt.jpg" download
+                  ><img
+                    src="../cometmath/media/ratt.jpg"
+                    alt="Correct answer: 1 + 1 = 2 scores ten points"
+                    loading="lazy"
+                /></a>
+              </li>
+              <li>
+                <a href="../cometmath/media/bildmatte.jpg" download
+                  ><img
+                    src="../cometmath/media/bildmatte.jpg"
+                    alt="Picture math: 1 + 5 with pictures to count and four answers to choose from"
+                    loading="lazy"
+                /></a>
+              </li>
+              <li>
+                <a href="../cometmath/media/resultat.jpg" download
+                  ><img
+                    src="../cometmath/media/resultat.jpg"
+                    alt="The result: 10 of 10 correct, three stars and a new record"
+                    loading="lazy"
+                /></a>
+              </li>
+              <li>
+                <a href="../cometmath/media/installningar.jpg" download
+                  ><img
+                    src="../cometmath/media/installningar.jpg"
+                    alt="Settings for language, time limit, sound and vibration"
+                    loading="lazy"
+                /></a>
+              </li>
+            </ul>
+            <div class="files">
+              <a class="file" href="media/cometmath-icon.png" download
+                >App icon <small>PNG, 1024 × 1024</small></a
+              >
+              <a class="file" href="../cometmath/media/klipp.mp4" download
+                >Gameplay video <small>MP4, 5 MB</small></a
+              >
+              <a class="file" href="../cometmath/">Web page</a>
+            </div>
+          </article>
+        </div>
+        <p class="note">Press releases and full-size store screenshots are added at launch.</p>
+      </section>
+
+      <section class="wrap" aria-labelledby="maker">
+        <h2 id="maker">Who makes the apps</h2>
+        <div class="text">
+          <p>
+            No Swell Studio is Daniel Sandberg, a software developer who has worked mostly with
+            frontend for many years. He made RocketWords and CometMath together with his two kids,
+            aged 6 and 8, who have played the games, come up with new ideas and helped shape them.
+          </p>
+          <p>
+            He got tired of kids' apps where the game takes over from the learning, and of all the
+            ads and tracking that pull children's attention away. In his apps the task is the game:
+            read the word and type it, work out the answer and type it. There is as little as
+            possible to distract, and you can sit down and practice for a while.
+          </p>
+        </div>
+        <ul class="promise">
+          <li>No in-app purchases</li>
+          <li>No ads</li>
+          <li>No tracking</li>
+          <li>No account</li>
+          <li>Works offline</li>
+        </ul>
+      </section>
+
+      <section class="contact wrap" aria-labelledby="contact">
+        <h2 id="contact">Contact</h2>
+        <div class="text">
+          <p>Questions, interviews or review copies: write to Daniel.</p>
+        </div>
+        <a href="mailto:hi@noswell.se">hi@noswell.se</a>
+      </section>
+    </main>
+    <footer class="site-foot">
+      <div class="wrap">
+        <a href="../">No Swell Studio</a>
+        <span>© 2026 No Swell Studio</span>
+      </div>
+    </footer>
+  </body>
+</html>
