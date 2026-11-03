@@ -869,6 +869,19 @@ section .wrap {
   color: var(--on-card-muted);
   grid-column: 2;
 }
+/* Föräldradelen: punkterna i en ruta, två kolumner */
+.promise {
+  padding: 40px;
+  border: 2px solid var(--cloud-light);
+  border-radius: 28px;
+}
+.promise .sec-head {
+  margin-bottom: 32px;
+}
+.promise .trust {
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px 40px;
+}
 
 /* Ladda ner */
 .cta .wrap {
@@ -944,8 +957,12 @@ footer .wrap {
   }
   .steps,
   .trust,
+  .promise .trust,
   .learn-grid {
     grid-template-columns: 1fr;
+  }
+  .promise {
+    padding: 24px;
   }
   .site-head nav {
     display: none;
