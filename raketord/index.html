@@ -102,16 +102,110 @@
           <path d="M4 21.5c.6.1 1.3 0 2-.4l11.5-6.6-3-2.8z" fill="#EA4335" />
           <path d="M17.5 9.7l-3 2.8 3 2.8 3-1.7c.9-.5.9-1.7 0-2.2z" fill="#FBBC04" />
         </symbol>
-        <symbol id="check" viewBox="0 0 40 40">
+        <!-- Ikonerna i föräldrarutan -->
+        <symbol id="i-wallet" viewBox="0 0 40 40">
           <circle cx="20" cy="20" r="18" fill="var(--hl-pale)" />
-          <path
-            d="M13 21l5 5 9-11"
-            stroke="var(--on-card)"
-            stroke-width="3.5"
+          <g
+            transform="translate(8 8)"
             fill="none"
+            stroke="var(--on-card)"
+            stroke-width="2"
             stroke-linecap="round"
             stroke-linejoin="round"
-          />
+          >
+            <path
+              d="M19 7V5.5A1.5 1.5 0 0 0 17.5 4H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h14a1 1 0 0 0 1-1v-3"
+            />
+            <path d="M3 6a2 2 0 0 0 2 2h14a1 1 0 0 1 1 1v3" />
+            <path d="M21 12v4h-4a2 2 0 0 1 0-4z" />
+          </g>
+        </symbol>
+        <symbol id="i-shield" viewBox="0 0 40 40">
+          <circle cx="20" cy="20" r="18" fill="var(--hl-pale)" />
+          <g
+            transform="translate(8 8)"
+            fill="none"
+            stroke="var(--on-card)"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z" />
+            <path d="M9 12l2 2 4-4" />
+          </g>
+        </symbol>
+        <symbol id="i-lock" viewBox="0 0 40 40">
+          <circle cx="20" cy="20" r="18" fill="var(--hl-pale)" />
+          <g
+            transform="translate(8 8)"
+            fill="none"
+            stroke="var(--on-card)"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <rect x="5" y="11" width="14" height="10" rx="2" />
+            <path d="M8 11V8a4 4 0 0 1 8 0v3" />
+          </g>
+        </symbol>
+        <symbol id="i-clock" viewBox="0 0 40 40">
+          <circle cx="20" cy="20" r="18" fill="var(--hl-pale)" />
+          <g
+            transform="translate(8 8)"
+            fill="none"
+            stroke="var(--on-card)"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <circle cx="12" cy="12" r="9" />
+            <path d="M12 7v5l3 2" />
+          </g>
+        </symbol>
+        <symbol id="i-sliders" viewBox="0 0 40 40">
+          <circle cx="20" cy="20" r="18" fill="var(--hl-pale)" />
+          <g
+            transform="translate(8 8)"
+            fill="none"
+            stroke="var(--on-card)"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12" />
+            <circle cx="16" cy="6" r="2" />
+            <circle cx="10" cy="12" r="2" />
+            <circle cx="18" cy="18" r="2" />
+          </g>
+        </symbol>
+        <symbol id="i-trophy" viewBox="0 0 40 40">
+          <circle cx="20" cy="20" r="18" fill="var(--hl-pale)" />
+          <g
+            transform="translate(8 8)"
+            fill="none"
+            stroke="var(--on-card)"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M8 4h8v5a4 4 0 0 1-8 0z" />
+            <path d="M8 6H5a3 3 0 0 0 3 4M16 6h3a3 3 0 0 1-3 4M12 13v4" />
+            <path d="M8 20h8l-1-3H9z" />
+          </g>
+        </symbol>
+        <symbol id="i-book" viewBox="0 0 40 40">
+          <circle cx="20" cy="20" r="18" fill="var(--hl-pale)" />
+          <g
+            transform="translate(8 8)"
+            fill="none"
+            stroke="var(--on-card)"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M4 5a2 2 0 0 1 2-2h13v15H6a2 2 0 0 0-2 2z" />
+            <path d="M4 20a2 2 0 0 0 2 2h13v-4" />
+          </g>
         </symbol>
 
         <!-- Himlakropparna i appen (src/components/sky/) -->
@@ -426,8 +520,9 @@
             <span class="eyebrow">Lärospel för barn 6–10 år</span>
             <h1>Hann du läsa ordet?</h1>
             <p class="lead">
-              Ett ord blixtrar förbi, och barnet skriver vad det såg. Raketord gör lästräningen
-              rolig och hjälper barn att känna igen ord snabbare och läsa säkrare.
+              Ett ord visas snabbt på skärmen och försvinner igen, och barnet skriver vad det såg.
+              Raketord gör lästräningen rolig och hjälper barn att känna igen ord snabbare och läsa
+              med större säkerhet.
             </p>
             <!-- Butikslänkarna läggs in när appen finns i butikerna. -->
             <div class="badges">
@@ -482,25 +577,28 @@
       <div class="wrap">
         <div class="sec-head">
           <span class="eyebrow">Så funkar det</span>
-          <h2>Från att ljuda till att läsa säkert</h2>
+          <h2>Från att ljuda till att känna igen orden</h2>
         </div>
         <ol class="steps">
           <li>
             <h3>Ordet visas en kort stund</h3>
             <p>
-              Barnet hinner inte ljuda bokstav för bokstav, utan övar på att känna igen hela ordet
-              på en gång.
+              Barnet får öva på att känna igen ordet direkt, utan att behöva läsa bokstav för
+              bokstav.
             </p>
           </li>
           <li>
             <h3>Barnet skriver ordet</h3>
-            <p>Då syns det att ordet verkligen blev läst, och stavningen tränas på köpet.</p>
+            <p>
+              När barnet skriver ordet får det visa vad det hann läsa. Samtidigt får stavningen lite
+              extra träning.
+            </p>
           </li>
           <li>
             <h3>Tiden kortas steg för steg</h3>
             <p>
-              För varje nivå visas ordet lite kortare tid. Läsningen blir snabbare och säkrare,
-              tills den går av sig själv.
+              För varje nivå visas ordet lite kortare tid. Barnet får steg för steg öva på att läsa
+              snabbare och känna igen fler ord direkt.
             </p>
           </li>
         </ol>
@@ -542,9 +640,7 @@
                 loading="lazy"
               />
             </div>
-            <figcaption>
-              Rätt svar ger poäng<span>Direkt återkoppling på varje ord</span>
-            </figcaption>
+            <figcaption>Rätt svar ger poäng<span>Direkt feedback på varje ord</span></figcaption>
           </figure>
           <figure>
             <div class="phone small">
@@ -590,7 +686,7 @@
       <div class="wrap">
         <div class="sec-head">
           <span class="eyebrow">Vad barnet lär sig</span>
-          <h2>Från första orden till skolans ämnen</h2>
+          <h2>Träna på ord – och bli säkrare i läsningen</h2>
           <p>
             Raketord är gjort för barn 6–10 år som går från att ljuda till att känna igen hela ord.
             Expert är en utmaning för den som redan läser flytande.
@@ -598,22 +694,22 @@
         </div>
         <div class="learn-grid">
           <div>
-            <h3>Läsa snabbare</h3>
+            <h3>Läsa snabbare och säkrare</h3>
             <p>När vanliga ord känns igen direkt går läsningen snabbare och blir lättare.</p>
           </div>
           <div>
-            <h3>Känna igen ord</h3>
+            <h3>Känna igen vanliga ord</h3>
             <p>Samma vanliga ord kommer tillbaka tills barnet känner igen dem direkt.</p>
           </div>
           <div>
-            <h3>Extra träning när läsningen är jobbig</h3>
+            <h3>Extra lästräning när det behövs</h3>
             <p>
-              Korta, lekfulla pass med tydliga bokstäver och direkt återkoppling kan vara ett bra
-              komplement för den som tycker att läsning är jobbigt.
+              Korta och lekfulla övningar med tydliga bokstäver och direkt feedback. Ett roligt sätt
+              att få lite extra lästräning när det behövs.
             </p>
           </div>
           <div>
-            <h3>Ord på tolv språk</h3>
+            <h3>Öva på ord på tolv språk</h3>
             <p>
               Svenska, engelska, norska, danska, nederländska, italienska, portugisiska, tyska,
               franska, spanska, finska och polska. Bra även för den som övar ett nytt språk.
@@ -656,9 +752,9 @@
           <span class="eyebrow">Prova först</span>
           <h2>Testa i webbläsaren</h2>
           <p>
-            Se om Raketord passar ert barn innan ni laddar ner. Gratisversionen fungerar i
-            webbläsaren på både dator och telefon och har alla fyra svårighetsgraderna, men bara den
-            första nivån. I appen finns alla tio.
+            Osäker på om Raketord passar ditt barn? Prova gratis, direkt i webbläsaren, på dator
+            eller telefon. Gratisversionen har alla fyra svårighetsgraderna, men bara den första
+            nivån. I appen finns alla tio.
           </p>
         </div>
         <a class="btn" href="https://dsandberg.github.io/raketord-test/">Prova gratis</a>
@@ -678,39 +774,39 @@
           </div>
           <div class="trust">
             <div>
-              <svg aria-hidden="true"><use href="#check" /></svg>
+              <svg aria-hidden="true"><use href="#i-wallet" /></svg>
               <h3>Betala en gång</h3>
-              <p>Allt ingår från början.</p>
+              <p>Inga abonnemang, och allt ingår.</p>
             </div>
             <div>
-              <svg aria-hidden="true"><use href="#check" /></svg>
+              <svg aria-hidden="true"><use href="#i-shield" /></svg>
               <h3>Ingen reklam</h3>
               <p>Bara lärande och lek.</p>
             </div>
             <div>
-              <svg aria-hidden="true"><use href="#check" /></svg>
+              <svg aria-hidden="true"><use href="#i-lock" /></svg>
               <h3>Ingen spårning</h3>
               <p>Inga konton, och ingen data lämnar telefonen.</p>
             </div>
             <div>
-              <svg aria-hidden="true"><use href="#check" /></svg>
+              <svg aria-hidden="true"><use href="#i-clock" /></svg>
               <h3>Korta pass</h3>
-              <p>Några minuter i taget, med direkt återkoppling.</p>
+              <p>Några minuter i taget, med direkt feedback.</p>
             </div>
             <div>
-              <svg aria-hidden="true"><use href="#check" /></svg>
+              <svg aria-hidden="true"><use href="#i-sliders" /></svg>
               <h3>Anpassa efter barnet</h3>
               <p>Ställ in hastigheten, och välj stora eller små bokstäver.</p>
             </div>
             <div>
-              <svg aria-hidden="true"><use href="#check" /></svg>
+              <svg aria-hidden="true"><use href="#i-trophy" /></svg>
               <h3>Slå ditt eget rekord</h3>
-              <p>Stjärnor, rekord och medaljer att jaga, men ingen topplista.</p>
+              <p>Varje nytt rekord är barnets eget. Ingen topplista, bara egna framsteg.</p>
             </div>
             <div>
-              <svg aria-hidden="true"><use href="#check" /></svg>
+              <svg aria-hidden="true"><use href="#i-book" /></svg>
               <h3>Alla ord passar barn</h3>
-              <p>Även i Expert är varje ord valt så att det passar en sexåring.</p>
+              <p>Även på de svåraste nivåerna är orden utvalda med barn i åtanke.</p>
             </div>
           </div>
         </div>

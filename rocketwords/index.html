@@ -8,7 +8,7 @@
     <title>RocketWords – can you read the word in time?</title>
     <meta
       name="description"
-      content="Learning game for kids aged 6–10. A word flashes by and disappears. Type what you saw and practice recognizing whole words quickly."
+      content="Learning game for kids aged 6–10. A word flashes by and disappears. Type what you saw and practise recognising whole words quickly."
     />
     <meta name="theme-color" content="#3B6F7E" />
     <link rel="icon" href="../raketord/favicon.png" />
@@ -102,16 +102,110 @@
           <path d="M4 21.5c.6.1 1.3 0 2-.4l11.5-6.6-3-2.8z" fill="#EA4335" />
           <path d="M17.5 9.7l-3 2.8 3 2.8 3-1.7c.9-.5.9-1.7 0-2.2z" fill="#FBBC04" />
         </symbol>
-        <symbol id="check" viewBox="0 0 40 40">
+        <!-- Ikonerna i föräldrarutan -->
+        <symbol id="i-wallet" viewBox="0 0 40 40">
           <circle cx="20" cy="20" r="18" fill="var(--hl-pale)" />
-          <path
-            d="M13 21l5 5 9-11"
-            stroke="var(--on-card)"
-            stroke-width="3.5"
+          <g
+            transform="translate(8 8)"
             fill="none"
+            stroke="var(--on-card)"
+            stroke-width="2"
             stroke-linecap="round"
             stroke-linejoin="round"
-          />
+          >
+            <path
+              d="M19 7V5.5A1.5 1.5 0 0 0 17.5 4H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h14a1 1 0 0 0 1-1v-3"
+            />
+            <path d="M3 6a2 2 0 0 0 2 2h14a1 1 0 0 1 1 1v3" />
+            <path d="M21 12v4h-4a2 2 0 0 1 0-4z" />
+          </g>
+        </symbol>
+        <symbol id="i-shield" viewBox="0 0 40 40">
+          <circle cx="20" cy="20" r="18" fill="var(--hl-pale)" />
+          <g
+            transform="translate(8 8)"
+            fill="none"
+            stroke="var(--on-card)"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z" />
+            <path d="M9 12l2 2 4-4" />
+          </g>
+        </symbol>
+        <symbol id="i-lock" viewBox="0 0 40 40">
+          <circle cx="20" cy="20" r="18" fill="var(--hl-pale)" />
+          <g
+            transform="translate(8 8)"
+            fill="none"
+            stroke="var(--on-card)"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <rect x="5" y="11" width="14" height="10" rx="2" />
+            <path d="M8 11V8a4 4 0 0 1 8 0v3" />
+          </g>
+        </symbol>
+        <symbol id="i-clock" viewBox="0 0 40 40">
+          <circle cx="20" cy="20" r="18" fill="var(--hl-pale)" />
+          <g
+            transform="translate(8 8)"
+            fill="none"
+            stroke="var(--on-card)"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <circle cx="12" cy="12" r="9" />
+            <path d="M12 7v5l3 2" />
+          </g>
+        </symbol>
+        <symbol id="i-sliders" viewBox="0 0 40 40">
+          <circle cx="20" cy="20" r="18" fill="var(--hl-pale)" />
+          <g
+            transform="translate(8 8)"
+            fill="none"
+            stroke="var(--on-card)"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12" />
+            <circle cx="16" cy="6" r="2" />
+            <circle cx="10" cy="12" r="2" />
+            <circle cx="18" cy="18" r="2" />
+          </g>
+        </symbol>
+        <symbol id="i-trophy" viewBox="0 0 40 40">
+          <circle cx="20" cy="20" r="18" fill="var(--hl-pale)" />
+          <g
+            transform="translate(8 8)"
+            fill="none"
+            stroke="var(--on-card)"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M8 4h8v5a4 4 0 0 1-8 0z" />
+            <path d="M8 6H5a3 3 0 0 0 3 4M16 6h3a3 3 0 0 1-3 4M12 13v4" />
+            <path d="M8 20h8l-1-3H9z" />
+          </g>
+        </symbol>
+        <symbol id="i-book" viewBox="0 0 40 40">
+          <circle cx="20" cy="20" r="18" fill="var(--hl-pale)" />
+          <g
+            transform="translate(8 8)"
+            fill="none"
+            stroke="var(--on-card)"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M4 5a2 2 0 0 1 2-2h13v15H6a2 2 0 0 0-2 2z" />
+            <path d="M4 20a2 2 0 0 0 2 2h13v-4" />
+          </g>
         </symbol>
 
         <!-- Himlakropparna i appen (src/components/sky/) -->
@@ -426,8 +520,9 @@
             <span class="eyebrow">Learning game for kids aged 6–10</span>
             <h1>Can you read the word in time?</h1>
             <p class="lead">
-              A word flashes by, and your child types what they saw. RocketWords makes reading
-              practice fun and helps kids recognize words faster and read with more confidence.
+              A word flashes on the screen and disappears, and your child types what they saw.
+              RocketWords makes reading practice fun and helps kids recognise words more quickly and
+              confidently.
             </p>
             <!-- Butikslänkarna läggs in när appen finns i butikerna. -->
             <div class="badges">
@@ -488,19 +583,19 @@
           <li>
             <h3>The word shows for a moment</h3>
             <p>
-              There is no time to sound it out letter by letter, so the child practices recognizing
-              the whole word at once.
+              The child gets a quick look at each word and practises recognising it without having
+              to sound out every letter.
             </p>
           </li>
           <li>
             <h3>The child types the word</h3>
-            <p>That shows the word was really read – and spelling gets practiced along the way.</p>
+            <p>That shows the word was really read – and spelling gets practised along the way.</p>
           </li>
           <li>
             <h3>Less time, step by step</h3>
             <p>
-              With every level, the word shows a little shorter. Reading gets faster and more
-              confident, until it comes naturally.
+              With every level, the word shows a little shorter. Step by step, your child practises
+              reading faster and recognising more words at a glance.
             </p>
           </li>
         </ol>
@@ -590,33 +685,33 @@
       <div class="wrap">
         <div class="sec-head">
           <span class="eyebrow">What kids learn</span>
-          <h2>From first words to school subjects</h2>
+          <h2>Build reading confidence, one word at a time</h2>
           <p>
             RocketWords is made for kids aged 6–10 who are moving from sounding out words to
-            recognizing them whole. Expert is a challenge for those who already read fluently.
+            recognising them whole. Expert is a challenge for those who already read fluently.
           </p>
         </div>
         <div class="learn-grid">
           <div>
             <h3>Read faster</h3>
-            <p>When common words are recognized at a glance, reading gets quicker and easier.</p>
+            <p>When common words are recognised at a glance, reading gets quicker and easier.</p>
           </div>
           <div>
-            <h3>Recognize words</h3>
+            <h3>Recognise words</h3>
             <p>The same common words keep coming back until your child knows them at a glance.</p>
           </div>
           <div>
-            <h3>Extra practice when reading is hard</h3>
+            <h3>Extra reading practice</h3>
             <p>
-              Short, playful sessions with clear letters and instant feedback can be a good
-              complement for kids who find reading hard.
+              Short, playful sessions with clear letters and instant feedback. A fun way to get a
+              little extra reading practice.
             </p>
           </div>
           <div>
             <h3>Words in twelve languages</h3>
             <p>
               English, Swedish, Norwegian, Danish, Dutch, Italian, Portuguese, German, French,
-              Spanish, Finnish and Polish. Great for practicing a new language, too.
+              Spanish, Finnish and Polish. Great for practising a new language, too.
             </p>
           </div>
         </div>
@@ -656,9 +751,9 @@
           <span class="eyebrow">Try it first</span>
           <h2>Try it in your browser</h2>
           <p>
-            See if RocketWords suits your child before you download. The free version works in the
-            browser on both computer and phone and has all four difficulty levels, but only level 1.
-            The app has all ten levels.
+            Not sure if RocketWords is right for your child? Try it for free, right here in your
+            browser, on a computer or a phone. The free version has all four difficulty levels, but
+            only level 1. The app has all ten levels.
           </p>
         </div>
         <a class="btn" href="https://dsandberg.github.io/raketord-test/">Try it free</a>
@@ -678,39 +773,42 @@
           </div>
           <div class="trust">
             <div>
-              <svg aria-hidden="true"><use href="#check" /></svg>
+              <svg aria-hidden="true"><use href="#i-wallet" /></svg>
               <h3>One-time purchase</h3>
-              <p>Pay once. Everything is included.</p>
+              <p>Pay once. Play and learn without limits.</p>
             </div>
             <div>
-              <svg aria-hidden="true"><use href="#check" /></svg>
+              <svg aria-hidden="true"><use href="#i-shield" /></svg>
               <h3>No ads</h3>
               <p>Just learning and playing.</p>
             </div>
             <div>
-              <svg aria-hidden="true"><use href="#check" /></svg>
+              <svg aria-hidden="true"><use href="#i-lock" /></svg>
               <h3>No tracking</h3>
               <p>No accounts, and no data leaves the phone.</p>
             </div>
             <div>
-              <svg aria-hidden="true"><use href="#check" /></svg>
+              <svg aria-hidden="true"><use href="#i-clock" /></svg>
               <h3>Short sessions</h3>
               <p>A few minutes of practice at a time, with instant feedback.</p>
             </div>
             <div>
-              <svg aria-hidden="true"><use href="#check" /></svg>
+              <svg aria-hidden="true"><use href="#i-sliders" /></svg>
               <h3>Adjust to your child</h3>
               <p>Set the speed, and choose uppercase or lowercase letters.</p>
             </div>
             <div>
-              <svg aria-hidden="true"><use href="#check" /></svg>
+              <svg aria-hidden="true"><use href="#i-trophy" /></svg>
               <h3>Beat your own record</h3>
-              <p>Stars, records and medals to chase, but no leaderboard.</p>
+              <p>
+                Every new record is your child's own achievement. No leaderboards, just personal
+                progress.
+              </p>
             </div>
             <div>
-              <svg aria-hidden="true"><use href="#check" /></svg>
+              <svg aria-hidden="true"><use href="#i-book" /></svg>
               <h3>Every word is kid-friendly</h3>
-              <p>Even in Expert, every word is chosen to suit a six-year-old.</p>
+              <p>Even at the hardest levels, every word is chosen with children in mind.</p>
             </div>
           </div>
         </div>
@@ -767,7 +865,7 @@
           <span>
             <small>More apps</small>
             <strong>CometMath</strong>
-            Practice addition, subtraction, multiplication and division.
+            Practise addition, subtraction, multiplication and division.
           </span>
         </a>
         <nav class="foot-links" aria-label="Footer">

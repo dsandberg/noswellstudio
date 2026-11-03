@@ -8,7 +8,7 @@
     <title>Kometmatte – redo för en matteutmaning?</title>
     <meta
       name="description"
-      content="Lärospel för barn 6–10 år. Räkna plus, minus, gånger och delat med i din egen takt, och träna tills talfakta och tabeller sitter."
+      content="Lärospel för barn 6–10 år. Räkna plus, minus, gånger och delat med i din egen takt, och bli säkrare på tabellerna."
     />
     <meta name="theme-color" content="#663F64" />
     <link rel="icon" href="favicon.png" />
@@ -58,16 +58,94 @@
           <path d="M4 21.5c.6.1 1.3 0 2-.4l11.5-6.6-3-2.8z" fill="#EA4335" />
           <path d="M17.5 9.7l-3 2.8 3 2.8 3-1.7c.9-.5.9-1.7 0-2.2z" fill="#FBBC04" />
         </symbol>
-        <symbol id="check" viewBox="0 0 40 40">
+        <!-- Ikonerna i föräldrarutan -->
+        <symbol id="i-wallet" viewBox="0 0 40 40">
           <circle cx="20" cy="20" r="18" fill="var(--hl-pale)" />
-          <path
-            d="M13 21l5 5 9-11"
-            stroke="var(--on-card)"
-            stroke-width="3.5"
+          <g
+            transform="translate(8 8)"
             fill="none"
+            stroke="var(--on-card)"
+            stroke-width="2"
             stroke-linecap="round"
             stroke-linejoin="round"
-          />
+          >
+            <path
+              d="M19 7V5.5A1.5 1.5 0 0 0 17.5 4H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h14a1 1 0 0 0 1-1v-3"
+            />
+            <path d="M3 6a2 2 0 0 0 2 2h14a1 1 0 0 1 1 1v3" />
+            <path d="M21 12v4h-4a2 2 0 0 1 0-4z" />
+          </g>
+        </symbol>
+        <symbol id="i-shield" viewBox="0 0 40 40">
+          <circle cx="20" cy="20" r="18" fill="var(--hl-pale)" />
+          <g
+            transform="translate(8 8)"
+            fill="none"
+            stroke="var(--on-card)"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z" />
+            <path d="M9 12l2 2 4-4" />
+          </g>
+        </symbol>
+        <symbol id="i-lock" viewBox="0 0 40 40">
+          <circle cx="20" cy="20" r="18" fill="var(--hl-pale)" />
+          <g
+            transform="translate(8 8)"
+            fill="none"
+            stroke="var(--on-card)"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <rect x="5" y="11" width="14" height="10" rx="2" />
+            <path d="M8 11V8a4 4 0 0 1 8 0v3" />
+          </g>
+        </symbol>
+        <symbol id="i-clock" viewBox="0 0 40 40">
+          <circle cx="20" cy="20" r="18" fill="var(--hl-pale)" />
+          <g
+            transform="translate(8 8)"
+            fill="none"
+            stroke="var(--on-card)"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <circle cx="12" cy="12" r="9" />
+            <path d="M12 7v5l3 2" />
+          </g>
+        </symbol>
+        <symbol id="i-trophy" viewBox="0 0 40 40">
+          <circle cx="20" cy="20" r="18" fill="var(--hl-pale)" />
+          <g
+            transform="translate(8 8)"
+            fill="none"
+            stroke="var(--on-card)"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M8 4h8v5a4 4 0 0 1-8 0z" />
+            <path d="M8 6H5a3 3 0 0 0 3 4M16 6h3a3 3 0 0 1-3 4M12 13v4" />
+            <path d="M8 20h8l-1-3H9z" />
+          </g>
+        </symbol>
+        <symbol id="i-globe" viewBox="0 0 40 40">
+          <circle cx="20" cy="20" r="18" fill="var(--hl-pale)" />
+          <g
+            transform="translate(8 8)"
+            fill="none"
+            stroke="var(--on-card)"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <circle cx="12" cy="12" r="9" />
+            <path d="M3 12h18M12 3a14 14 0 0 1 0 18a14 14 0 0 1 0-18z" />
+          </g>
         </symbol>
 
         <!-- Himlakropparna i appen (src/components/sky/) -->
@@ -382,8 +460,9 @@
             <span class="eyebrow">Lärospel för barn 6–10 år</span>
             <h1>Redo för en matteutmaning?</h1>
             <p class="lead">
-              Träna plus, minus, gånger och delat med i korta, roliga omgångar. Ingen klocka
-              stressar, men snabba svar ger mest poäng.
+              Öva på plus, minus, gånger och delat med i korta och roliga omgångar. Här finns ingen
+              tidspress – barnet får räkna i sin egen takt. Snabba svar ger lite extra poäng för den
+              som vill utmana sig själv.
             </p>
             <!-- Butikslänkarna läggs in när appen finns i butikerna. -->
             <div class="badges">
@@ -437,28 +516,28 @@
       <div class="wrap">
         <div class="sec-head">
           <span class="eyebrow">Så funkar det</span>
-          <h2>Från att räkna fram till att bara kunna</h2>
+          <h2>Från att räkna till att kunna svaret direkt</h2>
         </div>
         <ol class="steps">
           <li>
             <h3>Välj räknesätt och nivå</h3>
             <p>
-              Plus, minus, gånger eller delat med. Barnet börjar där det känns lagom och går vidare
-              i egen takt.
+              Plus, minus, gånger eller delat med. Barnet börjar på en nivå som känns lagom och
+              utvecklas i sin egen takt.
             </p>
           </li>
           <li>
             <h3>Barnet svarar i lugn takt</h3>
             <p>
-              Ingen tid rinner ut, så barnet hinner tänka. Den som vill ha mer utmaning kan slå på
-              en tidsgräns.
+              Ingen tid räknas ner, så barnet får tänka i lugn och ro. Den som vill ha en extra
+              utmaning kan slå på en tidsgräns.
             </p>
           </li>
           <li>
             <h3>Bättre för varje gång</h3>
             <p>
-              Uppgifterna blir svårare steg för steg. Till slut kan barnet svaret direkt i stället
-              för att räkna på fingrarna.
+              Uppgifterna blir svårare steg för steg. Med övning lär sig barnet fler svar utantill
+              och behöver inte längre räkna på fingrarna.
             </p>
           </li>
         </ol>
@@ -553,28 +632,31 @@
           <h2>Bättre på matte, ett steg i taget</h2>
           <p>
             Kometmatte är gjort för barn 6–10 år som går från att räkna på fingrarna till att kunna
-            talfakta och tabeller utantill. Expert är en utmaning för 10-åringen.
+            svaren och tabellerna utantill. Expert är en utmaning för 10-åringen.
           </p>
         </div>
         <div class="learn-grid">
           <div>
-            <h3>Snabbare på matte</h3>
+            <h3>Säkrare på matte</h3>
             <p>
-              När 8 + 5 och 7 × 8 sitter behöver barnet inte räkna steg för steg, och kan lägga
-              kraften på svårare matte.
+              När barnet kan svaren på till exempel 8 + 5 och 7 × 8 utantill blir det lättare att ta
+              sig an svårare mattetal.
             </p>
           </div>
           <div>
-            <h3>En utmaning som växer med barnet</h3>
+            <h3>En utmaning som följer barnets utveckling</h3>
             <p>Uppgifterna blir svårare för varje nivå, i barnets egen takt.</p>
           </div>
           <div>
-            <h3>Mer träning på det svåra</h3>
-            <p>Samma uppgifter återkommer tills de sitter, och det ger medaljer.</p>
+            <h3>Öva lite extra på det som är svårt</h3>
+            <p>
+              Uppgifter som är lite kluriga kommer tillbaka så att barnet får öva mer. När barnet
+              klarar dem samlas poäng och medaljer.
+            </p>
           </div>
           <div>
-            <h3>Extra träning när matte känns svårt</h3>
-            <p>Korta, lekfulla pass med direkt återkoppling och rätt svar vid fel.</p>
+            <h3>Extra matteträning när det behövs</h3>
+            <p>Korta, lekfulla pass med direkt feedback och rätt svar vid fel.</p>
           </div>
         </div>
         <div class="levels-wrap">
@@ -636,32 +718,32 @@
           </div>
           <div class="trust">
             <div>
-              <svg aria-hidden="true"><use href="#check" /></svg>
+              <svg aria-hidden="true"><use href="#i-wallet" /></svg>
               <h3>Betala en gång</h3>
-              <p>Allt ingår från början.</p>
+              <p>Inga abonnemang, och allt ingår.</p>
             </div>
             <div>
-              <svg aria-hidden="true"><use href="#check" /></svg>
+              <svg aria-hidden="true"><use href="#i-shield" /></svg>
               <h3>Ingen reklam</h3>
               <p>Bara lärande och lek.</p>
             </div>
             <div>
-              <svg aria-hidden="true"><use href="#check" /></svg>
+              <svg aria-hidden="true"><use href="#i-lock" /></svg>
               <h3>Ingen spårning</h3>
               <p>Inga konton, och ingen data lämnar telefonen.</p>
             </div>
             <div>
-              <svg aria-hidden="true"><use href="#check" /></svg>
+              <svg aria-hidden="true"><use href="#i-clock" /></svg>
               <h3>Lugnt tempo</h3>
               <p>Ingen klocka som stressar, om man inte vill.</p>
             </div>
             <div>
-              <svg aria-hidden="true"><use href="#check" /></svg>
+              <svg aria-hidden="true"><use href="#i-trophy" /></svg>
               <h3>Slå ditt eget rekord</h3>
-              <p>Stjärnor, rekord och medaljer att jaga, men ingen topplista.</p>
+              <p>Varje nytt rekord är barnets eget. Ingen topplista, bara egna framsteg.</p>
             </div>
             <div>
-              <svg aria-hidden="true"><use href="#check" /></svg>
+              <svg aria-hidden="true"><use href="#i-globe" /></svg>
               <h3>14 språk</h3>
               <p>
                 Svenska, engelska, norska, danska, nederländska, italienska, portugisiska, tyska,
