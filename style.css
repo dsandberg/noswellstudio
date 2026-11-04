@@ -883,6 +883,15 @@ section .wrap {
   gap: 24px 40px;
 }
 
+/* Hjälp och kontakt */
+.help .btn {
+  margin-bottom: 48px;
+}
+.help .learn-grid {
+  grid-template-columns: repeat(3, 1fr);
+  margin-bottom: 0;
+}
+
 /* Ladda ner */
 .cta .wrap {
   display: grid;
@@ -958,7 +967,8 @@ footer .wrap {
   .steps,
   .trust,
   .promise .trust,
-  .learn-grid {
+  .learn-grid,
+  .help .learn-grid {
     grid-template-columns: 1fr;
   }
   .promise {
