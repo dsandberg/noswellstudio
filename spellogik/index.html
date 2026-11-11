@@ -1,0 +1,2560 @@
+<!doctype html>
+<html lang="sv">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- Intern sida för teamet och testare. Länkas inte från andra sidor. -->
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Spellogiken i Raketord och Kometmatte</title>
+    <meta name="theme-color" content="#3B6F7E" />
+    <link rel="icon" href="../favicon.svg" />
+    <link rel="stylesheet" href="spellogik.css" />
+  </head>
+  <body>
+    <svg width="0" height="0" style="position: absolute" aria-hidden="true">
+      <defs>
+        <!-- En rundad femuddig stjärna (src/components/star.ts). Färgen kommer från CSS. -->
+        <symbol id="star" viewBox="0 0 24 24">
+          <path d="M12 2.5l2.9 6 6.6.8-4.9 4.6 1.3 6.6L12 17.3l-5.9 3.2 1.3-6.6-4.9-4.6 6.6-.8z" />
+        </symbol>
+        <!-- Medaljen som i appen (src/components/Podium.tsx, MedalIcon): band, skiva med kant och en
+     präglad stjärna. Färgerna kommer från CSS-variablerna --ribbon, --ribbon-shade, --metal
+     och --metal-edge. -->
+        <symbol id="medal" viewBox="0 0 20 24">
+          <path d="M3 .5h5.5L10 4l1.5-3.5H17L13 10H7z" fill="var(--ribbon)" />
+          <path d="M10 4l1.5-3.5H17L13 10h-3z" fill="var(--ribbon-shade)" />
+          <circle cx="10" cy="15.5" r="8" fill="var(--metal-edge)" />
+          <circle cx="10" cy="15.5" r="6.5" fill="var(--metal)" />
+          <path
+            transform="translate(4.6 10.3) scale(0.45)"
+            d="M12 2.5l2.9 6 6.6.8-4.9 4.6 1.3 6.6L12 17.3l-5.9 3.2 1.3-6.6-4.9-4.6 6.6-.8z"
+            fill="var(--metal-edge)"
+            stroke="var(--metal-edge)"
+            stroke-width="1.5"
+            stroke-linejoin="round"
+          />
+        </symbol>
+        <!-- Bocken under en klarad nivå på nivåstegen -->
+        <symbol id="tick" viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="12" fill="#8FD19E" />
+          <path
+            d="M7 12.5l3.3 3.3L17 9"
+            stroke="#24434C"
+            stroke-width="2.6"
+            fill="none"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </symbol>
+        <!-- Raketords raket, Lätt-raketen (src/components/Rocket.tsx) -->
+        <clipPath id="rocket-body">
+          <path d="M50 8C66 20 74 44 74 70v34q0 8-8 8H34q-8 0-8-8V70C26 44 34 20 50 8z" />
+        </clipPath>
+        <symbol id="rocket" viewBox="0 0 100 160">
+          <path d="M35 104C35 117.5 44 128 50 134C56 128 65 117.5 65 104z" fill="#E9963B" />
+          <path d="M42 104C42 113.5 46.8 120.8 50 125C53.2 120.8 58 113.5 58 104z" fill="#F7D27E" />
+          <path d="M27 78C15 84 10 96 10 114l17-6zM73 78c12 6 17 18 17 36l-17-6z" fill="#96382D" />
+          <rect x="47.5" y="0" width="5" height="14" rx="2.5" fill="#24434C" />
+          <path
+            d="M50 8C66 20 74 44 74 70v34q0 8-8 8H34q-8 0-8-8V70C26 44 34 20 50 8z"
+            fill="#B5483A"
+          />
+          <g clip-path="url(#rocket-body)">
+            <rect x="50" y="0" width="50" height="160" fill="rgba(0,0,0,.11)" />
+          </g>
+          <circle cx="50" cy="54" r="12" fill="#3B6F7E" stroke="#DCE3E3" stroke-width="5" />
+          <path
+            d="M44 50a7 7 0 0 1 6-5"
+            stroke="#fff"
+            stroke-opacity=".6"
+            stroke-width="2.5"
+            stroke-linecap="round"
+            fill="none"
+          />
+        </symbol>
+        <!-- Kometmattes Lätt-komet (src/components/Comet.tsx) -->
+        <symbol id="comet" viewBox="0 0 100 160">
+          <path
+            d="M24.7 52L24.7 70.7L35.6 126.9L44.3 91.3L54.7 145.6L60.7 96.9L72.7 132.5L79.3 72.6L79.3 52Z"
+            fill="#86D8F4"
+            fill-opacity=".5"
+          />
+          <path
+            d="M26.8 91.3L35.6 126.9L44.3 91.3L54.7 145.6L60.7 96.9L72.7 132.5L78.2 93.2L64 78.2L46.5 76.3Z"
+            fill="#3E9EE0"
+          />
+          <path
+            d="M31.2 98.8L36.1 117.5L42.1 93.2L48.7 89.4L54.7 134.4L58.5 95.1L66.1 93.2L71.6 123.1L74.9 96.9L62.9 85.7L46.5 83.8Z"
+            fill="#86D8F4"
+          />
+          <g transform="translate(50 52) scale(.65)">
+            <circle cx="3" cy="3" r="42" fill="#3E9EE0" />
+            <circle r="40" fill="#F08A2E" />
+            <path d="M-38.1 12.2A40 40 0 0 1 12.2 -38.1A36 36 0 1 1 -38.1 12.2Z" fill="#F9B44A" />
+            <path
+              d="M-24.7 -11.6A10 6 -40 1 0 -9.3 -24.4A10 6 -40 1 0 -24.7 -11.6Z"
+              fill="#F7D88F"
+            />
+            <path
+              d="M4.6 0.6A10 12 20 1 0 23.4 7.4A10 12 20 1 0 4.6 0.6ZM20.1 -15.9A5 6 10 1 0 29.9 -14.1A5 6 10 1 0 20.1 -15.9ZM-10.9 27.6A9 6 -10 1 0 6.9 24.4A9 6 -10 1 0 -10.9 27.6ZM-28 14A4 3 0 1 0 -20 14A4 3 0 1 0 -28 14Z"
+              fill="#CF5F22"
+            />
+          </g>
+        </symbol>
+      </defs>
+    </svg>
+
+    <header class="top">
+      <div class="top-inner">
+        <svg class="" viewBox="0 0 100 160" aria-hidden="true"><use href="#rocket" /></svg>
+        <div>
+          <h1>Så fungerar spelen</h1>
+          <p>
+            Nivåer, rundor, stjärnor, medaljer och poäng i Raketord och Kometmatte. För teamet och
+            testare.
+          </p>
+        </div>
+        <svg class="" viewBox="0 0 100 160" aria-hidden="true"><use href="#comet" /></svg>
+      </div>
+    </header>
+
+    <main>
+      <section class="box" id="snabba-svar" aria-labelledby="snabba-svar-rubrik">
+        <h2 id="snabba-svar-rubrik">Snabba svar</h2>
+        <ul class="quick">
+          <li>
+            <b>Vad är en svårighetsgrad?</b
+            ><span
+              >Lätt, Mellan, Svår eller Expert, som barnet väljer. Den avgör vad som kommer:
+              ordlängden i Raketord, talområdet i Kometmatte. Varje svårighetsgrad har tio nivåer.
+              <a href="#nivaer">Vad ändras mellan nivåerna</a></span
+            >
+          </li>
+          <li>
+            <b>Vad är en nivå?</b
+            ><span
+              >Ett steg av tio i en svårighetsgrad. Ju högre nivå, desto kortare visas ordet
+              (Raketord) eller desto svårare uppgifter (Kometmatte).
+              <a href="#byggstenar">Byggstenarna</a></span
+            >
+          </li>
+          <li>
+            <b>Vad är en runda?</b
+            ><span
+              >Ett försök på en nivå: 10 ord eller 10 uppgifter i rad, sedan kommer resultatet.
+              <a href="#runda">En runda steg för steg</a></span
+            >
+          </li>
+          <li>
+            <b>Hur många nivåer har en runda?</b
+            ><span
+              >En. Det är tvärtom: en runda hör till en nivå, och en nivå kan spelas hur många
+              gånger som helst. <a href="#byggstenar">Runda, nivå och spelomgång</a></span
+            >
+          </li>
+          <li>
+            <b>Vad krävs för medaljerna?</b
+            ><span
+              >Stjärnor på nivå 1 till 10 i ett svep: minst 1 på varje ger brons, minst 2 silver och
+              3 på alla guld. <a href="#medaljer">Medaljer</a></span
+            >
+          </li>
+          <li>
+            <b>Hur räknas poängen?</b
+            ><span
+              >Ett rätt svar ger 10 poäng, ett snabbt 20 och ett blixtsnabbt 30. Fel svar ger 0. I
+              Raketord ger hastigheten ×2–×4 lite extra på rundan. <a href="#poang">Poäng</a></span
+            >
+          </li>
+          <li>
+            <b>Vilka uppgifter finns i Kometmatte?</b
+            ><span
+              >Alla uppgifter i varje räknesätt och svårighetsgrad, och nivån där de kommer första
+              gången. <a href="uppgifter.html">Kometmattes uppgifter</a></span
+            >
+          </li>
+        </ul>
+      </section>
+
+      <nav class="box" aria-labelledby="innehall-rubrik">
+        <h2 id="innehall-rubrik">Innehåll</h2>
+        <ol class="toc">
+          <li>
+            <a href="#byggstenar"><span class="num">1</span>Byggstenarna</a>
+          </li>
+          <li>
+            <a href="#nivaer"><span class="num">2</span>Vad ändras mellan nivåerna?</a>
+          </li>
+          <li>
+            <a href="#runda"><span class="num">3</span>En runda steg för steg</a>
+          </li>
+          <li>
+            <a href="#stjarnor"><span class="num">4</span>Stjärnor per runda</a>
+          </li>
+          <li>
+            <a href="#efter"><span class="num">5</span>Efter rundan</a>
+          </li>
+          <li>
+            <a href="#medaljer"><span class="num">6</span>Medaljer</a>
+          </li>
+          <li>
+            <a href="#poang"><span class="num">7</span>Poäng</a>
+          </li>
+          <li>
+            <a href="#hastighet"><span class="num">8</span>Hastighet</a>
+          </li>
+          <li>
+            <a href="#urval"><span class="num">9</span>Vilka ord och uppgifter som kommer</a>
+          </li>
+          <li>
+            <a href="#prov"><span class="num">10</span>Provversionen på webben</a>
+          </li>
+          <li>
+            <a href="#ordlista"><span class="num">11</span>Ordlista</a>
+          </li>
+        </ol>
+        <div class="legend" style="margin-top: 4px">
+          <span class="muted">Så läses bilderna:</span>
+          <span class="tag shared">Båda apparna</span>
+          <span class="tag rw"
+            ><svg class="" viewBox="0 0 100 160" aria-hidden="true"><use href="#rocket" /></svg
+            >Raketord</span
+          >
+          <span class="tag km"
+            ><svg class="" viewBox="0 0 100 160" aria-hidden="true"><use href="#comet" /></svg
+            >Kometmatte</span
+          >
+          <span class="nowrap"
+            ><svg class="st" aria-hidden="true"><use href="#star" /></svg> stjärna</span
+          >
+          <span class="nowrap"
+            ><svg class="medal bronze" viewBox="0 0 20 24" role="img" aria-label="Brons">
+              <use href="#medal" /></svg
+            ><svg class="medal silver" viewBox="0 0 20 24" role="img" aria-label="Silver">
+              <use href="#medal" /></svg
+            ><svg class="medal gold" viewBox="0 0 20 24" role="img" aria-label="Guld">
+              <use href="#medal" />
+            </svg>
+            medaljer</span
+          >
+          <span class="nowrap"><span class="lvl sm done">1</span> klarad nivå</span>
+        </div>
+      </nav>
+
+      <!-- 1 -->
+      <section class="box" id="byggstenar">
+        <h2><span class="num">1</span>Byggstenarna</h2>
+        <p class="lead">
+          Båda apparna är byggda på samma sätt: en svårighetsgrad har tio nivåer, och varje nivå
+          spelas som en runda med tio ord eller uppgifter. Kometmatte har räknesätten som ett extra
+          steg överst.
+        </p>
+        <div class="two">
+          <div class="app rw">
+            <header>
+              <svg class="" viewBox="0 0 100 160" aria-hidden="true"><use href="#rocket" /></svg
+              >Raketord
+            </header>
+            <div class="body">
+              <div class="tree">
+                <div class="tier">
+                  <h4>Ordspråk <span>12 språk</span></h4>
+                  <p class="muted">Orden följer appens språk. Rekorden sparas per språk.</p>
+                </div>
+                <div class="down" aria-hidden="true">
+                  <svg viewBox="0 0 16 22">
+                    <path
+                      d="M8 1v18M2 13l6 7 6-7"
+                      stroke="currentColor"
+                      stroke-width="2.5"
+                      fill="none"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                </div>
+                <div class="tier">
+                  <h4>Svårighetsgrad <span>4 st</span></h4>
+                  <div class="row">
+                    <span class="chip">Lätt</span><span class="chip">Mellan</span
+                    ><span class="chip">Svår</span><span class="chip">Expert</span>
+                  </div>
+                </div>
+                <div class="down" aria-hidden="true">
+                  <svg viewBox="0 0 16 22">
+                    <path
+                      d="M8 1v18M2 13l6 7 6-7"
+                      stroke="currentColor"
+                      stroke-width="2.5"
+                      fill="none"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                </div>
+                <div class="tier">
+                  <h4>Nivå <span>10 per svårighetsgrad</span></h4>
+                  <div class="row">
+                    <span class="lvl sm">1</span><span class="lvl sm">2</span
+                    ><span class="lvl sm">3</span><span class="lvl sm">4</span
+                    ><span class="lvl sm">5</span><span class="lvl sm">6</span
+                    ><span class="lvl sm">7</span><span class="lvl sm">8</span
+                    ><span class="lvl sm">9</span><span class="lvl sm">10</span>
+                  </div>
+                </div>
+                <div class="down" aria-hidden="true">
+                  <svg viewBox="0 0 16 22">
+                    <path
+                      d="M8 1v18M2 13l6 7 6-7"
+                      stroke="currentColor"
+                      stroke-width="2.5"
+                      fill="none"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                </div>
+                <div class="tier round">
+                  <h4>Runda <span>10 ord</span></h4>
+                  <div class="row">
+                    <i class="tile"></i><i class="tile"></i><i class="tile"></i><i class="tile"></i
+                    ><i class="tile"></i><i class="tile"></i><i class="tile"></i><i class="tile"></i
+                    ><i class="tile"></i><i class="tile"></i>
+                  </div>
+                </div>
+              </div>
+              <p class="sum">4 × 10 = <big>40</big> nivåer per ordspråk</p>
+            </div>
+          </div>
+          <div class="app km">
+            <header>
+              <svg class="" viewBox="0 0 100 160" aria-hidden="true"><use href="#comet" /></svg
+              >Kometmatte
+            </header>
+            <div class="body">
+              <div class="tree">
+                <div class="tier">
+                  <h4>Räknesätt <span>4 st</span></h4>
+                  <div class="row">
+                    <span class="chip op">+</span><span class="chip op">−</span
+                    ><span class="chip op">×</span><span class="chip op">÷</span>
+                  </div>
+                  <p class="muted">Plus, minus, gånger och delat med.</p>
+                </div>
+                <div class="down" aria-hidden="true">
+                  <svg viewBox="0 0 16 22">
+                    <path
+                      d="M8 1v18M2 13l6 7 6-7"
+                      stroke="currentColor"
+                      stroke-width="2.5"
+                      fill="none"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                </div>
+                <div class="tier">
+                  <h4>Svårighetsgrad <span>4 per räknesätt</span></h4>
+                  <div class="row">
+                    <span class="chip">Lätt</span><span class="chip">Mellan</span
+                    ><span class="chip">Svår</span><span class="chip">Expert</span>
+                  </div>
+                </div>
+                <div class="down" aria-hidden="true">
+                  <svg viewBox="0 0 16 22">
+                    <path
+                      d="M8 1v18M2 13l6 7 6-7"
+                      stroke="currentColor"
+                      stroke-width="2.5"
+                      fill="none"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                </div>
+                <div class="tier">
+                  <h4>Nivå <span>10 per svårighetsgrad</span></h4>
+                  <div class="row">
+                    <span class="lvl sm">1</span><span class="lvl sm">2</span
+                    ><span class="lvl sm">3</span><span class="lvl sm">4</span
+                    ><span class="lvl sm">5</span><span class="lvl sm">6</span
+                    ><span class="lvl sm">7</span><span class="lvl sm">8</span
+                    ><span class="lvl sm">9</span><span class="lvl sm">10</span>
+                  </div>
+                </div>
+                <div class="down" aria-hidden="true">
+                  <svg viewBox="0 0 16 22">
+                    <path
+                      d="M8 1v18M2 13l6 7 6-7"
+                      stroke="currentColor"
+                      stroke-width="2.5"
+                      fill="none"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                </div>
+                <div class="tier round">
+                  <h4>Runda <span>10 uppgifter</span></h4>
+                  <div class="row">
+                    <i class="tile"></i><i class="tile"></i><i class="tile"></i><i class="tile"></i
+                    ><i class="tile"></i><i class="tile"></i><i class="tile"></i><i class="tile"></i
+                    ><i class="tile"></i><i class="tile"></i>
+                  </div>
+                </div>
+              </div>
+              <p class="sum">4 × 4 = 16 kombinationer × 10 = <big>160</big> nivåer</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h3>Runda, nivå och spelomgång</h3>
+          <p>
+            En runda hör alltid till <b>en</b> nivå. En nivå har ingen bestämd mängd rundor: man
+            spelar den så många gånger man vill, och varje gång är en ny runda.
+          </p>
+          <p>
+            En <b>spelomgång</b> är en eller flera rundor i rad, där barnet trycker Nästa nivå
+            mellan dem. Poängen läggs ihop.
+          </p>
+          <div>
+            <div
+              class="session"
+              role="img"
+              aria-label="Exempel på en spelomgång: runda på nivå 1 ger 160 poäng, Nästa nivå, runda på nivå 2 ger 110 poäng, Nästa nivå, runda på nivå 3 ger 200 poäng. Spelomgången har 470 poäng."
+            >
+              <div class="rnd">
+                <span class="lvl sm done">1</span><b>Runda på nivå 1</b><span>8 rätt</span
+                ><span class="stars" role="img" aria-label="2 stjärnor"
+                  ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                  ><svg class="st" aria-hidden="true"><use href="#star" /></svg></span
+                ><span>160 p</span>
+              </div>
+              <div class="arrow">Nästa nivå</div>
+              <div class="rnd">
+                <span class="lvl sm done">2</span><b>Runda på nivå 2</b><span>7 rätt</span
+                ><span class="stars" role="img" aria-label="1 stjärna"
+                  ><svg class="st" aria-hidden="true"><use href="#star" /></svg></span
+                ><span>110 p</span>
+              </div>
+              <div class="arrow">Nästa nivå</div>
+              <div class="rnd">
+                <span class="lvl sm done">3</span><b>Runda på nivå 3</b><span>9 rätt</span
+                ><span class="stars" role="img" aria-label="2 stjärnor"
+                  ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                  ><svg class="st" aria-hidden="true"><use href="#star" /></svg></span
+                ><span>200 p</span>
+              </div>
+            </div>
+            <div class="bracket" aria-hidden="true"></div>
+            <p class="bracket-label">
+              Spelomgång: 160 + 110 + 200 = 470 p <span class="muted">(exempel)</span>
+            </p>
+          </div>
+          <div class="resets">
+            <span>Spelomgången börjar på 0 poäng vid</span><span class="chip">första start</span
+            ><span class="chip">Försök igen</span><span class="chip">Börja om från nivå 1</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2 -->
+      <section class="box" id="nivaer">
+        <h2><span class="num">2</span>Vad ändras mellan nivåerna?</h2>
+        <p class="lead">
+          Svårighetsgraden avgör <b>vad</b> som kommer: vilka ord eller vilka tal. Nivån gör det
+          svårare inom svårighetsgraden, på olika sätt i de två apparna.
+        </p>
+        <div class="app rw">
+          <header>
+            <svg class="" viewBox="0 0 100 160" aria-hidden="true"><use href="#rocket" /></svg
+            >Raketord
+          </header>
+          <div class="body">
+            <h3>Svårighetsgraden avgör orden</h3>
+            <div class="lengths">
+              <div>
+                <b>Lätt</b
+                ><span class="tiles"
+                  ><i class="tile"></i><i class="tile"></i><i class="tile maybe"></i
+                  ><small>2–3 bokstäver</small></span
+                >
+              </div>
+              <div>
+                <b>Mellan</b
+                ><span class="tiles"
+                  ><i class="tile"></i><i class="tile"></i><i class="tile"></i><i class="tile"></i
+                  ><i class="tile maybe"></i><small>4–5 bokstäver</small></span
+                >
+              </div>
+              <div>
+                <b>Svår</b
+                ><span class="tiles"
+                  ><i class="tile"></i><i class="tile"></i><i class="tile"></i><i class="tile"></i
+                  ><i class="tile"></i><i class="tile"></i><i class="tile maybe"></i
+                  ><i class="tile maybe"></i><small>6–8 bokstäver</small></span
+                >
+              </div>
+              <div>
+                <b>Expert</b
+                ><span class="tiles"
+                  ><i class="tile"></i><i class="tile"></i><i class="tile"></i><i class="tile"></i
+                  ><i class="tile"></i><i class="tile"></i><i class="tile"></i><i class="tile"></i
+                  ><i class="tile"></i><small>9 eller fler</small></span
+                >
+              </div>
+            </div>
+            <p>
+              Lätt har bara ljudenliga ord, som skrivs som de låter. Vanliga ord kommer först,
+              ovanligare ord kommer med i de högre svårighetsgraderna. I en runda kommer orden från
+              det kortaste till det längsta.
+            </p>
+            <h3>Nivån avgör hur länge ordet visas</h3>
+            <p>Ordet visas en kort stund och försvinner sedan. Ju högre nivå, desto kortare tid.</p>
+            <ul class="legend">
+              <li><i class="c-easy"></i>Lätt</li>
+              <li><i class="c-medium dash"></i>Mellan</li>
+              <li><i class="c-hard dot"></i>Svår</li>
+              <li><i class="c-expert dash"></i>Expert</li>
+            </ul>
+            <div class="scroll">
+              <svg
+                class="chart"
+                viewBox="0 0 600 306"
+                role="img"
+                aria-label="Linjediagram: hur länge ordet visas på nivå 1 till 10. Tiden sjunker för varje nivå i alla svårighetsgrader. Siffrorna finns i tabellen under."
+              >
+                <line class="grid" x1="56" x2="576" y1="250" y2="250" />
+                <text x="44" y="256" text-anchor="end">0</text>
+                <line class="grid" x1="56" x2="576" y1="220" y2="220" />
+                <text x="44" y="226" text-anchor="end">0,5</text>
+                <line class="grid" x1="56" x2="576" y1="190" y2="190" />
+                <text x="44" y="196" text-anchor="end">1</text>
+                <line class="grid" x1="56" x2="576" y1="160" y2="160" />
+                <text x="44" y="166" text-anchor="end">1,5</text>
+                <line class="grid" x1="56" x2="576" y1="130" y2="130" />
+                <text x="44" y="136" text-anchor="end">2</text>
+                <line class="grid" x1="56" x2="576" y1="100" y2="100" />
+                <text x="44" y="106" text-anchor="end">2,5</text>
+                <line class="grid" x1="56" x2="576" y1="70" y2="70" />
+                <text x="44" y="76" text-anchor="end">3</text>
+                <line class="grid" x1="56" x2="576" y1="40" y2="40" />
+                <text x="44" y="46" text-anchor="end">3,5</text>
+                <text x="56" y="276" text-anchor="middle">1</text>
+                <text x="113.8" y="276" text-anchor="middle">2</text>
+                <text x="171.6" y="276" text-anchor="middle">3</text>
+                <text x="229.3" y="276" text-anchor="middle">4</text>
+                <text x="287.1" y="276" text-anchor="middle">5</text>
+                <text x="344.9" y="276" text-anchor="middle">6</text>
+                <text x="402.7" y="276" text-anchor="middle">7</text>
+                <text x="460.4" y="276" text-anchor="middle">8</text>
+                <text x="518.2" y="276" text-anchor="middle">9</text>
+                <text x="576" y="276" text-anchor="middle">10</text>
+                <line class="axis" x1="56" x2="576" y1="250" y2="250" />
+                <text x="8" y="22">sekunder</text>
+                <text x="576" y="300" text-anchor="end">nivå</text>
+                <polyline
+                  class="c-easy"
+                  points="56,40 113.8,67 171.6,91 229.3,112 287.1,130 344.9,145 402.7,160 460.4,172 518.2,181 576,190"
+                />
+                <circle class="c-easy" cx="56" cy="40" r="4" />
+                <circle class="c-easy" cx="113.8" cy="67" r="4" />
+                <circle class="c-easy" cx="171.6" cy="91" r="4" />
+                <circle class="c-easy" cx="229.3" cy="112" r="4" />
+                <circle class="c-easy" cx="287.1" cy="130" r="4" />
+                <circle class="c-easy" cx="344.9" cy="145" r="4" />
+                <circle class="c-easy" cx="402.7" cy="160" r="4" />
+                <circle class="c-easy" cx="460.4" cy="172" r="4" />
+                <circle class="c-easy" cx="518.2" cy="181" r="4" />
+                <circle class="c-easy" cx="576" cy="190" r="4" />
+                <polyline
+                  class="c-medium"
+                  points="56,70 113.8,100 171.6,124 229.3,145 287.1,163 344.9,175 402.7,187 460.4,199 518.2,208 576,214"
+                  stroke-dasharray="10 7"
+                />
+                <circle class="c-medium" cx="56" cy="70" r="4" />
+                <circle class="c-medium" cx="113.8" cy="100" r="4" />
+                <circle class="c-medium" cx="171.6" cy="124" r="4" />
+                <circle class="c-medium" cx="229.3" cy="145" r="4" />
+                <circle class="c-medium" cx="287.1" cy="163" r="4" />
+                <circle class="c-medium" cx="344.9" cy="175" r="4" />
+                <circle class="c-medium" cx="402.7" cy="187" r="4" />
+                <circle class="c-medium" cx="460.4" cy="199" r="4" />
+                <circle class="c-medium" cx="518.2" cy="208" r="4" />
+                <circle class="c-medium" cx="576" cy="214" r="4" />
+                <polyline
+                  class="c-hard"
+                  points="56,70 113.8,97 171.6,121 229.3,139 287.1,157 344.9,169 402.7,181 460.4,193 518.2,202 576,208"
+                  stroke-dasharray="3 6"
+                />
+                <circle class="c-hard" cx="56" cy="70" r="4" />
+                <circle class="c-hard" cx="113.8" cy="97" r="4" />
+                <circle class="c-hard" cx="171.6" cy="121" r="4" />
+                <circle class="c-hard" cx="229.3" cy="139" r="4" />
+                <circle class="c-hard" cx="287.1" cy="157" r="4" />
+                <circle class="c-hard" cx="344.9" cy="169" r="4" />
+                <circle class="c-hard" cx="402.7" cy="181" r="4" />
+                <circle class="c-hard" cx="460.4" cy="193" r="4" />
+                <circle class="c-hard" cx="518.2" cy="202" r="4" />
+                <circle class="c-hard" cx="576" cy="208" r="4" />
+                <polyline
+                  class="c-expert"
+                  points="56,70 113.8,94 171.6,115 229.3,133 287.1,151 344.9,163 402.7,175 460.4,187 518.2,193 576,202"
+                  stroke-dasharray="16 6 3 6"
+                />
+                <circle class="c-expert" cx="56" cy="70" r="4" />
+                <circle class="c-expert" cx="113.8" cy="94" r="4" />
+                <circle class="c-expert" cx="171.6" cy="115" r="4" />
+                <circle class="c-expert" cx="229.3" cy="133" r="4" />
+                <circle class="c-expert" cx="287.1" cy="151" r="4" />
+                <circle class="c-expert" cx="344.9" cy="163" r="4" />
+                <circle class="c-expert" cx="402.7" cy="175" r="4" />
+                <circle class="c-expert" cx="460.4" cy="187" r="4" />
+                <circle class="c-expert" cx="518.2" cy="193" r="4" />
+                <circle class="c-expert" cx="576" cy="202" r="4" />
+              </svg>
+            </div>
+            <div class="scroll">
+              <table>
+                <caption
+                  class="muted"
+                  style="caption-side: bottom; text-align: left; padding-top: 6px; font-size: 14px"
+                >
+                  Sekunder som ordet visas, vid hastighet ×1.
+                </caption>
+                <thead>
+                  <tr>
+                    <th scope="col">Nivå</th>
+                    <th scope="col">1</th>
+                    <th scope="col">2</th>
+                    <th scope="col">3</th>
+                    <th scope="col">4</th>
+                    <th scope="col">5</th>
+                    <th scope="col">6</th>
+                    <th scope="col">7</th>
+                    <th scope="col">8</th>
+                    <th scope="col">9</th>
+                    <th scope="col">10</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th scope="row">Lätt</th>
+                    <td>3,5</td>
+                    <td>3,05</td>
+                    <td>2,65</td>
+                    <td>2,3</td>
+                    <td>2,0</td>
+                    <td>1,75</td>
+                    <td>1,5</td>
+                    <td>1,3</td>
+                    <td>1,15</td>
+                    <td>1,0</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Mellan</th>
+                    <td>3,0</td>
+                    <td>2,5</td>
+                    <td>2,1</td>
+                    <td>1,75</td>
+                    <td>1,45</td>
+                    <td>1,25</td>
+                    <td>1,05</td>
+                    <td>0,85</td>
+                    <td>0,7</td>
+                    <td>0,6</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Svår</th>
+                    <td>3,0</td>
+                    <td>2,55</td>
+                    <td>2,15</td>
+                    <td>1,85</td>
+                    <td>1,55</td>
+                    <td>1,35</td>
+                    <td>1,15</td>
+                    <td>0,95</td>
+                    <td>0,8</td>
+                    <td>0,7</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Expert</th>
+                    <td>3,0</td>
+                    <td>2,6</td>
+                    <td>2,25</td>
+                    <td>1,95</td>
+                    <td>1,65</td>
+                    <td>1,45</td>
+                    <td>1,25</td>
+                    <td>1,05</td>
+                    <td>0,95</td>
+                    <td>0,8</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div class="app km">
+          <header>
+            <svg class="" viewBox="0 0 100 160" aria-hidden="true"><use href="#comet" /></svg
+            >Kometmatte
+          </header>
+          <div class="body">
+            <h3>Svårighetsgraden avgör talen</h3>
+            <p>
+              Varje svårighetsgrad har ett eget talområde, och därmed en egen samling uppgifter:
+              Lätt har de minsta talen, Expert de största.
+            </p>
+            <h3>Nivån avgör vilka uppgifter som kommer</h3>
+            <p>
+              Uppgifterna är ordnade i steg som följer skolans ordning, från de lättaste. Varje nivå
+              har sitt steg.
+            </p>
+            <div class="mix">
+              <div>
+                <b>Nivå 1</b>
+                <div class="cells">
+                  <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+                </div>
+              </div>
+              <div>
+                <b>Nivå 2–9</b>
+                <div class="cells">
+                  <i></i><i></i><i></i><i></i><i></i><i></i><i class="old"></i><i class="old"></i
+                  ><i class="old"></i><i class="old"></i>
+                </div>
+              </div>
+              <div>
+                <b>Nivå 10</b>
+                <div class="cells">
+                  <i></i><i class="m1"></i><i class="old"></i><i class="m2"></i><i class="m3"></i
+                  ><i></i><i class="m1"></i><i class="old"></i><i class="m2"></i><i class="m3"></i>
+                </div>
+              </div>
+            </div>
+            <div class="key">
+              <span><i></i>uppgifter från nivåns steg</span
+              ><span><i class="old"></i>repetition från tidigare steg</span
+              ><span
+                ><i class="m1"></i><i class="m2"></i><i class="m3"></i>andra steg (nivå 10 blandar
+                alla)</span
+              >
+            </div>
+            <ul>
+              <li><b>Nivå 1:</b> steg 1, de lättaste uppgifterna.</li>
+              <li>
+                <b>Nivå 2–9:</b> cirka 6 nya uppgifter från nivåns steg och cirka 4 som repetition
+                från tidigare steg.
+              </li>
+              <li><b>Nivå 10:</b> en blandning av alla uppgifter i svårighetsgraden.</li>
+            </ul>
+            <div class="panel">
+              <p><b>Ingen klocka som rinner ut.</b> Uppgiften står kvar tills barnet svarar.</p>
+              <p>
+                En <b>tidsgräns</b> finns som tillval i inställningarna. Den är av från början. När
+                den är på gäller dubbla referenstiden (se <a href="#poang">Poäng</a>).
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="app km">
+          <header>
+            <svg class="" viewBox="0 0 100 160" aria-hidden="true"><use href="#comet" /></svg
+            >Kometmatte: alla uppgifter
+          </header>
+          <div class="body">
+            <!-- Bilden är kartan över Gånger Lätt från uppgifter.html, en ruta per uppgift i
+                 nivåns färg. Rita om den när stegen i Gånger Lätt ändras. -->
+            <a class="tasks-card" href="uppgifter.html">
+              <svg
+                class="tasks-map"
+                viewBox="0 0 158 158"
+                width="112"
+                height="112"
+                aria-hidden="true"
+              >
+                <rect class="none" x="0" y="0" width="14" height="14" rx="3" />
+                <rect x="16" y="0" width="14" height="14" rx="3" fill="#cdeee4" />
+                <rect class="none" x="32" y="0" width="14" height="14" rx="3" />
+                <rect class="none" x="48" y="0" width="14" height="14" rx="3" />
+                <rect x="64" y="0" width="14" height="14" rx="3" fill="#55b0a0" />
+                <rect class="none" x="80" y="0" width="14" height="14" rx="3" />
+                <rect class="none" x="96" y="0" width="14" height="14" rx="3" />
+                <rect class="none" x="112" y="0" width="14" height="14" rx="3" />
+                <rect class="none" x="128" y="0" width="14" height="14" rx="3" />
+                <rect x="144" y="0" width="14" height="14" rx="3" fill="#cdeee4" />
+                <rect x="0" y="16" width="14" height="14" rx="3" fill="#3f7484" />
+                <rect x="16" y="16" width="14" height="14" rx="3" fill="#cdeee4" />
+                <rect x="32" y="16" width="14" height="14" rx="3" fill="#3f7484" />
+                <rect x="48" y="16" width="14" height="14" rx="3" fill="#4d5b80" />
+                <rect x="64" y="16" width="14" height="14" rx="3" fill="#55b0a0" />
+                <rect x="80" y="16" width="14" height="14" rx="3" fill="#4d5b80" />
+                <rect x="96" y="16" width="14" height="14" rx="3" fill="#5c4677" />
+                <rect x="112" y="16" width="14" height="14" rx="3" fill="#5c4677" />
+                <rect x="128" y="16" width="14" height="14" rx="3" fill="#663f64" />
+                <rect x="144" y="16" width="14" height="14" rx="3" fill="#cdeee4" />
+                <rect class="none" x="0" y="32" width="14" height="14" rx="3" />
+                <rect x="16" y="32" width="14" height="14" rx="3" fill="#cdeee4" />
+                <rect class="none" x="32" y="32" width="14" height="14" rx="3" />
+                <rect class="none" x="48" y="32" width="14" height="14" rx="3" />
+                <rect x="64" y="32" width="14" height="14" rx="3" fill="#55b0a0" />
+                <rect class="none" x="80" y="32" width="14" height="14" rx="3" />
+                <rect class="none" x="96" y="32" width="14" height="14" rx="3" />
+                <rect class="none" x="112" y="32" width="14" height="14" rx="3" />
+                <rect class="none" x="128" y="32" width="14" height="14" rx="3" />
+                <rect x="144" y="32" width="14" height="14" rx="3" fill="#cdeee4" />
+                <rect class="none" x="0" y="48" width="14" height="14" rx="3" />
+                <rect x="16" y="48" width="14" height="14" rx="3" fill="#cdeee4" />
+                <rect class="none" x="32" y="48" width="14" height="14" rx="3" />
+                <rect class="none" x="48" y="48" width="14" height="14" rx="3" />
+                <rect x="64" y="48" width="14" height="14" rx="3" fill="#55b0a0" />
+                <rect class="none" x="80" y="48" width="14" height="14" rx="3" />
+                <rect class="none" x="96" y="48" width="14" height="14" rx="3" />
+                <rect class="none" x="112" y="48" width="14" height="14" rx="3" />
+                <rect class="none" x="128" y="48" width="14" height="14" rx="3" />
+                <rect x="144" y="48" width="14" height="14" rx="3" fill="#cdeee4" />
+                <rect x="0" y="64" width="14" height="14" rx="3" fill="#3f7484" />
+                <rect x="16" y="64" width="14" height="14" rx="3" fill="#cdeee4" />
+                <rect x="32" y="64" width="14" height="14" rx="3" fill="#3f7484" />
+                <rect x="48" y="64" width="14" height="14" rx="3" fill="#4d5b80" />
+                <rect x="64" y="64" width="14" height="14" rx="3" fill="#55b0a0" />
+                <rect x="80" y="64" width="14" height="14" rx="3" fill="#4d5b80" />
+                <rect x="96" y="64" width="14" height="14" rx="3" fill="#5c4677" />
+                <rect x="112" y="64" width="14" height="14" rx="3" fill="#5c4677" />
+                <rect x="128" y="64" width="14" height="14" rx="3" fill="#663f64" />
+                <rect x="144" y="64" width="14" height="14" rx="3" fill="#cdeee4" />
+                <rect class="none" x="0" y="80" width="14" height="14" rx="3" />
+                <rect x="16" y="80" width="14" height="14" rx="3" fill="#cdeee4" />
+                <rect class="none" x="32" y="80" width="14" height="14" rx="3" />
+                <rect class="none" x="48" y="80" width="14" height="14" rx="3" />
+                <rect x="64" y="80" width="14" height="14" rx="3" fill="#3e9088" />
+                <rect class="none" x="80" y="80" width="14" height="14" rx="3" />
+                <rect class="none" x="96" y="80" width="14" height="14" rx="3" />
+                <rect class="none" x="112" y="80" width="14" height="14" rx="3" />
+                <rect class="none" x="128" y="80" width="14" height="14" rx="3" />
+                <rect x="144" y="80" width="14" height="14" rx="3" fill="#cdeee4" />
+                <rect class="none" x="0" y="96" width="14" height="14" rx="3" />
+                <rect x="16" y="96" width="14" height="14" rx="3" fill="#a6e0d0" />
+                <rect class="none" x="32" y="96" width="14" height="14" rx="3" />
+                <rect class="none" x="48" y="96" width="14" height="14" rx="3" />
+                <rect x="64" y="96" width="14" height="14" rx="3" fill="#3e9088" />
+                <rect class="none" x="80" y="96" width="14" height="14" rx="3" />
+                <rect class="none" x="96" y="96" width="14" height="14" rx="3" />
+                <rect class="none" x="112" y="96" width="14" height="14" rx="3" />
+                <rect class="none" x="128" y="96" width="14" height="14" rx="3" />
+                <rect x="144" y="96" width="14" height="14" rx="3" fill="#7dcbb9" />
+                <rect class="none" x="0" y="112" width="14" height="14" rx="3" />
+                <rect x="16" y="112" width="14" height="14" rx="3" fill="#a6e0d0" />
+                <rect class="none" x="32" y="112" width="14" height="14" rx="3" />
+                <rect class="none" x="48" y="112" width="14" height="14" rx="3" />
+                <rect x="64" y="112" width="14" height="14" rx="3" fill="#3e9088" />
+                <rect class="none" x="80" y="112" width="14" height="14" rx="3" />
+                <rect class="none" x="96" y="112" width="14" height="14" rx="3" />
+                <rect class="none" x="112" y="112" width="14" height="14" rx="3" />
+                <rect class="none" x="128" y="112" width="14" height="14" rx="3" />
+                <rect x="144" y="112" width="14" height="14" rx="3" fill="#7dcbb9" />
+                <rect class="none" x="0" y="128" width="14" height="14" rx="3" />
+                <rect x="16" y="128" width="14" height="14" rx="3" fill="#a6e0d0" />
+                <rect class="none" x="32" y="128" width="14" height="14" rx="3" />
+                <rect class="none" x="48" y="128" width="14" height="14" rx="3" />
+                <rect x="64" y="128" width="14" height="14" rx="3" fill="#3e9088" />
+                <rect class="none" x="80" y="128" width="14" height="14" rx="3" />
+                <rect class="none" x="96" y="128" width="14" height="14" rx="3" />
+                <rect class="none" x="112" y="128" width="14" height="14" rx="3" />
+                <rect class="none" x="128" y="128" width="14" height="14" rx="3" />
+                <rect x="144" y="128" width="14" height="14" rx="3" fill="#7dcbb9" />
+                <rect x="0" y="144" width="14" height="14" rx="3" fill="#3f7484" />
+                <rect x="16" y="144" width="14" height="14" rx="3" fill="#a6e0d0" />
+                <rect x="32" y="144" width="14" height="14" rx="3" fill="#3f7484" />
+                <rect x="48" y="144" width="14" height="14" rx="3" fill="#4d5b80" />
+                <rect x="64" y="144" width="14" height="14" rx="3" fill="#3e9088" />
+                <rect x="80" y="144" width="14" height="14" rx="3" fill="#4d5b80" />
+                <rect x="96" y="144" width="14" height="14" rx="3" fill="#5c4677" />
+                <rect x="112" y="144" width="14" height="14" rx="3" fill="#5c4677" />
+                <rect x="128" y="144" width="14" height="14" rx="3" fill="#663f64" />
+                <rect x="144" y="144" width="14" height="14" rx="3" fill="#7dcbb9" />
+              </svg>
+              <span
+                ><b>Kometmattes uppgifter</b>Alla uppgifter i varje räknesätt och svårighetsgrad,
+                och nivån där varje uppgift kommer första gången. Bilden visar Gånger Lätt: en ruta
+                per uppgift, färgad efter nivån.</span
+              >
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3 -->
+      <section class="box" id="runda">
+        <h2><span class="num">3</span>En runda steg för steg</h2>
+        <div class="flow">
+          <div class="step">
+            <h4>Intro</h4>
+            <p>Nivån, en kort ledtext och knappen Start.</p>
+          </div>
+          <div class="down" aria-hidden="true">
+            <svg viewBox="0 0 16 22">
+              <path
+                d="M8 1v18M2 13l6 7 6-7"
+                stroke="currentColor"
+                stroke-width="2.5"
+                fill="none"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </div>
+          <div class="step">
+            <h4>Nedräkning</h4>
+            <div class="count" aria-label="3, 2, 1"><span>3</span><span>2</span><span>1</span></div>
+          </div>
+          <div class="down" aria-hidden="true">
+            <svg viewBox="0 0 16 22">
+              <path
+                d="M8 1v18M2 13l6 7 6-7"
+                stroke="currentColor"
+                stroke-width="2.5"
+                fill="none"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </div>
+          <div class="split">
+            <div class="step app-step rw">
+              <h4>Raketord</h4>
+              <div class="flash">
+                <span>SOL</span><span class="dust" aria-hidden="true">· ✦ · ✦</span>
+              </div>
+              <p>Ordet blixtrar förbi och försvinner i stjärnstoft.</p>
+              <div class="slots" aria-hidden="true">
+                <span>S</span><span>O</span><span class="active"></span>
+              </div>
+              <p>Barnet skriver ordet i rutorna, en ruta per bokstav, och trycker <b>Klar</b>.</p>
+            </div>
+            <div class="step app-step km">
+              <h4>Kometmatte</h4>
+              <div class="task" aria-label="3 + 4 = 7">
+                <span>3 + 4 =</span><span class="answer">7</span>
+              </div>
+              <p>Uppgiften visas. Barnet skriver svaret på sifferblocket och trycker <b>OK</b>.</p>
+            </div>
+          </div>
+          <div class="down" aria-hidden="true">
+            <svg viewBox="0 0 16 22">
+              <path
+                d="M8 1v18M2 13l6 7 6-7"
+                stroke="currentColor"
+                stroke-width="2.5"
+                fill="none"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </div>
+          <div class="split">
+            <div class="step right">
+              <h4>Rätt</h4>
+              <p>Grönt, och en av tre texter:</p>
+              <div class="verdicts">
+                <span class="pill">Rätt!</span><span class="pill">Snabbt!</span
+                ><span class="pill gold">Blixtsnabbt!</span>
+              </div>
+            </div>
+            <div class="step wrong">
+              <h4>Fel</h4>
+              <p>Rött, och rätt svar visas.</p>
+              <div class="verdicts"><span class="pill bad">rätt svar: SOL</span></div>
+            </div>
+          </div>
+          <p class="loop">↻ Nästa ord eller uppgift, 10 gånger</p>
+          <div class="down" aria-hidden="true">
+            <svg viewBox="0 0 16 22">
+              <path
+                d="M8 1v18M2 13l6 7 6-7"
+                stroke="currentColor"
+                stroke-width="2.5"
+                fill="none"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </div>
+          <div class="step end">
+            <h4>Resultat</h4>
+            <p>
+              Antal rätt, stjärnor, poäng och vad som händer sedan (<a href="#efter">Efter rundan</a
+              >).
+            </p>
+          </div>
+        </div>
+        <div class="two">
+          <div class="panel rw">
+            <p>
+              <span class="tag rw"
+                ><svg class="" viewBox="0 0 100 160" aria-hidden="true"><use href="#rocket" /></svg
+                >Raketord</span
+              >
+            </p>
+            <p>Stor eller liten bokstav spelar ingen roll. Accenter spelar roll.</p>
+            <div class="compare"><span>SOL = sol ✓</span><span>ä ≠ a</span></div>
+          </div>
+          <div class="panel">
+            <p><span class="tag shared">Båda apparna</span></p>
+            <p>
+              <b>Avbryta:</b> barnet kan gå ur när som helst. Den rundan ger inga poäng och inga
+              stjärnor.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4 -->
+      <section class="box" id="stjarnor">
+        <h2><span class="num">4</span>Stjärnor per runda</h2>
+        <p class="lead">
+          Antal rätt av 10 ger 0 till 3 stjärnor. <b>Klarad nivå = minst 5 rätt av 10.</b> Med 5
+          rätt kommer barnet vidare men får ingen stjärna.
+        </p>
+        <div
+          class="scale"
+          role="img"
+          aria-label="0 till 2 rätt: inte klarad. 3 till 4 rätt: inte klarad, Nästan!. 5 rätt: klarad utan stjärna. 6 till 7 rätt: 1 stjärna. 8 till 9 rätt: 2 stjärnor. 10 rätt: 3 stjärnor."
+        >
+          <div class="cell no" style="grid-column: 1"><span class="n">0</span></div>
+          <div class="cell no" style="grid-column: 2"><span class="n">1</span></div>
+          <div class="cell no" style="grid-column: 3"><span class="n">2</span></div>
+          <div class="cell no" style="grid-column: 4"><span class="n">3</span></div>
+          <div class="cell no" style="grid-column: 5"><span class="n">4</span></div>
+          <div class="cell zero" style="grid-column: 6"><span class="n">5</span></div>
+          <div class="cell star" style="grid-column: 7"><span class="n">6</span></div>
+          <div class="cell star" style="grid-column: 8"><span class="n">7</span></div>
+          <div class="cell star" style="grid-column: 9"><span class="n">8</span></div>
+          <div class="cell star" style="grid-column: 10"><span class="n">9</span></div>
+          <div class="cell star" style="grid-column: 11"><span class="n">10</span></div>
+          <div class="band" style="grid-row: 2; grid-column: 1 / 6"><span>Inte klarad</span></div>
+          <div class="band on" style="grid-row: 2; grid-column: 6 / 12">
+            <span class="pass"
+              ><svg class="tick" viewBox="0 0 24 24" aria-hidden="true"><use href="#tick" /></svg
+              >Klarad</span
+            >
+          </div>
+          <div class="band flat" style="grid-row: 3; grid-column: 1 / 4"><span>–</span></div>
+          <div class="band flat" style="grid-row: 3; grid-column: 4 / 6"><span>Nästan!</span></div>
+          <div class="band flat" style="grid-row: 3; grid-column: 6 / 7">
+            <svg class="st off" aria-hidden="true"><use href="#star" /></svg>
+          </div>
+          <div class="band flat" style="grid-row: 3; grid-column: 7 / 9">
+            <span class="stars" role="img" aria-label="1 stjärna"
+              ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+            ></span>
+          </div>
+          <div class="band flat" style="grid-row: 3; grid-column: 9 / 11">
+            <span class="stars" role="img" aria-label="2 stjärnor"
+              ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+              ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+            ></span>
+          </div>
+          <div class="band flat" style="grid-row: 3; grid-column: 11 / 12">
+            <span class="stars col3"
+              ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+              ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+              ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+            ></span>
+          </div>
+        </div>
+        <p class="muted" style="font-size: 15px">
+          Vid 3–4 rätt visar resultatet ”Nästan!”. En nivå som klarats med 5 rätt har 0 stjärnor och
+          räcker inte till brons.
+        </p>
+        <div class="two">
+          <div class="panel">
+            <h3>Det bästa sparas</h3>
+            <p>
+              Spelar barnet samma nivå igen behåller nivån sitt bästa antal stjärnor. En sämre runda
+              tar aldrig bort stjärnor.
+            </p>
+            <p class="muted">Nivå 3 spelas tre gånger:</p>
+            <div class="best">
+              <div>
+                <span>Första gången</span
+                ><span class="stars" role="img" aria-label="2 av 3 stjärnor"
+                  ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                  ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                  ><svg class="st off" aria-hidden="true"><use href="#star" /></svg></span
+                ><span class="saved"
+                  >sparat
+                  <span class="stars" role="img" aria-label="2 stjärnor"
+                    ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                    ><svg class="st" aria-hidden="true"><use href="#star" /></svg></span
+                ></span>
+              </div>
+              <div>
+                <span>Andra gången</span
+                ><span class="stars" role="img" aria-label="1 av 3 stjärnor"
+                  ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                  ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                  ><svg class="st off" aria-hidden="true"><use href="#star" /></svg></span
+                ><span class="saved"
+                  >sparat
+                  <span class="stars" role="img" aria-label="2 stjärnor"
+                    ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                    ><svg class="st" aria-hidden="true"><use href="#star" /></svg></span
+                ></span>
+              </div>
+              <div>
+                <span>Tredje gången</span
+                ><span class="stars" role="img" aria-label="3 av 3 stjärnor"
+                  ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                  ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                  ><svg class="st" aria-hidden="true"><use href="#star" /></svg></span
+                ><span class="saved"
+                  >sparat
+                  <span class="stars" role="img" aria-label="3 stjärnor"
+                    ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                    ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                    ><svg class="st" aria-hidden="true"><use href="#star" /></svg></span
+                ></span>
+              </div>
+            </div>
+            <p class="muted" style="font-size: 15px">
+              Spelar barnet en lägre nivå nollställs nivåerna över den (se
+              <a href="#medaljer">Medaljer</a>).
+            </p>
+          </div>
+          <div class="panel">
+            <h3>Bara antal rätt räknas</h3>
+            <p>
+              Snabbhet påverkar aldrig stjärnorna. Ett långsamt rätt svar är lika mycket värt som
+              ett blixtsnabbt för stjärnorna.
+            </p>
+            <p>Snabbheten ger i stället extra <a href="#poang">poäng</a>.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 5 -->
+      <section class="box" id="efter">
+        <h2><span class="num">5</span>Efter rundan</h2>
+        <div class="decide">
+          <div class="question">Minst 5 rätt av 10?</div>
+          <div class="outcomes">
+            <div class="outcome ok">
+              <span class="when">Ja, nivå 1–9</span>
+              <h4>Nivå klarad!</h4>
+              <p>
+                Raketen flyger ett steg upp i nivåstegen. Med 5 rätt får nivån en bock men ingen
+                stjärna.
+              </p>
+              <div class="btns">
+                <span class="btn">Nästa nivå</span><small>poängen följer med</small>
+              </div>
+              <div class="btns">
+                <span class="btn alt">Försök igen</span><small>ny spelomgång, 0 p</small>
+              </div>
+            </div>
+            <div class="outcome ok">
+              <span class="when">Ja, nivå 10</span>
+              <h4>Du klarade alla nivåer!</h4>
+              <p>Raketen flyger upp ur stegen.</p>
+              <div class="btns">
+                <span class="btn">Prova Mellan</span><small>nästa svårighetsgrad</small>
+              </div>
+              <div class="btns"><span class="btn alt">Försök igen</span></div>
+              <p class="muted">På Expert finns bara Försök igen.</p>
+            </div>
+            <div class="outcome no">
+              <span class="when">Nej, 0–4 rätt</span>
+              <h4>Inte klarad</h4>
+              <p>”Du behöver 5 rätt av 10 för att gå vidare.” Vid 3–4 rätt står det ”Nästan!”.</p>
+              <div class="btns">
+                <span class="btn alt">Försök igen</span><small>bara den</small>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="two">
+          <div class="panel">
+            <h3>Sparad plats</h3>
+            <p>Den som går ut fortsätter nästa gång på samma nivå, med spelomgångens poäng kvar.</p>
+            <p>
+              Över nivå 1 finns även knappen <b>Börja om från nivå 1</b>. Då börjar en ny spelomgång
+              på 0 poäng och en ny <a href="#medaljer">genomgång</a>.
+            </p>
+          </div>
+          <div class="panel">
+            <h3>Nivåstegen</h3>
+            <div
+              class="ladder rw"
+              role="img"
+              aria-label="Nivåstegen: nivå 3 är klarad med 5 rätt och har bara en bock, nivå 4 är klarad med tre stjärnor och bock, raketen står på nivå 5, nivå 6 och 7 är låsta."
+            >
+              <div class="rung" style="--i: 0">
+                <span class="mini"></span><span class="lvl done">3</span
+                ><svg class="tick" viewBox="0 0 24 24" aria-hidden="true"><use href="#tick" /></svg>
+              </div>
+              <div class="rung" style="--i: 1">
+                <span class="mini"
+                  ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                  ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                  ><svg class="st" aria-hidden="true"><use href="#star" /></svg></span
+                ><span class="lvl done">4</span
+                ><svg class="tick" viewBox="0 0 24 24" aria-hidden="true"><use href="#tick" /></svg>
+              </div>
+              <div class="rung" style="--i: 2">
+                <svg class="rocket" viewBox="0 0 100 160" aria-hidden="true">
+                  <use href="#rocket" /></svg
+                ><span class="lvl now">5</span
+                ><svg class="tick none" viewBox="0 0 24 24" aria-hidden="true">
+                  <use href="#tick" />
+                </svg>
+              </div>
+              <div class="rung" style="--i: 3">
+                <span class="mini"></span><span class="lvl lock">6</span
+                ><svg class="tick none" viewBox="0 0 24 24" aria-hidden="true">
+                  <use href="#tick" />
+                </svg>
+              </div>
+              <div class="rung" style="--i: 4">
+                <span class="mini"></span><span class="lvl lock">7</span
+                ><svg class="tick none" viewBox="0 0 24 24" aria-hidden="true">
+                  <use href="#tick" />
+                </svg>
+              </div>
+            </div>
+            <p class="ladder-caption">
+              Fem nivåer syns i taget och resten sveps fram. Klarade nivåer har en bock och sina
+              stjärnor. Nivå 3 här klarades med 5 rätt: bock men ingen stjärna. Raketen står på
+              nivån som spelas. Nivåerna ovanför är låsta.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 6 -->
+      <section class="box" id="medaljer">
+        <h2><span class="num">6</span>Medaljer</h2>
+        <p class="lead">
+          En medalj kräver stjärnor på nivå 1 till 10 <b>i samma genomgång</b>, alltså i ett svep.
+          Det är <b>nivån med minst stjärnor</b> som avgör.
+        </p>
+        <div class="ranks">
+          <div class="rank bronze">
+            <svg class="medal bronze big" viewBox="0 0 20 24" role="img" aria-label="Brons">
+              <use href="#medal" />
+            </svg>
+            <h3>Brons</h3>
+            <p>
+              Minst
+              <span class="stars" role="img" aria-label="1 stjärna"
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+              ></span>
+              på varje nivå 1–10, i ett svep.
+            </p>
+          </div>
+          <div class="rank silver">
+            <svg class="medal silver big" viewBox="0 0 20 24" role="img" aria-label="Silver">
+              <use href="#medal" />
+            </svg>
+            <h3>Silver</h3>
+            <p>
+              Minst
+              <span class="stars" role="img" aria-label="2 stjärnor"
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+              ></span>
+              på varje nivå 1–10, i ett svep.
+            </p>
+          </div>
+          <div class="rank gold">
+            <svg class="medal gold big" viewBox="0 0 20 24" role="img" aria-label="Guld">
+              <use href="#medal" />
+            </svg>
+            <h3>Guld</h3>
+            <p>
+              <span class="stars" role="img" aria-label="3 stjärnor"
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+              ></span>
+              på alla nivåer 1–10, i ett svep.
+            </p>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h3>Genomgången</h3>
+          <p>
+            En genomgång är nivå 1 till 10 i en svårighetsgrad, i ordning. När barnet spelar en nivå
+            händer tre saker:
+          </p>
+          <ul class="rules">
+            <li>
+              <span class="mark kept"></span><span><b>Nivåerna under</b> behålls.</span>
+            </li>
+            <li>
+              <span class="mark up"></span
+              ><span
+                ><b>Nivån själv</b> får sitt bästa antal stjärnor. Försök igen tar aldrig bort
+                stjärnor.</span
+              >
+            </li>
+            <li>
+              <span class="mark reset"></span
+              ><span
+                ><b>Nivåerna över</b> nollställs till 0. Den som går tillbaka och spelar en lägre
+                nivå börjar alltså en ny genomgång.</span
+              >
+            </li>
+          </ul>
+          <div class="change">
+            <span class="when-label">Före</span>
+            <div class="levels">
+              <span role="img" aria-label="Nivå 1: 1 stjärna"
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><span class="lvl sm done">1</span></span
+              ><span role="img" aria-label="Nivå 2: 1 stjärna"
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><span class="lvl sm done">2</span></span
+              ><span role="img" aria-label="Nivå 3: 1 stjärna"
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><span class="lvl sm done">3</span></span
+              ><span role="img" aria-label="Nivå 4: 1 stjärna"
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><span class="lvl sm done">4</span></span
+              ><span role="img" aria-label="Nivå 5: 1 stjärna"
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><span class="lvl sm done">5</span></span
+              ><span role="img" aria-label="Nivå 6: 1 stjärna"
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><span class="lvl sm done">6</span></span
+              ><span role="img" aria-label="Nivå 7: 1 stjärna"
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><span class="lvl sm done">7</span></span
+              ><span role="img" aria-label="Nivå 8: 1 stjärna"
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><span class="lvl sm done">8</span></span
+              ><span role="img" aria-label="Nivå 9: 1 stjärna"
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><span class="lvl sm done">9</span></span
+              ><span role="img" aria-label="Nivå 10: 0 stjärnor"
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><span class="lvl sm">10</span></span
+              >
+            </div>
+            <p class="action">
+              Spelar nivå 9 igen och får
+              <span class="stars" role="img" aria-label="3 stjärnor"
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+              ></span>
+            </p>
+            <span class="when-label">Efter</span>
+            <div class="levels">
+              <span role="img" aria-label="Nivå 1: 1 stjärna"
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><span class="lvl sm done">1</span></span
+              ><span role="img" aria-label="Nivå 2: 1 stjärna"
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><span class="lvl sm done">2</span></span
+              ><span role="img" aria-label="Nivå 3: 1 stjärna"
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><span class="lvl sm done">3</span></span
+              ><span role="img" aria-label="Nivå 4: 1 stjärna"
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><span class="lvl sm done">4</span></span
+              ><span role="img" aria-label="Nivå 5: 1 stjärna"
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><span class="lvl sm done">5</span></span
+              ><span role="img" aria-label="Nivå 6: 1 stjärna"
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><span class="lvl sm done">6</span></span
+              ><span role="img" aria-label="Nivå 7: 1 stjärna"
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><span class="lvl sm done">7</span></span
+              ><span role="img" aria-label="Nivå 8: 1 stjärna"
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><span class="lvl sm done">8</span></span
+              ><span class="up" role="img" aria-label="Nivå 9: 3 stjärnor"
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><span class="lvl sm done">9</span></span
+              ><span class="reset" role="img" aria-label="Nivå 10: 0 stjärnor"
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><span class="lvl sm">10</span></span
+              >
+            </div>
+            <p>Nivå 1–8 är oförändrade. Nivå 9 får 3 stjärnor. Nivå 10 nollställs till 0.</p>
+          </div>
+          <div class="change">
+            <span class="when-label">Före</span>
+            <div class="levels">
+              <span role="img" aria-label="Nivå 1: 1 stjärna"
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><span class="lvl sm done">1</span></span
+              ><span role="img" aria-label="Nivå 2: 1 stjärna"
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><span class="lvl sm done">2</span></span
+              ><span role="img" aria-label="Nivå 3: 1 stjärna"
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><span class="lvl sm done">3</span></span
+              ><span role="img" aria-label="Nivå 4: 1 stjärna"
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><span class="lvl sm done">4</span></span
+              ><span role="img" aria-label="Nivå 5: 1 stjärna"
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><span class="lvl sm done">5</span></span
+              ><span role="img" aria-label="Nivå 6: 1 stjärna"
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><span class="lvl sm done">6</span></span
+              ><span role="img" aria-label="Nivå 7: 1 stjärna"
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><span class="lvl sm done">7</span></span
+              ><span role="img" aria-label="Nivå 8: 1 stjärna"
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><span class="lvl sm done">8</span></span
+              ><span role="img" aria-label="Nivå 9: 3 stjärnor"
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><span class="lvl sm done">9</span></span
+              ><span role="img" aria-label="Nivå 10: 0 stjärnor"
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><span class="lvl sm">10</span></span
+              >
+            </div>
+            <p class="action">
+              Försök igen på nivå 9 och får
+              <span class="stars" role="img" aria-label="1 stjärna"
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+              ></span>
+            </p>
+            <span class="when-label">Efter</span>
+            <div class="levels">
+              <span role="img" aria-label="Nivå 1: 1 stjärna"
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><span class="lvl sm done">1</span></span
+              ><span role="img" aria-label="Nivå 2: 1 stjärna"
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><span class="lvl sm done">2</span></span
+              ><span role="img" aria-label="Nivå 3: 1 stjärna"
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><span class="lvl sm done">3</span></span
+              ><span role="img" aria-label="Nivå 4: 1 stjärna"
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><span class="lvl sm done">4</span></span
+              ><span role="img" aria-label="Nivå 5: 1 stjärna"
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><span class="lvl sm done">5</span></span
+              ><span role="img" aria-label="Nivå 6: 1 stjärna"
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><span class="lvl sm done">6</span></span
+              ><span role="img" aria-label="Nivå 7: 1 stjärna"
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><span class="lvl sm done">7</span></span
+              ><span role="img" aria-label="Nivå 8: 1 stjärna"
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><span class="lvl sm done">8</span></span
+              ><span class="up" role="img" aria-label="Nivå 9: 3 stjärnor"
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><span class="lvl sm done">9</span></span
+              ><span role="img" aria-label="Nivå 10: 0 stjärnor"
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><span class="lvl sm">10</span></span
+              >
+            </div>
+            <p>Nivå 9 behåller sitt bästa: 3 stjärnor.</p>
+          </div>
+          <div class="change">
+            <span class="when-label">Före</span>
+            <div class="levels">
+              <span role="img" aria-label="Nivå 1: 2 stjärnor"
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><span class="lvl sm done">1</span></span
+              ><span role="img" aria-label="Nivå 2: 2 stjärnor"
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><span class="lvl sm done">2</span></span
+              ><span role="img" aria-label="Nivå 3: 2 stjärnor"
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><span class="lvl sm done">3</span></span
+              ><span role="img" aria-label="Nivå 4: 2 stjärnor"
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><span class="lvl sm done">4</span></span
+              ><span role="img" aria-label="Nivå 5: 2 stjärnor"
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><span class="lvl sm done">5</span></span
+              ><span role="img" aria-label="Nivå 6: 2 stjärnor"
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><span class="lvl sm done">6</span></span
+              ><span role="img" aria-label="Nivå 7: 2 stjärnor"
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><span class="lvl sm done">7</span></span
+              ><span role="img" aria-label="Nivå 8: 2 stjärnor"
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><span class="lvl sm done">8</span></span
+              ><span role="img" aria-label="Nivå 9: 2 stjärnor"
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><span class="lvl sm done">9</span></span
+              ><span role="img" aria-label="Nivå 10: 2 stjärnor"
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><span class="lvl sm done">10</span></span
+              >
+            </div>
+            <p class="action">
+              Går tillbaka, spelar nivå 3 och får
+              <span class="stars" role="img" aria-label="3 stjärnor"
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+              ></span>
+            </p>
+            <span class="when-label">Efter</span>
+            <div class="levels">
+              <span role="img" aria-label="Nivå 1: 2 stjärnor"
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><span class="lvl sm done">1</span></span
+              ><span role="img" aria-label="Nivå 2: 2 stjärnor"
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><span class="lvl sm done">2</span></span
+              ><span class="up" role="img" aria-label="Nivå 3: 3 stjärnor"
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><span class="lvl sm done">3</span></span
+              ><span class="reset" role="img" aria-label="Nivå 4: 0 stjärnor"
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><span class="lvl sm">4</span></span
+              ><span class="reset" role="img" aria-label="Nivå 5: 0 stjärnor"
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><span class="lvl sm">5</span></span
+              ><span class="reset" role="img" aria-label="Nivå 6: 0 stjärnor"
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><span class="lvl sm">6</span></span
+              ><span class="reset" role="img" aria-label="Nivå 7: 0 stjärnor"
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><span class="lvl sm">7</span></span
+              ><span class="reset" role="img" aria-label="Nivå 8: 0 stjärnor"
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><span class="lvl sm">8</span></span
+              ><span class="reset" role="img" aria-label="Nivå 9: 0 stjärnor"
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><span class="lvl sm">9</span></span
+              ><span class="reset" role="img" aria-label="Nivå 10: 0 stjärnor"
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><span class="lvl sm">10</span></span
+              >
+            </div>
+            <div class="verdict">
+              <svg class="medal silver" viewBox="0 0 20 24" role="img" aria-label="Silver">
+                <use href="#medal" /></svg
+              ><span
+                >Nivå 4–10 nollställs och en ny genomgång börjar. Silvermedaljen från förra
+                genomgången finns kvar.</span
+              >
+            </div>
+          </div>
+        </div>
+
+        <h3>Exempel: vilken medalj en genomgång ger</h3>
+        <div class="examples">
+          <div class="ex">
+            <div class="levels">
+              <span role="img" aria-label="Nivå 1: 3 stjärnor"
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><span class="lvl sm done">1</span></span
+              ><span role="img" aria-label="Nivå 2: 2 stjärnor"
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><span class="lvl sm done">2</span></span
+              ><span role="img" aria-label="Nivå 3: 2 stjärnor"
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><span class="lvl sm done">3</span></span
+              ><span role="img" aria-label="Nivå 4: 3 stjärnor"
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><span class="lvl sm done">4</span></span
+              ><span role="img" aria-label="Nivå 5: 2 stjärnor"
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><span class="lvl sm done">5</span></span
+              ><span class="weak" role="img" aria-label="Nivå 6: 1 stjärna"
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><span class="lvl sm done">6</span></span
+              ><span role="img" aria-label="Nivå 7: 2 stjärnor"
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><span class="lvl sm done">7</span></span
+              ><span role="img" aria-label="Nivå 8: 3 stjärnor"
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><span class="lvl sm done">8</span></span
+              ><span role="img" aria-label="Nivå 9: 2 stjärnor"
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><span class="lvl sm done">9</span></span
+              ><span role="img" aria-label="Nivå 10: 2 stjärnor"
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><span class="lvl sm done">10</span></span
+              >
+            </div>
+            <div class="verdict">
+              <svg class="medal bronze big" viewBox="0 0 20 24" role="img" aria-label="Brons">
+                <use href="#medal" /></svg
+              ><span><b>Brons.</b> Nivå 6 har bara en stjärna och håller emot silver.</span>
+            </div>
+          </div>
+          <div class="ex">
+            <div class="levels">
+              <span role="img" aria-label="Nivå 1: 2 stjärnor"
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><span class="lvl sm done">1</span></span
+              ><span role="img" aria-label="Nivå 2: 2 stjärnor"
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><span class="lvl sm done">2</span></span
+              ><span role="img" aria-label="Nivå 3: 3 stjärnor"
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><span class="lvl sm done">3</span></span
+              ><span role="img" aria-label="Nivå 4: 2 stjärnor"
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><span class="lvl sm done">4</span></span
+              ><span role="img" aria-label="Nivå 5: 2 stjärnor"
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><span class="lvl sm done">5</span></span
+              ><span role="img" aria-label="Nivå 6: 2 stjärnor"
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><span class="lvl sm done">6</span></span
+              ><span role="img" aria-label="Nivå 7: 3 stjärnor"
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><span class="lvl sm done">7</span></span
+              ><span role="img" aria-label="Nivå 8: 2 stjärnor"
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><span class="lvl sm done">8</span></span
+              ><span role="img" aria-label="Nivå 9: 2 stjärnor"
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><span class="lvl sm done">9</span></span
+              ><span role="img" aria-label="Nivå 10: 2 stjärnor"
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><span class="lvl sm done">10</span></span
+              >
+            </div>
+            <div class="verdict">
+              <svg class="medal silver big" viewBox="0 0 20 24" role="img" aria-label="Silver">
+                <use href="#medal" /></svg
+              ><span><b>Silver.</b> Alla nivåer har minst två stjärnor.</span>
+            </div>
+          </div>
+          <div class="ex">
+            <div class="levels">
+              <span role="img" aria-label="Nivå 1: 3 stjärnor"
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><span class="lvl sm done">1</span></span
+              ><span role="img" aria-label="Nivå 2: 3 stjärnor"
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><span class="lvl sm done">2</span></span
+              ><span role="img" aria-label="Nivå 3: 3 stjärnor"
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><span class="lvl sm done">3</span></span
+              ><span role="img" aria-label="Nivå 4: 3 stjärnor"
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><span class="lvl sm done">4</span></span
+              ><span role="img" aria-label="Nivå 5: 3 stjärnor"
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><span class="lvl sm done">5</span></span
+              ><span role="img" aria-label="Nivå 6: 3 stjärnor"
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><span class="lvl sm done">6</span></span
+              ><span role="img" aria-label="Nivå 7: 3 stjärnor"
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><span class="lvl sm done">7</span></span
+              ><span role="img" aria-label="Nivå 8: 3 stjärnor"
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><span class="lvl sm done">8</span></span
+              ><span role="img" aria-label="Nivå 9: 3 stjärnor"
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><span class="lvl sm done">9</span></span
+              ><span role="img" aria-label="Nivå 10: 3 stjärnor"
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><span class="lvl sm done">10</span></span
+              >
+            </div>
+            <div class="verdict">
+              <svg class="medal gold big" viewBox="0 0 20 24" role="img" aria-label="Guld">
+                <use href="#medal" /></svg
+              ><span><b>Guld.</b> Tre stjärnor på alla nivåer.</span>
+            </div>
+          </div>
+          <div class="ex">
+            <div class="levels">
+              <span role="img" aria-label="Nivå 1: 3 stjärnor"
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><span class="lvl sm done">1</span></span
+              ><span role="img" aria-label="Nivå 2: 3 stjärnor"
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><span class="lvl sm done">2</span></span
+              ><span role="img" aria-label="Nivå 3: 3 stjärnor"
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><span class="lvl sm done">3</span></span
+              ><span role="img" aria-label="Nivå 4: 3 stjärnor"
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><span class="lvl sm done">4</span></span
+              ><span role="img" aria-label="Nivå 5: 3 stjärnor"
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><span class="lvl sm done">5</span></span
+              ><span role="img" aria-label="Nivå 6: 3 stjärnor"
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><span class="lvl sm done">6</span></span
+              ><span role="img" aria-label="Nivå 7: 3 stjärnor"
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><span class="lvl sm done">7</span></span
+              ><span role="img" aria-label="Nivå 8: 3 stjärnor"
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><span class="lvl sm done">8</span></span
+              ><span role="img" aria-label="Nivå 9: 3 stjärnor"
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><span class="lvl sm done">9</span></span
+              ><span class="weak" role="img" aria-label="Nivå 10: 0 stjärnor"
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st off" aria-hidden="true"><use href="#star" /></svg
+                ><span class="lvl sm">10</span></span
+              >
+            </div>
+            <div class="verdict">
+              <svg
+                class="medal none big"
+                viewBox="0 0 20 24"
+                role="img"
+                aria-label="Ingen medalj än"
+              >
+                <use href="#medal" /></svg
+              ><span><b>Ingen medalj än.</b> Nivå 10 har ingen stjärna i den här genomgången.</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="two">
+          <div class="panel">
+            <h3>Medaljen finns kvar</h3>
+            <p>
+              En vunnen medalj finns kvar för alltid, även när barnet börjar om. Den kan bara bli
+              högre, aldrig lägre.
+            </p>
+          </div>
+          <div class="panel">
+            <h3>Varför i ett svep?</h3>
+            <p>
+              Förut kunde man spela om enstaka nivåer och få guld utan att klara allt i ett svep. Nu
+              måste alla tio nivåer nå stjärnorna i samma genomgång.
+            </p>
+          </div>
+        </div>
+
+        <h3>Var medaljen räknas och syns</h3>
+        <div class="two">
+          <div class="app rw">
+            <header>
+              <svg class="" viewBox="0 0 100 160" aria-hidden="true"><use href="#rocket" /></svg
+              >Raketord
+            </header>
+            <div class="body">
+              <p>En medalj per svårighetsgrad och ordspråk.</p>
+              <p>
+                <b>Startkortet</b> har en stapel och en prispall. Stapeln visar hur många av de 10
+                nivåerna som har stjärnor i den pågående genomgången. En nivå klarad med 5 rätt
+                räknas inte. Prispallens tre medaljer visar det bästa hittills.
+              </p>
+              <div class="two" style="gap: 10px">
+                <div class="mock day">
+                  <h4>Lätt</h4>
+                  <div class="barrow">
+                    <span class="bar"><i style="--w: 70%"></i></span
+                    ><span class="podium"
+                      ><svg
+                        class="medal none"
+                        viewBox="0 0 20 24"
+                        role="img"
+                        aria-label="Ingen medalj än"
+                      >
+                        <use href="#medal" /></svg
+                      ><svg
+                        class="medal none"
+                        viewBox="0 0 20 24"
+                        role="img"
+                        aria-label="Ingen medalj än"
+                      >
+                        <use href="#medal" /></svg
+                      ><svg
+                        class="medal none"
+                        viewBox="0 0 20 24"
+                        role="img"
+                        aria-label="Ingen medalj än"
+                      >
+                        <use href="#medal" /></svg
+                    ></span>
+                  </div>
+                </div>
+                <div class="mock day">
+                  <h4>Lätt</h4>
+                  <div class="barrow">
+                    <span class="bar"><i style="--w: 30%"></i></span
+                    ><span class="podium"
+                      ><svg class="medal bronze" viewBox="0 0 20 24" role="img" aria-label="Brons">
+                        <use href="#medal" /></svg
+                      ><svg
+                        class="medal none"
+                        viewBox="0 0 20 24"
+                        role="img"
+                        aria-label="Ingen medalj än"
+                      >
+                        <use href="#medal" /></svg
+                      ><svg
+                        class="medal none"
+                        viewBox="0 0 20 24"
+                        role="img"
+                        aria-label="Ingen medalj än"
+                      >
+                        <use href="#medal" /></svg
+                    ></span>
+                  </div>
+                </div>
+              </div>
+              <p class="mock-caption">
+                Till vänster: 7 av 10 nivåer med stjärnor i genomgången, ingen medalj än. Till
+                höger: brons vunnen tidigare, och en ny genomgång med 3 av 10 nivåer med stjärnor.
+              </p>
+            </div>
+          </div>
+          <div class="app km">
+            <header>
+              <svg class="" viewBox="0 0 100 160" aria-hidden="true"><use href="#comet" /></svg
+              >Kometmatte
+            </header>
+            <div class="body">
+              <p>En medalj per räknesätt och svårighetsgrad, alltså 16 medaljer.</p>
+              <p><b>Räknesättskortet</b> visar fyra små medaljer, en per svårighetsgrad.</p>
+              <div class="mock plum">
+                <h4>+ Plus</h4>
+                <div class="fours">
+                  <span
+                    ><svg class="medal gold" viewBox="0 0 20 24" role="img" aria-label="Guld">
+                      <use href="#medal" /></svg
+                    >Lätt</span
+                  ><span
+                    ><svg class="medal bronze" viewBox="0 0 20 24" role="img" aria-label="Brons">
+                      <use href="#medal" /></svg
+                    >Mellan</span
+                  ><span
+                    ><svg
+                      class="medal none"
+                      viewBox="0 0 20 24"
+                      role="img"
+                      aria-label="Ingen medalj än"
+                    >
+                      <use href="#medal" /></svg
+                    >Svår</span
+                  ><span
+                    ><svg
+                      class="medal none"
+                      viewBox="0 0 20 24"
+                      role="img"
+                      aria-label="Ingen medalj än"
+                    >
+                      <use href="#medal" /></svg
+                    >Expert</span
+                  >
+                </div>
+              </div>
+              <p class="mock-caption">
+                Guld på Lätt, brons på Mellan, ingen medalj än på Svår och Expert.
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="panel">
+          <h3>När medaljen vinns</h3>
+          <div class="mock result rw">
+            <svg class="medal bronze huge" viewBox="0 0 20 24" role="img" aria-label="Brons">
+              <use href="#medal" />
+            </svg>
+            <p class="congrats">Grattis! Du fick brons!</p>
+            <p class="next">Silver: minst två stjärnor på nivå 1 till 10 i ett svep.</p>
+          </div>
+          <p class="mock-caption">
+            Resultatet visar medaljen stor, med kravet för nästa medalj under. Guld har ingen rad om
+            nästa.
+          </p>
+        </div>
+      </section>
+
+      <!-- 7 -->
+      <section class="box" id="poang">
+        <h2><span class="num">7</span>Poäng</h2>
+        <p class="lead">
+          Varje rätt svar ger poäng, mer ju snabbare det kom. Fel svar ger 0. Poängen avgör aldrig
+          om en nivå klaras eller hur många stjärnor den får: det gör bara antal rätt. Talen är små
+          med flit, så att barn kan läsa och jämföra dem.
+        </p>
+        <div class="two">
+          <div class="app rw">
+            <header>
+              <svg class="" viewBox="0 0 100 160" aria-hidden="true"><use href="#rocket" /></svg
+              >Raketord
+            </header>
+            <div class="body">
+              <h3>Ordpoäng</h3>
+              <div class="formula">
+                <span class="brick speed"
+                  ><b>snabbhet</b><small>Rätt · Snabbt · Blixtsnabbt</small></span
+                ><span class="op">=</span>
+                <span class="brick result"><b>10 · 20 · 30</b><small>poäng</small></span>
+              </div>
+              <h3>Rundpoäng</h3>
+              <div class="formula">
+                <span class="brick base"><b>ordpoängen</b><small>summan</small></span
+                ><span class="op">×</span>
+                <span class="brick app"
+                  ><b>hastighet</b><small>×1 1 · ×2 1,2 · ×3 1,3 · ×4 1,4</small></span
+                >
+              </div>
+              <p class="muted">Exempel: 10 ord, alla Blixtsnabbt, hastighet ×4</p>
+              <div class="formula">
+                <span class="brick base"><b>300</b></span
+                ><span class="op">×</span>
+                <span class="brick app"><b>1,4</b><small>hastighet</small></span
+                ><span class="op">=</span>
+                <span class="brick result"><b>420</b><small>det mesta en runda ger</small></span>
+              </div>
+              <p>Ordets längd, nivån och svårighetsgraden påverkar inte poängen.</p>
+            </div>
+          </div>
+          <div class="app km">
+            <header>
+              <svg class="" viewBox="0 0 100 160" aria-hidden="true"><use href="#comet" /></svg
+              >Kometmatte
+            </header>
+            <div class="body">
+              <h3>Uppgiftspoäng</h3>
+              <div class="formula">
+                <span class="brick speed"
+                  ><b>snabbhet</b><small>Rätt · Snabbt · Blixtsnabbt</small></span
+                ><span class="op">=</span>
+                <span class="brick result"><b>10 · 20 · 30</b><small>poäng</small></span>
+              </div>
+              <h3>Rundpoäng</h3>
+              <p>
+                Summan av uppgiftspoängen. Kometmatte har ingen hastighet, så en runda ger högst
+                300.
+              </p>
+              <p>Svårighetsgraden, nivån, räknesättet och tidsgränsen påverkar inte poängen.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h3>Snabbhet</h3>
+          <p>
+            Varje ord och uppgift har en <b>referenstid</b>. Svarstiden räknas från att rutorna
+            visas tills barnet trycker Klar eller OK.
+          </p>
+          <div>
+            <div
+              class="timeline"
+              role="img"
+              aria-label="Inom 0,6 gånger referenstiden: Blixtsnabbt, 30 poäng. Inom 1,2 gånger referenstiden: Snabbt, 20 poäng. Senare: Rätt, 10 poäng."
+            >
+              <span class="t3"><b>Blixtsnabbt 30 p</b>inom 0,6 gånger referenstiden</span>
+              <span class="t2"><b>Snabbt 20 p</b>inom 1,2 gånger referenstiden</span>
+              <span class="t1"><b>Rätt 10 p</b>senare</span>
+            </div>
+            <div class="ticks" aria-hidden="true">
+              <span>0 s</span><span>2,3 s</span><span>4,6 s</span>
+            </div>
+            <p class="muted" style="font-size: 15px">
+              Tiderna gäller ”katt” i Raketord: referenstiden är 3,8 sekunder.
+            </p>
+          </div>
+          <div class="two">
+            <div class="app rw">
+              <header>
+                <svg class="" viewBox="0 0 100 160" aria-hidden="true"><use href="#rocket" /></svg
+                >Raketord
+              </header>
+              <div class="body">
+                <p><b>Referenstid = 1 s + 0,7 s per bokstav</b></p>
+                <div class="scroll">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th scope="col">Ord</th>
+                        <th scope="col">Bokstäver</th>
+                        <th scope="col">Referenstid</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>ko</td>
+                        <td>2</td>
+                        <td>2,4 s</td>
+                      </tr>
+                      <tr>
+                        <td>sol</td>
+                        <td>3</td>
+                        <td>3,1 s</td>
+                      </tr>
+                      <tr>
+                        <td>katt</td>
+                        <td>4</td>
+                        <td>3,8 s</td>
+                      </tr>
+                      <tr>
+                        <td>kyckling</td>
+                        <td>8</td>
+                        <td>6,6 s</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+            <div class="app km">
+              <header>
+                <svg class="" viewBox="0 0 100 160" aria-hidden="true"><use href="#comet" /></svg
+                >Kometmatte
+              </header>
+              <div class="body">
+                <p><b>Referenstid / tidsgräns</b> i sekunder</p>
+                <div class="scroll">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th scope="col"></th>
+                        <th scope="col">Lätt</th>
+                        <th scope="col">Mellan</th>
+                        <th scope="col">Svår</th>
+                        <th scope="col">Expert</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <th scope="row">plus</th>
+                        <td>4 / 8</td>
+                        <td>5 / 10</td>
+                        <td>7 / 14</td>
+                        <td>10 / 20</td>
+                      </tr>
+                      <tr>
+                        <th scope="row">minus</th>
+                        <td>5 / 10</td>
+                        <td>6 / 12</td>
+                        <td>8 / 16</td>
+                        <td>12 / 24</td>
+                      </tr>
+                      <tr>
+                        <th scope="row">gånger</th>
+                        <td>4 / 8</td>
+                        <td>5 / 10</td>
+                        <td>6 / 12</td>
+                        <td>10 / 20</td>
+                      </tr>
+                      <tr>
+                        <th scope="row">delat med</th>
+                        <td>5 / 10</td>
+                        <td>6 / 12</td>
+                        <td>7 / 14</td>
+                        <td>12 / 24</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <p>
+                  Tidsgränsen gäller bara om den är på. Ett svar som tidsgränsen skickade ger alltid
+                  10 poäng, aldrig Snabbt eller Blixtsnabbt.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h3>Från svar till rekord</h3>
+          <div class="stack">
+            <div>
+              <span class="label">Rundpoäng<small>210 p, bonusen ingår</small></span
+              ><span class="seg" role="img" aria-label="Exempel: 210 poäng, varav 110 bonus."
+                ><i style="--f: 100">100</i><i class="bonus" style="--f: 110">bonus 110</i></span
+              >
+            </div>
+            <div>
+              <span class="label">Spelomgång<small>620 p, summan av rundorna</small></span
+              ><span
+                class="seg"
+                role="img"
+                aria-label="Exempel: tre rundor, 210, 160 och 250 poäng."
+                ><i style="--f: 210">210</i><i class="r2" style="--f: 160">160</i
+                ><i class="r3" style="--f: 250">250</i></span
+              >
+            </div>
+            <div>
+              <span class="label">Rekord<small>bästa spelomgången</small></span
+              ><span class="resets"
+                ><span class="chip">480</span
+                ><span class="chip" style="border-color: var(--hl-edge); background: var(--hl-tint)"
+                  ><svg class="st" aria-hidden="true"><use href="#star" /></svg> 620</span
+                ><span class="chip">350</span></span
+              >
+            </div>
+          </div>
+          <p class="muted" style="font-size: 15px">Talen är exempel.</p>
+          <ul>
+            <li>
+              <b>Bonus</b> är det som snabba svar gav utöver 10 per rätt svar, i Raketord också
+              hastigheten. Resultatet visar den för sig, men den ingår redan i rundpoängen.
+              Exemplet: 10 rätt, 4 Blixtsnabbt, 3 Snabbt och 3 Rätt på ×1.
+            </li>
+            <li>
+              <b>Rekord</b> är den bästa spelomgången per svårighetsgrad: i Raketord per ordspråk, i
+              Kometmatte per räknesätt. Samma lista gäller för alla hastigheter och med eller utan
+              tidsgräns.
+            </li>
+            <li>Ingen topplista: barnet tävlar bara mot sig själv.</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- 8 -->
+      <section class="box rw" id="hastighet">
+        <h2><span class="num">8</span>Hastighet</h2>
+        <p>
+          <span class="tag rw"
+            ><svg class="" viewBox="0 0 100 160" aria-hidden="true"><use href="#rocket" /></svg
+            >Raketord</span
+          >
+          <span class="muted">Bara i Raketord.</span>
+        </p>
+        <p class="lead">
+          I inställningarna väljer man hastighet ×1, ×2, ×3 eller ×4. Tiden ordet visas delas med
+          hastigheten, och rundan ger lite fler poäng: ×1,2, ×1,3 eller ×1,4.
+        </p>
+        <div
+          class="speeds"
+          role="img"
+          aria-label="Lätt nivå 1: ×1 visar ordet 3,5 sekunder, ×2 1,75 sekunder, ×3 1,17 sekunder, ×4 0,88 sekunder."
+        >
+          <div>
+            <span class="x">×1</span><span><span class="time" style="--w: 100%">3,5 s</span></span
+            ><span class="pts">poäng ×1</span>
+          </div>
+          <div>
+            <span class="x">×2</span><span><span class="time" style="--w: 50%">1,75 s</span></span
+            ><span class="pts">poäng ×1,2</span>
+          </div>
+          <div>
+            <span class="x">×3</span><span><span class="time" style="--w: 33.4%">1,17 s</span></span
+            ><span class="pts">poäng ×1,3</span>
+          </div>
+          <div>
+            <span class="x">×4</span><span><span class="time" style="--w: 25.1%">0,88 s</span></span
+            ><span class="pts">poäng ×1,4</span>
+          </div>
+        </div>
+        <p class="muted" style="font-size: 15px">Lätt, nivå 1.</p>
+        <p>
+          Hastigheten gäller en hel runda och byts bara mellan rundor. Den höjs aldrig av sig själv.
+        </p>
+        <div class="two">
+          <div class="panel">
+            <h3>Föreslår högre</h3>
+            <p>På resultatet kan knappen ”Prova ×2” dyka upp:</p>
+            <ul>
+              <li>
+                efter en runda med alla rätt och minst 6 snabba svar (Snabbt eller Blixtsnabbt),
+                högst en gång per spelomgång
+              </li>
+              <li>när nivå 10 är klarad</li>
+            </ul>
+          </div>
+          <div class="panel">
+            <h3>Föreslår lägre</h3>
+            <p>När nivån inte klarades, alltså vid 0–4 rätt.</p>
+          </div>
+        </div>
+        <div class="panel km">
+          <p>
+            <span class="tag km"
+              ><svg class="" viewBox="0 0 100 160" aria-hidden="true"><use href="#comet" /></svg
+              >Kometmatte</span
+            >
+          </p>
+          <p>
+            Kometmatte har ingen hastighet. Där finns tidsgränsen i stället (se
+            <a href="#nivaer">Vad ändras mellan nivåerna?</a>).
+          </p>
+        </div>
+      </section>
+
+      <!-- 9 -->
+      <section class="box" id="urval">
+        <h2><span class="num">9</span>Vilka ord och uppgifter som kommer</h2>
+        <p class="lead">
+          Spelet minns vilka ord och uppgifter barnet har svarat rätt på. Det som inte klarats
+          kommer först, så att inget upprepas i onödan.
+        </p>
+        <div class="queue-arrow" aria-hidden="true">
+          <span>Kommer först</span><i></i><span>Kommer sist</span>
+        </div>
+        <div class="queue">
+          <div class="group g1">
+            <h4><span class="order">1</span>Aldrig rätt</h4>
+            <p>Nya, och de som bara blivit fel.</p>
+            <div class="words" aria-hidden="true">
+              <span>BÅT</span><span>MUS</span><span class="recent">ÖGA</span>
+            </div>
+          </div>
+          <div class="group">
+            <h4><span class="order">2</span>Rätt en gång</h4>
+            <p>Väntar tills de oklarade är slut.</p>
+            <div class="words" aria-hidden="true">
+              <span>SOL</span><span class="recent">KO</span>
+            </div>
+          </div>
+          <div class="group">
+            <h4><span class="order">3</span>Rätt två gånger eller fler</h4>
+            <p>Väntar ännu längre.</p>
+            <div class="words" aria-hidden="true">
+              <span>IS</span><span class="recent">BI</span>
+            </div>
+          </div>
+        </div>
+        <div class="key">
+          <span
+            ><span class="chip" style="border-style: dashed; opacity: 0.55">ORD</span> bland de 100
+            senast visade: kommer efter andra i samma grupp</span
+          >
+        </div>
+        <ul>
+          <li>
+            Bara rätt svar räknas, även i avbrutna rundor och rundor som inte klarades. Fel räknas
+            aldrig emot barnet.
+          </li>
+          <li>På nivå 10 kommer ord och uppgifter som redan klarats på nivå 10 sist.</li>
+        </ul>
+        <div class="panel km">
+          <p>
+            <span class="tag km"
+              ><svg class="" viewBox="0 0 100 160" aria-hidden="true"><use href="#comet" /></svg
+              >Kometmatte</span
+            >
+          </p>
+          <ul>
+            <li>
+              Samma uppgift i spegelvänd form, som 3 + 4 och 4 + 3, kommer aldrig i samma runda.
+            </li>
+            <li>Högst två uppgifter i en runda har samma svar.</li>
+            <li>
+              Vilka uppgifter som finns och på vilken nivå de kommer:
+              <a href="uppgifter.html">Kometmattes uppgifter</a>.
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- 10 -->
+      <section class="box" id="prov">
+        <h2><span class="num">10</span>Provversionen på webben</h2>
+        <p>En kort provversion för att se hur spelet känns.</p>
+        <div class="trial">
+          <div>
+            <span class="muted">Svårighetsgrader</span><b>Alla</b><span>men bara nivå 1</span>
+          </div>
+          <div><span class="muted">En runda</span><b>3</b><span>ord eller uppgifter</span></div>
+          <div><span class="muted">Klarad nivå</span><b>2 av 3</b><span>rätt</span></div>
+          <div>
+            <span class="muted">Stjärnor</span
+            ><span
+              >3 rätt:
+              <span class="stars" role="img" aria-label="3 stjärnor"
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg></span></span
+            ><span
+              >2 rätt:
+              <span class="stars" role="img" aria-label="1 stjärna"
+                ><svg class="st" aria-hidden="true"><use href="#star" /></svg></span
+            ></span>
+          </div>
+          <div><span class="muted">Rundor</span><b>1</b><span>per svårighetsgrad</span></div>
+          <div><span class="muted">Medalj</span><b>Ingen</b><span>kan vinnas</span></div>
+        </div>
+        <p>Resultatet visar ”Fler nivåer finns i appen”.</p>
+      </section>
+
+      <!-- 11 -->
+      <section class="box" id="ordlista">
+        <h2><span class="num">11</span>Ordlista</h2>
+        <dl class="glossary">
+          <div>
+            <dt>Runda</dt>
+            <dd>Ett försök på en nivå: 10 ord eller uppgifter, sedan resultatet.</dd>
+          </div>
+          <div>
+            <dt>Nivå</dt>
+            <dd>Ett av tio steg i en svårighetsgrad. Spelas hur många gånger som helst.</dd>
+          </div>
+          <div>
+            <dt>Svårighetsgrad</dt>
+            <dd>Lätt, Mellan, Svår eller Expert. Avgör vilka ord eller tal som kommer.</dd>
+          </div>
+          <div>
+            <dt>Räknesätt</dt>
+            <dd>Plus, minus, gånger eller delat med. Bara i Kometmatte.</dd>
+          </div>
+          <div>
+            <dt>Spelomgång</dt>
+            <dd>En eller flera rundor i rad med Nästa nivå emellan. Poängen läggs ihop.</dd>
+          </div>
+          <div>
+            <dt>Genomgång</dt>
+            <dd>
+              Nivå 1 till 10 i ett svep. Spelar barnet en lägre nivå nollställs nivåerna över den
+              och en ny genomgång börjar. Inte samma sak som spelomgång: Försök igen ger en ny
+              spelomgång men samma genomgång.
+            </dd>
+          </div>
+          <div>
+            <dt>Stjärna</dt>
+            <dd>
+              0–3 per runda: 6–7 rätt ger 1, 8–9 rätt 2 och 10 rätt 3. Nivån behåller sitt bästa i
+              genomgången.
+            </dd>
+          </div>
+          <div>
+            <dt>Klarad nivå</dt>
+            <dd>Minst 5 rätt av 10. Med 5 rätt kommer barnet vidare men får ingen stjärna.</dd>
+          </div>
+          <div>
+            <dt>Medalj</dt>
+            <dd>
+              Brons, silver eller guld när nivå 1 till 10 har minst 1, 2 eller 3 stjärnor i samma
+              genomgång. Finns kvar för alltid och kan bara bli högre.
+            </dd>
+          </div>
+          <div>
+            <dt>Nivåstege</dt>
+            <dd>Nivåerna som trappsteg med raketen på nivån som spelas.</dd>
+          </div>
+          <div>
+            <dt>Sparad plats</dt>
+            <dd>Nivån och poängen där barnet gick ut. Spelet fortsätter där nästa gång.</dd>
+          </div>
+          <div>
+            <dt>Referenstid</dt>
+            <dd>Tiden för Snabbt. Hälften av den ger Blixtsnabbt.</dd>
+          </div>
+          <div>
+            <dt>Bonus</dt>
+            <dd>Det snabbheten gav extra. Ingår redan i rundpoängen.</dd>
+          </div>
+          <div>
+            <dt>Rekord</dt>
+            <dd>
+              Den bästa spelomgången per svårighetsgrad (Raketord per ordspråk, Kometmatte per
+              räknesätt).
+            </dd>
+          </div>
+        </dl>
+      </section>
+    </main>
+    <footer>Spellogiken i apparna, 2026-11-11.</footer>
+  </body>
+</html>

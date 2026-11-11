@@ -1,0 +1,725 @@
+<!doctype html>
+<html lang="sv">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- Intern sida för teamet. Länkas bara från spellogiksidan. -->
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Kometmattes uppgifter</title>
+    <meta name="theme-color" content="#663F64" />
+    <link rel="icon" href="../favicon.svg" />
+    <style>
+      /* Layout: en väljare (räknesätt × svårighetsgrad) överst, sedan kartan över alla uppgifter
+         och hela listan per nivå. Kometmattes plommon och mint, nivåerna som en skala mint → plommon. */
+      @font-face {
+        font-family: 'Fredoka';
+        font-weight: 600;
+        font-display: swap;
+        src: url('../fonts/Fredoka_600SemiBold.ttf') format('truetype');
+      }
+      @font-face {
+        font-family: 'Fredoka';
+        font-weight: 700;
+        font-display: swap;
+        src: url('../fonts/Fredoka_700Bold.ttf') format('truetype');
+      }
+      @font-face {
+        font-family: 'Jost';
+        font-weight: 400;
+        font-display: swap;
+        src: url('../fonts/Jost_400Regular.ttf') format('truetype');
+      }
+      @font-face {
+        font-family: 'Jost';
+        font-weight: 600;
+        font-display: swap;
+        src: url('../fonts/Jost_600SemiBold.ttf') format('truetype');
+      }
+      @font-face {
+        font-family: 'Jost';
+        font-weight: 700;
+        font-display: swap;
+        src: url('../fonts/Jost_700Bold.ttf') format('truetype');
+      }
+      :root {
+        --bg: #f6f1f4;
+        --card: #ffffff;
+        --line: #e6dbe3;
+        --text: #2e2433;
+        --muted: #6d5f72;
+        --accent: #2a6e60;
+        --plum: #663f64;
+        --tint: #f1e5ef;
+        --empty: #f3edf1;
+        --display: 'Fredoka', 'Arial Rounded MT Bold', system-ui, sans-serif;
+        --body: 'Jost', 'Avenir Next', 'Segoe UI', system-ui, sans-serif;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root:not([data-theme='light']) {
+          --bg: #1d1720;
+          --card: #28202c;
+          --line: #3d3242;
+          --text: #f1e9f0;
+          --muted: #b4a5b6;
+          --accent: #86d6c3;
+          --plum: #d9a8d4;
+          --tint: #35283a;
+          --empty: #2f2633;
+          color-scheme: dark;
+        }
+      }
+      :root[data-theme='dark'] {
+        --bg: #1d1720;
+        --card: #28202c;
+        --line: #3d3242;
+        --text: #f1e9f0;
+        --muted: #b4a5b6;
+        --accent: #86d6c3;
+        --plum: #d9a8d4;
+        --tint: #35283a;
+        --empty: #2f2633;
+        color-scheme: dark;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font-family: var(--body);
+        font-size: 16px;
+        line-height: 1.5;
+      }
+      .page {
+        max-width: 1080px;
+        margin: 0 auto;
+        padding-block: 28px 56px;
+        padding-left: max(16px, env(safe-area-inset-left, 0px));
+        padding-right: max(16px, env(safe-area-inset-right, 0px));
+        display: grid;
+        gap: 22px;
+      }
+      h1,
+      h2 {
+        font-family: var(--display);
+        font-weight: 700;
+        margin: 0;
+        text-wrap: balance;
+      }
+      h1 {
+        font-size: 2rem;
+        color: var(--plum);
+      }
+      h2 {
+        font-size: 1.3rem;
+      }
+      p {
+        margin: 0;
+      }
+      .lead {
+        max-width: 68ch;
+        display: grid;
+        gap: 10px;
+      }
+      .lead ul {
+        margin: 0;
+        padding-left: 1.2em;
+        display: grid;
+        gap: 4px;
+      }
+      .muted {
+        color: var(--muted);
+      }
+
+      /* Väljaren */
+      .picker {
+        overflow-x: auto;
+      }
+      .picker table {
+        border-collapse: separate;
+        border-spacing: 6px;
+        margin: -6px;
+      }
+      .picker th {
+        font-weight: 600;
+        font-size: 0.85rem;
+        color: var(--muted);
+        text-align: left;
+        padding: 0 4px;
+        white-space: nowrap;
+      }
+      .picker button {
+        font: inherit;
+        width: 100%;
+        min-width: 84px;
+        padding: 6px 10px;
+        border-radius: 10px;
+        border: 1.5px solid var(--line);
+        background: var(--card);
+        color: var(--text);
+        cursor: pointer;
+        text-align: left;
+        line-height: 1.25;
+      }
+      .picker button b {
+        font-family: var(--display);
+        font-weight: 600;
+        font-variant-numeric: tabular-nums;
+      }
+      .picker button small {
+        display: block;
+        font-size: 0.75rem;
+        color: var(--muted);
+      }
+      .picker button[aria-pressed='true'] {
+        border-color: var(--plum);
+        background: var(--tint);
+        box-shadow: inset 0 0 0 1px var(--plum);
+      }
+      button:focus-visible {
+        outline: 3px solid var(--accent);
+        outline-offset: 2px;
+      }
+
+      .panel {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        padding: 20px;
+        display: grid;
+        gap: 18px;
+        min-width: 0;
+      }
+      .panel-head {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px 20px;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .facts {
+        font-variant-numeric: tabular-nums;
+      }
+      .note {
+        max-width: 72ch;
+        color: var(--muted);
+      }
+
+      /* Nivåerna: legend och filter */
+      .levels {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+      .levels button {
+        font: inherit;
+        display: grid;
+        justify-items: center;
+        gap: 2px;
+        min-width: 54px;
+        padding: 6px 4px 5px;
+        border-radius: 10px;
+        border: 1.5px solid transparent;
+        cursor: pointer;
+        font-variant-numeric: tabular-nums;
+      }
+      .levels button span {
+        font-size: 0.72rem;
+        opacity: 0.85;
+      }
+      .levels button b {
+        font-family: var(--display);
+        font-size: 1.15rem;
+        line-height: 1;
+      }
+      .levels button em {
+        font-style: normal;
+        font-size: 0.7rem;
+      }
+      .levels button[aria-pressed='true'] {
+        border-color: var(--text);
+        box-shadow:
+          0 0 0 2px var(--card),
+          0 0 0 4px var(--text);
+      }
+      .levels .hint {
+        align-self: center;
+        font-size: 0.85rem;
+        color: var(--muted);
+        margin-left: 4px;
+      }
+
+      /* Kartan */
+      .map {
+        overflow-x: auto;
+        padding-bottom: 4px;
+      }
+      .grid {
+        border-collapse: separate;
+        border-spacing: 3px;
+        font-variant-numeric: tabular-nums;
+      }
+      .grid th {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--muted);
+        min-width: 26px;
+        padding: 0 2px;
+      }
+      .grid caption {
+        caption-side: top;
+        text-align: left;
+        font-size: 0.85rem;
+        color: var(--muted);
+        padding-bottom: 6px;
+      }
+      .grid td {
+        width: 34px;
+        min-width: 34px;
+        height: 30px;
+        border-radius: 6px;
+        text-align: center;
+        font-size: 0.8rem;
+        font-weight: 600;
+        position: relative;
+        transition: opacity 0.15s;
+      }
+      .grid td.none {
+        background: var(--empty);
+      }
+      .dim {
+        opacity: 0.13;
+      }
+      .scatter {
+        width: 100%;
+        max-width: 760px;
+        height: auto;
+        display: block;
+      }
+      .scatter text {
+        fill: var(--muted);
+        font-size: 11px;
+        font-family: var(--body);
+      }
+      .scatter .axis {
+        stroke: var(--line);
+      }
+      .scatter circle {
+        stroke: var(--card);
+        stroke-width: 1;
+        transition: opacity 0.15s;
+      }
+      .key {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px 18px;
+        font-size: 0.85rem;
+        color: var(--muted);
+      }
+      .key i {
+        display: inline-block;
+        width: 18px;
+        height: 16px;
+        border-radius: 4px;
+        vertical-align: -3px;
+        margin-right: 6px;
+        background: #7dcbb9;
+      }
+      .key i.only10 {
+        background: repeating-linear-gradient(45deg, var(--empty) 0 4px, var(--line) 4px 8px);
+      }
+
+      /* Listan */
+      .list {
+        display: grid;
+        gap: 10px;
+      }
+      .list-head {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px 16px;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .copy {
+        font: inherit;
+        font-weight: 600;
+        border: 1.5px solid var(--line);
+        background: var(--card);
+        color: var(--text);
+        border-radius: 999px;
+        padding: 4px 14px;
+        cursor: pointer;
+      }
+      .row {
+        display: grid;
+        grid-template-columns: 92px 1fr;
+        gap: 10px;
+        align-items: start;
+        border-top: 1px solid var(--line);
+        padding-top: 10px;
+      }
+      .row h3 {
+        margin: 0;
+        font-family: var(--display);
+        font-weight: 600;
+        font-size: 1rem;
+        line-height: 1.2;
+      }
+      .row h3 small {
+        display: block;
+        font-family: var(--body);
+        font-weight: 400;
+        font-size: 0.8rem;
+        color: var(--muted);
+      }
+      .chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px;
+        min-width: 0;
+      }
+      .chip {
+        position: relative;
+        font-variant-numeric: tabular-nums;
+        font-size: 0.85rem;
+        font-weight: 600;
+        padding: 2px 10px;
+        border-radius: 7px;
+        white-space: nowrap;
+      }
+      .chip span {
+        font-weight: 400;
+        opacity: 0.8;
+      }
+      textarea.fallback {
+        width: 100%;
+        min-height: 120px;
+        font: inherit;
+        font-size: 0.85rem;
+      }
+      @media (max-width: 520px) {
+        .row {
+          grid-template-columns: 1fr;
+          gap: 6px;
+        }
+        h1 {
+          font-size: 1.6rem;
+        }
+        .panel {
+          padding: 14px;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        * {
+          transition: none !important;
+        }
+      }
+      .back {
+        font-weight: 600;
+        color: var(--plum);
+      }
+    </style>
+  </head>
+  <body>
+    <main class="page">
+      <header class="lead">
+        <p><a class="back" href="./">← Så fungerar spelen</a></p>
+        <h1>Kometmattes uppgifter</h1>
+        <p>
+          Alla uppgifter som kan komma i varje räknesätt och svårighetsgrad. Varje ruta är en
+          uppgift. Färgen är nivån där den kommer första gången (dess steg). Efter det kommer den
+          igen som repetition, och nivå 10 blandar allt.
+        </p>
+        <p>
+          En runda tar upp till 6 nya uppgifter ur nivåns steg, högst 2 med samma svar och aldrig
+          både en uppgift och dess spegling (4 + 8 och 8 + 4). Har steget färre fylls rundan med
+          repetition ur tidigare steg.
+        </p>
+        <p class="muted">
+          Sidan räknar fram uppgifterna med samma regler som appen (<code>pooler.js</code>, en kopia
+          av appens <code>pools.ts</code> som ett test håller lika). Välj räknesätt och
+          svårighetsgrad i tabellen.
+        </p>
+      </header>
+
+      <nav class="picker" aria-label="Räknesätt och svårighetsgrad">
+        <table id="picker"></table>
+      </nav>
+
+      <section class="panel" aria-live="polite">
+        <div class="panel-head">
+          <div>
+            <h2 id="title"></h2>
+            <p class="facts muted" id="facts"></p>
+          </div>
+        </div>
+        <p class="note" id="note"></p>
+        <div class="levels" id="levels"></div>
+        <div class="map" id="map"></div>
+        <div class="key" id="key"></div>
+      </section>
+
+      <section class="panel list">
+        <div class="list-head">
+          <h2>Hela listan per nivå</h2>
+          <button type="button" class="copy" id="copy">Kopiera listan</button>
+        </div>
+        <div id="rows"></div>
+      </section>
+    </main>
+
+    <script src="pooler.js"></script>
+    <script>
+      const CATS = [
+        ['addition', 'Plus'],
+        ['subtraction', 'Minus'],
+        ['multiplication', 'Gånger'],
+        ['division', 'Delat med'],
+      ];
+      const DIFFS = [
+        ['easy', 'Lätt'],
+        ['medium', 'Mellan'],
+        ['hard', 'Svår'],
+        ['expert', 'Expert'],
+      ];
+      const SIGN = { addition: '+', subtraction: '−', multiplication: '·', division: '/' };
+      // Nivåerna 1–9: mint → plommon. Ljus text från nivå 5.
+      const COLORS = [
+        '#cdeee4',
+        '#a6e0d0',
+        '#7dcbb9',
+        '#55b0a0',
+        '#3e9088',
+        '#3f7484',
+        '#4d5b80',
+        '#5c4677',
+        '#663f64',
+      ];
+      const INK = (s) => (s >= 5 ? '#ffffff' : '#1d3a36');
+      const ONLY10 = 'repeating-linear-gradient(45deg, var(--empty) 0 4px, var(--line) 4px 8px)';
+
+      const SAMPLED =
+        'Poolen är 100 av alla uppgifter som regeln tillåter, utvalda med ett fast frö: 12 på nivå 1 och 11 på de andra. Därför är kartan gles.';
+      const DIVISION =
+        'Delat med är gångeruppgifterna baklänges: 20 / 5 kommer på samma nivå som 4 · 5. I rutan står talet som delas.';
+      const NOTES = {
+        'addition.hard': SAMPLED,
+        'addition.expert': SAMPLED,
+        'subtraction.hard': SAMPLED,
+        'subtraction.expert': SAMPLED,
+        'division.easy': DIVISION,
+        'division.medium': DIVISION,
+        'division.hard': DIVISION,
+        'division.expert': DIVISION,
+        'addition.medium':
+          'Alla uppgifter går över tiotalet: ett tal från 2 till 19 plus ett ental, som 8 + 5 och 17 + 5 (svar upp till 28).',
+        'subtraction.medium':
+          'Alla uppgifter går under tiotalet: ett tal från 11 till 28 minus ett ental, som 13 − 5 och 23 − 5.',
+      };
+
+      const state = { cat: 'addition', diff: 'medium', level: null };
+
+      const answer = (cat, a, b) => Pooler.answerOf({ category: cat, a, b });
+      const text = (cat, a, b) => `${a} ${SIGN[cat]} ${b}`;
+      const keyOf = (a, b) => `${a},${b}`;
+      // Steg 0: uppgiften finns bara på nivå 10.
+      const tasks = (cat, diff) =>
+        Pooler.taskPool(cat, diff).map((t) => ({ a: t.a, b: t.b, s: Pooler.taskStep(t, diff) }));
+      const perLevel = (list) => {
+        const c = Array(10).fill(0);
+        list.forEach((t) => c[t.s]++);
+        return c;
+      };
+      const paint = (s) =>
+        s
+          ? `background:${COLORS[s - 1]};color:${INK(s)}`
+          : `background:${ONLY10};color:var(--text)`;
+      const levelName = (s) => (s ? `nivå ${s}` : 'bara nivå 10');
+      const tip = (cat, t) =>
+        `${text(cat, t.a, t.b)} = ${answer(cat, t.a, t.b)}, ${levelName(t.s)}`;
+
+      function renderPicker() {
+        const head = `<tr><td></td>${DIFFS.map(([, n]) => `<th scope="col">${n}</th>`).join('')}</tr>`;
+        const rows = CATS.map(
+          ([c, cn]) =>
+            `<tr><th scope="row">${cn}</th>${DIFFS.map(([d]) => {
+              const n = Pooler.taskPool(c, d).length;
+              return `<td><button type="button" data-cat="${c}" data-diff="${d}" aria-pressed="${c === state.cat && d === state.diff}"><b>${n}</b><small>uppgifter</small></button></td>`;
+            }).join('')}</tr>`,
+        ).join('');
+        document.getElementById('picker').innerHTML = head + rows;
+      }
+
+      function axes(cat, all) {
+        // Rader och kolumner. Delat med ritas som gångertabellen: svaret × talet man delar med.
+        const row = (t) => (cat === 'division' ? t.a / t.b : t.a);
+        const names =
+          cat === 'division'
+            ? ['Svaret', 'Talet man delar med']
+            : cat === 'multiplication'
+              ? ['Första faktorn', 'Andra faktorn']
+              : ['Första talet', 'Andra talet'];
+        const rows = all.map(row);
+        const cols = all.map((t) => t.b);
+        return {
+          row,
+          names,
+          r: [Math.min(...rows), Math.max(...rows)],
+          c: [Math.min(...cols), Math.max(...cols)],
+        };
+      }
+
+      function renderMap(cat, list) {
+        const ax = axes(cat, list);
+        const nr = ax.r[1] - ax.r[0] + 1;
+        const nc = ax.c[1] - ax.c[0] + 1;
+        const dim = (t) => (state.level !== null && t.s !== state.level ? ' dim' : '');
+        if (nr * nc <= 500) {
+          const at = new Map(list.map((t) => [keyOf(ax.row(t), t.b), t]));
+          let html = `<table class="grid"><caption>Rader: ${ax.names[0].toLowerCase()}. Kolumner: ${ax.names[1].toLowerCase()}. I rutan: ${cat === 'division' ? 'talet som delas' : 'svaret'}.</caption><tr><th></th>`;
+          for (let c = ax.c[0]; c <= ax.c[1]; c++) html += `<th scope="col">${c}</th>`;
+          html += '</tr>';
+          for (let r = ax.r[0]; r <= ax.r[1]; r++) {
+            html += `<tr><th scope="row">${r}</th>`;
+            for (let c = ax.c[0]; c <= ax.c[1]; c++) {
+              const t = at.get(keyOf(r, c));
+              html += t
+                ? `<td class="cell${dim(t)}" style="${paint(t.s)}" title="${tip(cat, t)}">${cat === 'division' ? t.a : answer(cat, t.a, t.b)}</td>`
+                : '<td class="none"></td>';
+            }
+            html += '</tr>';
+          }
+          return html + '</table>';
+        }
+        // Stora pooler: en punkt per uppgift (första talet uppåt, andra talet åt höger).
+        const W = 760;
+        const H = 420;
+        const L = 40;
+        const B = 36;
+        const x = (v) => L + ((v - ax.c[0]) / (ax.c[1] - ax.c[0] || 1)) * (W - L - 14);
+        const y = (v) => H - B - ((v - ax.r[0]) / (ax.r[1] - ax.r[0] || 1)) * (H - B - 12);
+        const ticks = (lo, hi) => {
+          const out = [];
+          for (let v = Math.ceil(lo / 10) * 10; v <= hi; v += 10) out.push(v);
+          return out;
+        };
+        let svg = `<svg class="scatter" viewBox="0 0 ${W} ${H}" role="img" aria-label="Alla uppgifter som punkter">`;
+        svg += `<line class="axis" x1="${L}" y1="${H - B}" x2="${W - 8}" y2="${H - B}" /><line class="axis" x1="${L}" y1="8" x2="${L}" y2="${H - B}" />`;
+        ticks(ax.c[0], ax.c[1]).forEach(
+          (v) => (svg += `<text x="${x(v)}" y="${H - B + 16}" text-anchor="middle">${v}</text>`),
+        );
+        ticks(ax.r[0], ax.r[1]).forEach(
+          (v) => (svg += `<text x="${L - 6}" y="${y(v) + 4}" text-anchor="end">${v}</text>`),
+        );
+        svg += `<text x="${(W + L) / 2}" y="${H - 4}" text-anchor="middle">${ax.names[1]}</text>`;
+        svg += `<text x="12" y="${(H - B) / 2}" text-anchor="middle" transform="rotate(-90 12 ${(H - B) / 2})">${ax.names[0]}</text>`;
+        list.forEach((t) => {
+          const fill = t.s ? COLORS[t.s - 1] : 'var(--line)';
+          svg += `<circle class="${dim(t)}" cx="${x(t.b).toFixed(1)}" cy="${y(ax.row(t)).toFixed(1)}" r="6.5" fill="${fill}"><title>${tip(cat, t)}</title></circle>`;
+        });
+        return svg + '</svg>';
+      }
+
+      function renderLevels(counts) {
+        const btn = (s) =>
+          `<button type="button" data-level="${s}" aria-pressed="${state.level === s}" style="${paint(s)}"><span>${s ? `nivå ${s}` : 'nivå 10'}</span><b>${counts[s]}</b><em>${s ? 'nya' : 'bara där'}</em></button>`;
+        const levels = [1, 2, 3, 4, 5, 6, 7, 8, 9].map(btn).join('') + (counts[0] ? btn(0) : '');
+        document.getElementById('levels').innerHTML =
+          levels + `<span class="hint">Klicka på en nivå för att se bara den.</span>`;
+      }
+
+      const sortedAt = (list, s) =>
+        list.filter((t) => t.s === s).sort((p, q) => p.a - q.a || p.b - q.b);
+      const catName = (cat) => CATS.find(([c]) => c === cat)[1];
+      const diffName = (diff) => DIFFS.find(([d]) => d === diff)[1];
+
+      function render() {
+        const { cat, diff } = state;
+        const list = tasks(cat, diff);
+        const counts = perLevel(list);
+        const answers = list.map((t) => answer(cat, t.a, t.b));
+        const note = NOTES[`${cat}.${diff}`];
+
+        renderPicker();
+        document.getElementById('title').textContent = `${catName(cat)} · ${diffName(diff)}`;
+        document.getElementById('facts').textContent =
+          `${list.length} uppgifter · svar ${Math.min(...answers)}–${Math.max(...answers)}`;
+        document.getElementById('note').textContent = note || '';
+        document.getElementById('note').hidden = !note;
+        renderLevels(counts);
+        document.getElementById('map').innerHTML = renderMap(cat, list);
+
+        const keys = [];
+        if (counts[0]) keys.push('<span><i class="only10"></i>kommer bara på nivå 10</span>');
+        keys.push('<span>Håll muspekaren över en ruta eller punkt för att se uppgiften.</span>');
+        document.getElementById('key').innerHTML = keys.join('');
+
+        const order = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0].filter((s) => counts[s]);
+        document.getElementById('rows').innerHTML = order
+          .map((s) => {
+            const items = sortedAt(list, s);
+            return `<div class="row"><h3>${s ? `Nivå ${s}` : 'Bara nivå 10'}<small>${items.length} ${s ? 'nya' : 'uppgifter'}</small></h3><div class="chips">${items
+              .map(
+                (t) =>
+                  `<span class="chip" style="${paint(s)}" title="${tip(cat, t)}">${text(cat, t.a, t.b)} <span>= ${answer(cat, t.a, t.b)}</span></span>`,
+              )
+              .join('')}</div></div>`;
+          })
+          .join('');
+      }
+
+      function listText() {
+        const { cat, diff } = state;
+        const list = tasks(cat, diff);
+        const lines = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0]
+          .map((s) => [s, sortedAt(list, s)])
+          .filter(([, items]) => items.length)
+          .map(
+            ([s, items]) =>
+              `${s ? `Nivå ${s}` : 'Bara nivå 10'}: ${items.map((t) => `${text(cat, t.a, t.b)} = ${answer(cat, t.a, t.b)}`).join(', ')}`,
+          );
+        return [`${catName(cat)} ${diffName(diff)}`, ...lines].join('\n');
+      }
+
+      document.addEventListener('click', (e) => {
+        const pick = e.target.closest('[data-cat]');
+        if (pick) {
+          state.cat = pick.dataset.cat;
+          state.diff = pick.dataset.diff;
+          state.level = null;
+          return render();
+        }
+        const lvl = e.target.closest('[data-level]');
+        if (lvl) {
+          const s = Number(lvl.dataset.level);
+          state.level = state.level === s ? null : s;
+          return render();
+        }
+        if (e.target.id === 'copy') {
+          const t = listText();
+          const done = () => {
+            e.target.textContent = 'Kopierad';
+            setTimeout(() => (e.target.textContent = 'Kopiera listan'), 1600);
+          };
+          const fallback = () => {
+            let area = document.querySelector('textarea.fallback');
+            if (!area) {
+              area = document.createElement('textarea');
+              area.className = 'fallback';
+              area.setAttribute('aria-label', 'Listan att kopiera');
+              document.querySelector('.list-head').after(area);
+            }
+            area.value = t;
+            area.select();
+          };
+          try {
+            navigator.clipboard.writeText(t).then(done, fallback);
+          } catch {
+            fallback();
+          }
+        }
+      });
+
+      render();
+    </script>
+  </body>
+</html>
