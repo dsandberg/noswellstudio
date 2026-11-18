@@ -6,31 +6,31 @@
   font-family: 'Fredoka';
   font-weight: 600;
   font-display: swap;
-  src: url('fonts/Fredoka_600SemiBold.ttf') format('truetype');
+  src: url('fonts/Fredoka_600SemiBold.woff2') format('woff2');
 }
 @font-face {
   font-family: 'Fredoka';
   font-weight: 700;
   font-display: swap;
-  src: url('fonts/Fredoka_700Bold.ttf') format('truetype');
+  src: url('fonts/Fredoka_700Bold.woff2') format('woff2');
 }
 @font-face {
   font-family: 'Jost';
   font-weight: 400;
   font-display: swap;
-  src: url('fonts/Jost_400Regular.ttf') format('truetype');
+  src: url('fonts/Jost_400Regular.woff2') format('woff2');
 }
 @font-face {
   font-family: 'Jost';
   font-weight: 600;
   font-display: swap;
-  src: url('fonts/Jost_600SemiBold.ttf') format('truetype');
+  src: url('fonts/Jost_600SemiBold.woff2') format('woff2');
 }
 @font-face {
   font-family: 'Jost';
   font-weight: 700;
   font-display: swap;
-  src: url('fonts/Jost_700Bold.ttf') format('truetype');
+  src: url('fonts/Jost_700Bold.woff2') format('woff2');
 }
 
 /* Raketord */
@@ -914,6 +914,37 @@ section .wrap {
 .big-rocket {
   width: 60px;
   height: 96px;
+}
+
+/* Testsidan (testa.html): knappen till TestFlight i stället för butikslänkarna */
+.hero-text .btn {
+  justify-self: start;
+}
+.test-note {
+  color: var(--on-sky-muted);
+  font-size: 17px;
+  max-width: 40ch;
+  margin-top: -8px;
+}
+.test-note a {
+  color: inherit;
+}
+.qr {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.qr img {
+  width: 104px;
+  height: 104px;
+  padding: 8px;
+  background: #fff;
+  border-radius: 12px;
+}
+.qr p {
+  color: var(--on-sky-muted);
+  font-size: 17px;
+  max-width: 26ch;
 }
 
 /* Sidfoten med syskonappen */
