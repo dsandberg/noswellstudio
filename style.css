@@ -213,6 +213,21 @@ a {
 .site-head nav a:hover {
   color: var(--on-sky);
 }
+.lang-switch {
+  margin-left: auto;
+  border: 2px solid var(--on-sky-muted);
+  border-radius: 999px;
+  padding: 6px 14px;
+  font: 600 16px/1 var(--display);
+  color: var(--on-sky);
+  text-decoration: none;
+}
+.lang-switch:hover {
+  border-color: var(--on-sky);
+}
+.site-head nav + .lang-switch {
+  margin-left: 0;
+}
 
 /* Toppen: text till vänster, telefonen med filmen till höger */
 .hero .wrap {
@@ -920,6 +935,26 @@ section .wrap {
 .hero-text .btn {
   justify-self: start;
 }
+.platforms {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  list-style: none;
+  padding: 0;
+}
+.platforms li {
+  border-radius: 999px;
+  padding: 6px 14px;
+  font: 700 16px/1.3 var(--body);
+}
+.platforms .now {
+  background: var(--hl);
+  color: var(--ink);
+}
+.platforms .later {
+  border: 2px dashed var(--cloud);
+  color: var(--on-sky-muted);
+}
 .test-note {
   color: var(--on-sky-muted);
   font-size: 17px;
@@ -1007,6 +1042,9 @@ footer .wrap {
   }
   .site-head nav {
     display: none;
+  }
+  .site-head nav + .lang-switch {
+    margin-left: auto;
   }
   .moon {
     width: 100px;
